@@ -1,16 +1,16 @@
-import * as React from "react";
-import { StyleSheet, Text, View, Dimensions, Platform, Modal, Switch, TextInput } from "react-native";
+import React, { Fragment, useState } from "react";
+import { StyleSheet, Text, View, Modal, Switch, TextInput, ScrollView } from "react-native";
 import Button from "../components/shared/Button";
 import DummyCategories from "../dummy/category.json";
 
 export default function TabOneScreen() {
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [isFoundItemForm, setIsFoundItemForm] = React.useState(true);
-  const [location, setLocation] = React.useState(null);
-  const [category, setCategory] = React.useState(null);
-  const [dropOffLocation, setDropOffLocation] = React.useState(null);
-  const [description, setDescription] = React.useState(null);
-  const [image, setImage] = React.useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isFoundItemForm, setIsFoundItemForm] = useState(true);
+  const [location, setLocation] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [dropOffLocation, setDropOffLocation] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [image, setImage] = useState(null);
 
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => {
@@ -47,7 +47,7 @@ export default function TabOneScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <Fragment >
       <Button text="Post" color="#ad2ea3" onPress={openModal} />
       <Modal visible={isModalVisible}>
         <View style={styles.modal}>
@@ -58,7 +58,7 @@ export default function TabOneScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </Fragment>
   );
 }
 
@@ -82,6 +82,7 @@ const ModalHeader = (props: HeaderProps) => (
   </View>
 )
 
+// setting these to "any" to avoid annoying error
 type BodyProps = {
   isFoundItemForm: boolean;
   location: any;
@@ -95,10 +96,12 @@ type BodyProps = {
 }
 const ModalBody = (props: BodyProps) => (
   <View style={styles.modalBody}>
-    <TextInput placeholder={props.isFoundItemForm ? "Location Found" : "Location Lost"} value={props.location} style={styles.input} onChangeText={props.setLocation} />
-    <TextInput placeholder="Description" value={props.description} style={styles.input} onChangeText={props.setDescription} />
-    {props.isFoundItemForm && <TextInput placeholder="Drop-Off Location" value={props.dropOffLocation} style={styles.input} onChangeText={props.setDropOffLocation} />}
-    <TextInput placeholder="Category" value={props.category} style={styles.input} onChangeText={props.setCategory} />
+    <ScrollView>
+      <TextInput placeholder={props.isFoundItemForm ? "Location Found" : "Location Lost"} value={props.location} style={styles.input} onChangeText={props.setLocation} />
+      <TextInput placeholder="Description" value={props.description} style={styles.input} onChangeText={props.setDescription} />
+      {props.isFoundItemForm && <TextInput placeholder="Drop-Off Location" value={props.dropOffLocation} style={styles.input} onChangeText={props.setDropOffLocation} />}
+      <TextInput placeholder="Category" value={props.category} style={styles.input} onChangeText={props.setCategory} />
+    </ScrollView>
   </View>
 )
 
