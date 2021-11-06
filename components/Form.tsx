@@ -1,7 +1,9 @@
 import React, { Fragment, useState } from "react";
 import { StyleSheet, Text, View, Modal, Switch, TextInput, ScrollView } from "react-native";
-import Button from "../components/shared/Button";
+import { Picker } from 'react-native-woodpicker'
+import Button from "./shared/Button";
 import DummyCategories from "../dummy/category.json";
+import DummyDropOffLocations from "../dummy/drop_off_location.json";
 
 export default function TabOneScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -21,8 +23,8 @@ export default function TabOneScreen() {
     if (isFoundItemForm) {
       console.log("found item", {
         location,
-        dropOffLocation,
-        category,
+        dropOffLocation: dropOffLocation.value,
+        category: category.value,
         description,
         image
       })
@@ -30,7 +32,7 @@ export default function TabOneScreen() {
     else {
       console.log("lost item", {
         location,
-        category,
+        category: category.value,
         description,
         image
       })
@@ -46,13 +48,18 @@ export default function TabOneScreen() {
     setDescription(null);
   }
 
+  const changeForm = (isFoundItemForm: boolean) => {
+    setIsFoundItemForm(isFoundItemForm);
+    resetData();
+  }
+
   return (
     <Fragment >
       <Button text="Post" color="#ad2ea3" onPress={openModal} />
       <Modal visible={isModalVisible}>
         <View style={styles.modal}>
           <View style={styles.modalContainer}>
-            <ModalHeader isFoundItemForm={isFoundItemForm} changeForm={setIsFoundItemForm} />
+            <ModalHeader isFoundItemForm={isFoundItemForm} changeForm={changeForm} />
             <ModalBody isFoundItemForm={isFoundItemForm} location={location} setLocation={setLocation} description={description} setDescription={setDescription} dropOffLocation={dropOffLocation} setDropOffLocation={setDropOffLocation} category={category} setCategory={setCategory} />
             <ModalFooter closeModal={closeModal} createPost={createPost} />
           </View>
@@ -99,8 +106,8 @@ const ModalBody = (props: BodyProps) => (
     <ScrollView>
       <TextInput placeholder={props.isFoundItemForm ? "Location Found" : "Location Lost"} value={props.location} style={styles.input} onChangeText={props.setLocation} />
       <TextInput placeholder="Description" value={props.description} style={styles.input} onChangeText={props.setDescription} />
-      {props.isFoundItemForm && <TextInput placeholder="Drop-Off Location" value={props.dropOffLocation} style={styles.input} onChangeText={props.setDropOffLocation} />}
-      <TextInput placeholder="Category" value={props.category} style={styles.input} onChangeText={props.setCategory} />
+      {props.isFoundItemForm && <Picker title="Drop-Off Location" placeholder="Drop-Off Location" textInputStyle={props.dropOffLocation ? {fontSize: 14} : {color: "#cccccc", fontSize: 14}} style={styles.input} item={props.dropOffLocation} items={DummyDropOffLocations.map(dropOffLocation =>({label: dropOffLocation.name, value: dropOffLocation.location_id}))} onItemChange={(item, index) => props.setDropOffLocation(item)} isNullable={true}/>}
+      <Picker title="Category" placeholder="Category" textInputStyle={props.category ? {fontSize: 14} : {color: "#cccccc", fontSize: 14}} style={styles.input} item={props.category} items={DummyCategories.map(category =>({label: category.name, value: category.category_id}))} onItemChange={(item, index) => props.setCategory(item)} isNullable={true}/>
     </ScrollView>
   </View>
 )
@@ -177,6 +184,6 @@ const styles = StyleSheet.create({
     height: 40,
     padding: 10,
     borderWidth: 1,
-    borderRadius: 10
+    borderRadius: 10,
   }
 });
