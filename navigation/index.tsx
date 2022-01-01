@@ -39,14 +39,14 @@ function RootNavigator() {
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
-          headerRight: () => <PressableIcon onPress={() => navigation.navigate('Profile')} icon="user" />,
+          headerRight: () => <PressableIcon onPress={() => navigation.navigate('Profile')} icon="user" isLeft={false} />,
         })} />
       <Stack.Screen name="Profile"
         component={Profile}
         options={({ navigation }: RootTabScreenProps<'Profile'>) => ({
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
-          headerLeft: () => <PressableIcon onPress={() => navigation.navigate('Home')} icon="caret-left" />,
+          headerLeft: () => <PressableIcon onPress={() => navigation.navigate('Home')} icon="caret-left" isLeft={true} />,
         })} />
     </Stack.Navigator>
   );
@@ -66,6 +66,7 @@ function TabBarIcon(props: {
 type PressableIconProps = {
   icon: any;
   onPress: () => void;
+  isLeft: boolean;
 }
 /**
  * Perform an action when pressing the icon (like navigate to a new screen).
@@ -80,7 +81,7 @@ const PressableIcon = (props: PressableIconProps) => (
       name={props.icon}
       size={30}
       color={Colors.white}
-      style={{ marginRight: 15 }}
+      style={props.isLeft ? { marginLeft: 15 } : { marginRight: 15 }}
     />
   </Pressable>
 )
