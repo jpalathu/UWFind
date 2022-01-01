@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-
-import { Text, View } from '../components/Themed';
+import { Text, View, StyleSheet } from 'react-native';
+import Colors from '../constants/Colors';
 
 export default function Profile() {
   return (
@@ -18,5 +17,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Colors.gold
   },
 });
