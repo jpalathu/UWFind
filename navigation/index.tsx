@@ -12,6 +12,7 @@ import { ColorSchemeName, Pressable } from 'react-native';
 import Colors from '../constants/Colors';
 import Home from '../screens/Home';
 import Profile from "../screens/Profile";
+import SignIn from '../screens/SignIn';
 import { RootStackParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -34,6 +35,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator>
+      <Stack.Screen name="SignIn" 
+        component={SignIn} 
+        options={() => ({
+          headerShown: false
+        })}/>
       <Stack.Screen name="Home"
         component={Home}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
