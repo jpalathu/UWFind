@@ -5,7 +5,7 @@ import Button from "./shared/Button";
 import DummyCategories from "../dummy/category.json";
 import DummyDropOffLocations from "../dummy/drop_off_location.json";
 
-export default function TabOneScreen() {
+export default function LostFoundForm() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFoundItemForm, setIsFoundItemForm] = useState(true);
   const [location, setLocation] = useState(null);
