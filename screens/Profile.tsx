@@ -6,7 +6,9 @@ import { Text, View } from '../components/Themed';
 export default function Profile() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+      <View>
+          <Text>Fill in stuff here or create a new component and add it here</Text>
+      </View>
     </View>
   );
 }
@@ -17,8 +19,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  }
 });
