@@ -37,6 +37,7 @@ function RootNavigator() {
       <Stack.Screen name="Home"
         component={Home}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
+          title:"UWFind",
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerRight: () => <PressableIcon onPress={() => navigation.navigate('Profile')} icon="user" isLeft={false} />,
