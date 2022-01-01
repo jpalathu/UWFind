@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
+import { View } from '../components/Themed';
 import Form from '../components/Form';
 
-export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Form/>
+      <Form />
     </View>
   );
 }
