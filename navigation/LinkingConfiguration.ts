@@ -17,7 +17,7 @@ const linking: LinkingOptions<RootStackParamList> = {
         screens: {
           Home: {
             screens: {
-              TabOneScreen: 'home',
+              Home: 'home',
             },
           },
           TabTwo: {
@@ -28,7 +28,6 @@ const linking: LinkingOptions<RootStackParamList> = {
         },
       },
       Profile: 'profile',
-      NotFound: '*',
     },
   },
 };

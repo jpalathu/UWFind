@@ -12,7 +12,6 @@ import { ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import NotFoundScreen from '../screens/NotFoundScreen';
 import Home from '../screens/Home';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import Profile from "../screens/Profile";
@@ -40,7 +39,6 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   );
