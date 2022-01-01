@@ -37,29 +37,17 @@ function RootNavigator() {
       <Stack.Screen name="Home"
         component={Home}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
-          title: 'Home',
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Profile')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="user"
-                size={30}
-                color={Colors.white}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
+          headerRight: () => <PressableIcon onPress={() => navigation.navigate('Profile')} icon="user" />,
         })} />
-      <Stack.Screen name="Profile" component={Profile} options={() => ({
-        headerStyle: { backgroundColor: Colors.black },
-        headerTitleStyle: { color: Colors.white }
-      })} />
+      <Stack.Screen name="Profile"
+        component={Profile}
+        options={({ navigation }: RootTabScreenProps<'Profile'>) => ({
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+          headerLeft: () => <PressableIcon onPress={() => navigation.navigate('Home')} icon="caret-left" />,
+        })} />
     </Stack.Navigator>
   );
 }
@@ -73,3 +61,26 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
+
+
+type PressableIconProps = {
+  icon: any;
+  onPress: () => void;
+}
+/**
+ * Perform an action when pressing the icon (like navigate to a new screen).
+ */
+const PressableIcon = (props: PressableIconProps) => (
+  <Pressable
+    onPress={props.onPress}
+    style={({ pressed }) => ({
+      opacity: pressed ? 0.5 : 1,
+    })}>
+    <FontAwesome
+      name={props.icon}
+      size={30}
+      color={Colors.white}
+      style={{ marginRight: 15 }}
+    />
+  </Pressable>
+)
