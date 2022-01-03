@@ -13,3 +13,19 @@ These are just some notes written up about how our backend might work.
 - [ ] Set up the tables for the database
 - [ ] Test that creating something using GraphQL on AWS AppSync is appearing in the AWS RDS database
 - [ ] Create the GraphQL methods needed for the app
+
+## Debugging
+1. **Issue connecting to AWS Amplify**. Need to create an IAM user in the management console and have the person connecting do `amplify configure` and use the access key ID and the secret access key to create a profile. Might need to change the config under `amplify/.config/local-aws-info.json` to the following for it to work: 
+```
+{
+  "staging": {
+    "configLevel": "project",
+    "useProfile": true,
+    "profileName": "default"
+  }
+}
+```
+
+## GraphQL
+`Endpoint`: https://dr75v5xwtnafddzwd2rksf4qmq.appsync-api.us-east-2.amazonaws.com/graphql
+`Key`:  da2-i4ayhkiceve7necqwqqsvqpaqe

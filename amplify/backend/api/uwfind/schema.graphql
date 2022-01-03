@@ -1,0 +1,192 @@
+input AMPLIFY {
+  globalAuthRule: AuthRule = {allow: public}
+}
+
+input CreateCategoryInput {
+  categoryID: Int!
+  name: String!
+}
+
+type Category {
+  categoryID: Int!
+  name: String!
+}
+
+input UpdateCategoryInput {
+  categoryID: Int!
+  name: String
+}
+
+input CreateDropOffLocationInput {
+  locationID: Int!
+  name: String!
+  address: String!
+}
+
+type DropOffLocation {
+  locationID: Int!
+  name: String!
+  address: String!
+}
+
+input UpdateDropOffLocationInput {
+  locationID: Int!
+  name: String
+  address: String
+}
+
+input CreateFoundItemPostInput {
+  postID: Int!
+  foundUserID: Int!
+  claimedUserID: Int
+  imageID: Int
+  date: AWSDateTime!
+  dropOffLocationID: Int!
+  foundLocation: String
+  description: String!
+  categoryID: Int!
+}
+
+type FoundItemPost {
+  postID: Int!
+  foundUserID: Int!
+  claimedUserID: Int
+  imageID: Int
+  date: AWSDateTime!
+  dropOffLocationID: Int!
+  foundLocation: String
+  description: String!
+  categoryID: Int!
+}
+
+input UpdateFoundItemPostInput {
+  postID: Int!
+  foundUserID: Int
+  claimedUserID: Int
+  imageID: Int
+  date: AWSDateTime
+  dropOffLocationID: Int
+  foundLocation: String
+  description: String
+  categoryID: Int
+}
+
+input CreateImageInput {
+  imageID: Int!
+  image: String!
+}
+
+type Image {
+  imageID: Int!
+  image: String!
+}
+
+input UpdateImageInput {
+  imageID: Int!
+  image: String
+}
+
+input CreateLostItemPostInput {
+  postID: Int!
+  lostUserID: Int!
+  imageID: Int
+  date: AWSDateTime!
+  lostLocation: String
+  description: String!
+  categoryID: Int!
+}
+
+type LostItemPost {
+  postID: Int!
+  lostUserID: Int!
+  imageID: Int
+  date: AWSDateTime!
+  lostLocation: String
+  description: String!
+  categoryID: Int!
+}
+
+input UpdateLostItemPostInput {
+  postID: Int!
+  lostUserID: Int
+  imageID: Int
+  date: AWSDateTime
+  lostLocation: String
+  description: String
+  categoryID: Int
+}
+
+input CreateUserInput {
+  userID: Int!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+}
+
+type User {
+  userID: Int!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+}
+
+input UpdateUserInput {
+  userID: Int!
+  firstName: String
+  lastName: String
+  email: String
+  phoneNumber: String
+}
+
+type Mutation {
+  deleteCategory(categoryID: Int!): Category
+  createCategory(createCategoryInput: CreateCategoryInput!): Category
+  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category
+  deleteDropOffLocation(locationID: Int!): DropOffLocation
+  createDropOffLocation(createDropOffLocationInput: CreateDropOffLocationInput!): DropOffLocation
+  updateDropOffLocation(updateDropOffLocationInput: UpdateDropOffLocationInput!): DropOffLocation
+  deleteFoundItemPost(postID: Int!): FoundItemPost
+  createFoundItemPost(createFoundItemPostInput: CreateFoundItemPostInput!): FoundItemPost
+  updateFoundItemPost(updateFoundItemPostInput: UpdateFoundItemPostInput!): FoundItemPost
+  deleteImage(imageID: Int!): Image
+  createImage(createImageInput: CreateImageInput!): Image
+  updateImage(updateImageInput: UpdateImageInput!): Image
+  deleteLostItemPost(postID: Int!): LostItemPost
+  createLostItemPost(createLostItemPostInput: CreateLostItemPostInput!): LostItemPost
+  updateLostItemPost(updateLostItemPostInput: UpdateLostItemPostInput!): LostItemPost
+  deleteUser(userID: Int!): User
+  createUser(createUserInput: CreateUserInput!): User
+  updateUser(updateUserInput: UpdateUserInput!): User
+}
+
+type Query {
+  getCategory(categoryID: Int!): Category
+  listCategorys: [Category]
+  getDropOffLocation(locationID: Int!): DropOffLocation
+  listDropOffLocations: [DropOffLocation]
+  getFoundItemPost(postID: Int!): FoundItemPost
+  listFoundItemPosts: [FoundItemPost]
+  getImage(imageID: Int!): Image
+  listImages: [Image]
+  getLostItemPost(postID: Int!): LostItemPost
+  listLostItemPosts: [LostItemPost]
+  getUser(userID: Int!): User
+  listUsers: [User]
+}
+
+type Subscription {
+  onCreateCategory: Category @aws_subscribe(mutations: ["createCategory"])
+  onCreateDropOffLocation: DropOffLocation @aws_subscribe(mutations: ["createDropOffLocation"])
+  onCreateFoundItemPost: FoundItemPost @aws_subscribe(mutations: ["createFoundItemPost"])
+  onCreateImage: Image @aws_subscribe(mutations: ["createImage"])
+  onCreateLostItemPost: LostItemPost @aws_subscribe(mutations: ["createLostItemPost"])
+  onCreateUser: User @aws_subscribe(mutations: ["createUser"])
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
