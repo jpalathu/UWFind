@@ -1,0 +1,15 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-uwfind-staging-11732-authRole",
+      "UnauthRoleArn": "arn:aws:iam::296873055257:role/amplify-uwfind-staging-11732-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::296873055257:role/amplify-uwfind-staging-11732-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-uwfind-staging-11732-deployment",
+      "UnauthRoleName": "amplify-uwfind-staging-11732-unauthRole",
+      "StackName": "amplify-uwfind-staging-11732",
+      "StackId": "arn:aws:cloudformation:us-east-2:296873055257:stack/amplify-uwfind-staging-11732/973cb9e0-6f57-11ec-96dd-06d04c1ff22c",
+      "AmplifyAppId": "d2y9mr2x204avg"
+    }
+  }
+}
