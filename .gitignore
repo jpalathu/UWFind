@@ -33,3 +33,10 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# environments
+.env
+.venv
+env/
+venv/
+
