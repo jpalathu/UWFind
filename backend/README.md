@@ -1,5 +1,7 @@
 # Backend
 
+Postman link to join and test some APIs: https://app.getpostman.com/join-team?invite_code=d8c64230aef8c4c2ca6f06196bcfd023
+
 ## Initial Setup
 1. Install the dependencies.
 ```
