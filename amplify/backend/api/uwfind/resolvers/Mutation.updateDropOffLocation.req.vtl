@@ -1,9 +1,0 @@
-#set( $updateList = {} )
-#foreach( $entry in $ctx.args.updateDropOffLocationInput.keySet() )
-  #set( $discard = $updateList.put($entry, "'$ctx.args.updateDropOffLocationInput[$entry]'") )
-#end
-#set( $update = $updateList.toString().replace("{","").replace("}","") )
-{
-  "version": "2018-05-29",
-  "statements":   ["UPDATE DropOffLocation SET $update WHERE locationID=$ctx.args.updateDropOffLocationInput.locationID", "SELECT * FROM DropOffLocation WHERE locationID=$ctx.args.updateDropOffLocationInput.locationID"]
-}

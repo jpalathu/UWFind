@@ -1,25 +1,15 @@
 {
   "staging": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-uwfind-staging-213619-authRole",
-      "UnauthRoleArn": "arn:aws:iam::296873055257:role/amplify-uwfind-staging-213619-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::296873055257:role/amplify-uwfind-staging-213619-authRole",
+      "AuthRoleName": "amplify-uwfind-staging-11732-authRole",
+      "UnauthRoleArn": "arn:aws:iam::296873055257:role/amplify-uwfind-staging-11732-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::296873055257:role/amplify-uwfind-staging-11732-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-uwfind-staging-213619-deployment",
-      "UnauthRoleName": "amplify-uwfind-staging-213619-unauthRole",
-      "StackName": "amplify-uwfind-staging-213619",
-      "StackId": "arn:aws:cloudformation:us-east-2:296873055257:stack/amplify-uwfind-staging-213619/dc152d10-6b4a-11ec-819f-0a156c38e44a",
-      "AmplifyAppId": "d32abet7vafnmu"
-    },
-    "categories": {
-      "api": {
-        "uwfind": {
-          "rdsRegion": "us-east-2",
-          "rdsClusterIdentifier": "arn:aws:rds:us-east-2:296873055257:cluster:uwfind-db-server",
-          "rdsSecretStoreArn": "arn:aws:secretsmanager:us-east-2:296873055257:secret:rds-db-credentials/cluster-XPZY5JED3LJ6SHV5AQTYIU444A/admin-votFv8",
-          "rdsDatabaseName": "UWFind"
-        }
-      }
+      "DeploymentBucketName": "amplify-uwfind-staging-11732-deployment",
+      "UnauthRoleName": "amplify-uwfind-staging-11732-unauthRole",
+      "StackName": "amplify-uwfind-staging-11732",
+      "StackId": "arn:aws:cloudformation:us-east-2:296873055257:stack/amplify-uwfind-staging-11732/973cb9e0-6f57-11ec-96dd-06d04c1ff22c",
+      "AmplifyAppId": "d2y9mr2x204avg"
     }
   }
 }

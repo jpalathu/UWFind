@@ -1,9 +1,0 @@
-#set( $updateList = {} )
-#foreach( $entry in $ctx.args.updateLostItemPostInput.keySet() )
-  #set( $discard = $updateList.put($entry, "'$ctx.args.updateLostItemPostInput[$entry]'") )
-#end
-#set( $update = $updateList.toString().replace("{","").replace("}","") )
-{
-  "version": "2018-05-29",
-  "statements":   ["UPDATE LostItemPost SET $update WHERE postID=$ctx.args.updateLostItemPostInput.postID", "SELECT * FROM LostItemPost WHERE postID=$ctx.args.updateLostItemPostInput.postID"]
-}
