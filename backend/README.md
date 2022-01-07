@@ -46,3 +46,9 @@ Apply the migrations to update the DB:
 ```
 python manage.py migrate
 ```
+
+## Loading initial data into the DB
+Create a JSON file in the fixtures directory and run the following command to load into the DB.
+```
+python manage.py loaddata <FIXTURE FILE NAME>
+```

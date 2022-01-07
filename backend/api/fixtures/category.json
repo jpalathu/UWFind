@@ -1,0 +1,26 @@
+[
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Clothing"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Electronic"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Key"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Wallet"
+    }
+  }
+]

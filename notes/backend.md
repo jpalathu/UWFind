@@ -8,9 +8,9 @@ These are just some notes written up about how our backend might work.
 - https://www.twilio.com/blog/graphql-apis-django-graphene
 
 ## To Do
-- [ ] Set up the UWFind app on AWS Amplify 
-- [ ] Add the AWS Amplify configuration to our codebase
-- [ ] Set up AWS Amplify locally
-- [ ] Create a relational database on AWS RDS
+- [x] Set up the UWFind app on AWS Amplify 
+- [x] Add the AWS Amplify configuration to our codebase
+- [x] Set up AWS Amplify locally
+- [x] Create a relational database on AWS RDS
 - [ ] Create a Django API
 - [ ] Set up frontend to make API calls (maybe using Apollo)
