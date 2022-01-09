@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { NativeBaseProvider, Center } from "native-base";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
@@ -14,10 +14,10 @@ export default function App() {
     return null;
   } else {
     return (
-      <SafeAreaProvider>
+      <NativeBaseProvider>
         <Navigation colorScheme={colorScheme} />
         <StatusBar />
-      </SafeAreaProvider>
+      </NativeBaseProvider>
     );
   }
 }
