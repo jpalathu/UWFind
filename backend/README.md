@@ -3,14 +3,27 @@
 Postman link to join and test some APIs: https://app.getpostman.com/join-team?invite_code=d8c64230aef8c4c2ca6f06196bcfd023
 
 ## Initial Setup
-1. Install the dependencies.
-```
-pip install -r requirements.txt
-```
-
-2. Create a virtual environment.
+1. Create a virtual environment. **Note**: Make sure you're in the root directory when creating the virtual environment.
 ```
 python -m venv venv
+```
+
+2. Start a virtual environment.
+
+For Windows:
+```
+venv\Scripts\activate
+```
+
+For MacOS:
+```
+source venv\Scripts\activate
+```
+
+3. Install the dependencies.
+```
+cd backend
+pip install -r requirements.txt
 ```
 
 ## Running the Backend
