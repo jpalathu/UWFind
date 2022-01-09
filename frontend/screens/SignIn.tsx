@@ -36,7 +36,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
   });
 
   const goToSignUp = () => {
-    navigation.navigate("Home");
+    navigation.navigate("SignUp");
   };
 
   const login = () => {

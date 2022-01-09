@@ -52,6 +52,14 @@ function RootNavigator() {
         })}
       />
       <Stack.Screen
+        name="SignUp"
+        component={Home}
+        options={() => ({
+          title: "",
+          headerStyle: { backgroundColor: Colors.black },
+        })}
+      />
+      <Stack.Screen
         name="Home"
         component={Home}
         options={({ navigation }: RootTabScreenProps<"Home">) => ({

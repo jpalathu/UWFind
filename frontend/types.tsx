@@ -15,6 +15,7 @@ declare global {
 
 export type RootStackParamList = {
   SignIn: undefined;
+  SignUp: undefined;
   Home: undefined;
   Profile: undefined;
 };
@@ -24,6 +25,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 
 export type RootTabParamList = {
   SignIn: undefined;
+  SignUp: undefined;
   Home: undefined;
   Profile: undefined;
 };
