@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import * as yup from "yup";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ImageBackground } from "react-native";
 import Colors from "../constants/Colors";
 import {
   Button,
@@ -57,8 +57,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
               isInvalid: true,
               errorMessage: error.message,
             });
-          }
-          if (error.path === "password") {
+          } else if (error.path === "password") {
             setPassword({
               ...password,
               isInvalid: true,
@@ -71,13 +70,19 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
 
   return (
     <Box style={styles.container}>
+      <ImageBackground
+      resizeMode="cover"
+        source={require("../assets/images/sign-in.jpg")}
+        style={{ flex: 1, width: "100%", height: "100%", position: "absolute" }}
+      />
       <FormControl
         isInvalid={email.isInvalid}
         w={{
           base: "75%",
           md: "25%",
         }}
-        mb="6"
+        my="6"
+        mt="200"
       >
         <Input
           variant="outline"
@@ -118,22 +123,22 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         onPress={login}
         size="lg"
         my="6"
-        style={{ backgroundColor: "#ffc50b"}}
+        style={{ backgroundColor: "#ffc50b" }}
         width="240px"
         height="59px"
         borderRadius="20"
-        _text={{color: "#000"}}
+        _text={{ color: "#000" }}
       >
         Log In
       </Button>
       <Button
         onPress={goToSignUp}
         size="lg"
-        style={{ backgroundColor: "#ffc50b"}}
+        style={{ backgroundColor: "#ffc50b" }}
         width="240px"
         height="59px"
         borderRadius="20"
-        _text={{color: "#000"}}
+        _text={{ color: "#000" }}
       >
         Sign Up
       </Button>
@@ -146,6 +151,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.gold,
   },
 });
