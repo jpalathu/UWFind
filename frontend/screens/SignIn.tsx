@@ -23,16 +23,13 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
     errorMessage: string;
   };
 
-  const [email, setEmail] = useState<ValidationState>({
+  const initialState = {
     value: "",
     isInvalid: false,
     errorMessage: "",
-  });
-  const [password, setPassword] = useState<ValidationState>({
-    value: "",
-    isInvalid: false,
-    errorMessage: "",
-  });
+  };
+  const [email, setEmail] = useState<ValidationState>(initialState);
+  const [password, setPassword] = useState<ValidationState>(initialState);
 
   const goToSignUp = () => {
     navigation.navigate("SignUp");
@@ -50,17 +47,16 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
       })
       .catch((err) => {
         for (const error of err.inner) {
+          const errorState = { isInvalid: true, errorMessage: error.message };
           if (error.path === "email") {
             setEmail({
               ...email,
-              isInvalid: true,
-              errorMessage: error.message,
+              ...errorState,
             });
           } else if (error.path === "password") {
             setPassword({
               ...password,
-              isInvalid: true,
-              errorMessage: error.message,
+              ...errorState,
             });
           }
         }
@@ -71,7 +67,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
   return (
     <Box style={styles.container}>
       <ImageBackground
-      resizeMode="cover"
+        resizeMode="cover"
         source={require("../assets/images/sign-in.jpg")}
         style={{ flex: 1, width: "100%", height: "100%", position: "absolute" }}
       />
