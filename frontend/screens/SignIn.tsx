@@ -44,8 +44,8 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
       .then((value) => {
         console.log(value);
         // authenticate the user
-        setEmail(initialState)
-        setPassword(initialState)
+        setEmail(initialState);
+        setPassword(initialState);
         navigation.navigate("Home");
       })
       .catch((err) => {
