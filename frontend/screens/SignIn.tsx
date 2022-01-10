@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import * as yup from "yup";
 import { StyleSheet, ImageBackground } from "react-native";
-import Colors from "../constants/Colors";
 import {
   Button,
   Input,
@@ -68,6 +67,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
       });
   };
 
+  // TODO: Try to use svg to fix scaling issue
   return (
     <Box style={styles.container}>
       <ImageBackground
