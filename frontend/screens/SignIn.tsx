@@ -10,18 +10,18 @@ import {
 } from "native-base";
 import { RootTabScreenProps } from "../types";
 
+type ValidationState = {
+  value: string;
+  isInvalid: boolean;
+  errorMessage: string;
+};
+
 export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
   const schema = yup.object().shape({
     // disable required for now
-    email: yup.string(),
-    password: yup.string(),
+    email: yup.string().required(),
+    password: yup.string().required(),
   });
-
-  type ValidationState = {
-    value: string;
-    isInvalid: boolean;
-    errorMessage: string;
-  };
 
   const initialState = {
     value: "",
@@ -43,6 +43,9 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
       )
       .then((value) => {
         console.log(value);
+        // authenticate the user
+        setEmail(initialState)
+        setPassword(initialState)
         navigation.navigate("Home");
       })
       .catch((err) => {
@@ -71,50 +74,22 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         source={require("../assets/images/sign-in.jpg")}
         style={{ flex: 1, width: "100%", height: "100%", position: "absolute" }}
       />
-      <FormControl
+      <TextInput
+        title="Email"
+        value={email.value}
         isInvalid={email.isInvalid}
-        w={{
-          base: "75%",
-          md: "25%",
-        }}
+        errorMessage={email.errorMessage}
+        onChangeText={setEmail}
         my="6"
         mt="200"
-      >
-        <Input
-          variant="outline"
-          size="lg"
-          value={email.value}
-          placeholder="UW Email"
-          onChangeText={(value) =>
-            setEmail({ value, isInvalid: false, errorMessage: "" })
-          }
-          backgroundColor="#fff"
-        />
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-          {email.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
-      <FormControl
+      />
+      <TextInput
+        title="Password"
+        value={password.value}
         isInvalid={password.isInvalid}
-        w={{
-          base: "75%",
-          md: "25%",
-        }}
-      >
-        <Input
-          variant="outline"
-          size="lg"
-          value={password.value}
-          placeholder="Password"
-          onChangeText={(value) =>
-            setPassword({ value, isInvalid: false, errorMessage: "" })
-          }
-          backgroundColor="#fff"
-        />
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-          {password.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
+        errorMessage={password.errorMessage}
+        onChangeText={setPassword}
+      />
       <Button
         onPress={login}
         size="lg"
@@ -142,6 +117,42 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
   );
 }
 
+type TextInputProps = {
+  isInvalid: boolean;
+  value: string;
+  onChangeText: (value: ValidationState) => void;
+  errorMessage: string;
+  title: string;
+  mt?: string;
+  my?: string;
+};
+const TextInput = (props: TextInputProps) => {
+  return (
+    <FormControl
+      isInvalid={props.isInvalid}
+      w={{
+        base: "75%",
+        md: "25%",
+      }}
+      mt={props.mt}
+      my={props.my}
+    >
+      <Input
+        variant="outline"
+        size="lg"
+        value={props.value}
+        placeholder={props.title}
+        onChangeText={(value) =>
+          props.onChangeText({ value, isInvalid: false, errorMessage: "" })
+        }
+        backgroundColor="#fff"
+      />
+      <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+        {props.errorMessage}
+      </FormControl.ErrorMessage>
+    </FormControl>
+  );
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
