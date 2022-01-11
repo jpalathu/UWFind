@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import * as yup from "yup";
-import { StyleSheet } from "react-native";
-import Colors from "../constants/Colors";
+import { StyleSheet, ImageBackground } from "react-native";
 import {
   Button,
   Input,
@@ -11,29 +10,26 @@ import {
 } from "native-base";
 import { RootTabScreenProps } from "../types";
 
+type ValidationState = {
+  value: string;
+  isInvalid: boolean;
+  errorMessage: string;
+};
+
 export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
   const schema = yup.object().shape({
     // disable required for now
-    email: yup.string(),
-    password: yup.string(),
+    email: yup.string().required(),
+    password: yup.string().required(),
   });
 
-  type ValidationState = {
-    value: string;
-    isInvalid: boolean;
-    errorMessage: string;
+  const initialState = {
+    value: "",
+    isInvalid: false,
+    errorMessage: "",
   };
-
-  const [email, setEmail] = useState<ValidationState>({
-    value: "",
-    isInvalid: false,
-    errorMessage: "",
-  });
-  const [password, setPassword] = useState<ValidationState>({
-    value: "",
-    isInvalid: false,
-    errorMessage: "",
-  });
+  const [email, setEmail] = useState<ValidationState>(initialState);
+  const [password, setPassword] = useState<ValidationState>(initialState);
 
   const goToSignUp = () => {
     navigation.navigate("SignUp");
@@ -47,93 +43,73 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
       )
       .then((value) => {
         console.log(value);
+        // authenticate the user
+        setEmail(initialState);
+        setPassword(initialState);
         navigation.navigate("Home");
       })
       .catch((err) => {
         for (const error of err.inner) {
+          const errorState = { isInvalid: true, errorMessage: error.message };
           if (error.path === "email") {
             setEmail({
               ...email,
-              isInvalid: true,
-              errorMessage: error.message,
+              ...errorState,
             });
-          }
-          if (error.path === "password") {
+          } else if (error.path === "password") {
             setPassword({
               ...password,
-              isInvalid: true,
-              errorMessage: error.message,
+              ...errorState,
             });
           }
         }
       });
   };
 
+  // TODO: Try to use svg to fix scaling issue
   return (
     <Box style={styles.container}>
-      <FormControl
+      <ImageBackground
+        resizeMode="cover"
+        source={require("../assets/images/sign-in.jpg")}
+        style={{ flex: 1, width: "100%", height: "100%", position: "absolute" }}
+      />
+      <TextInput
+        title="Email"
+        value={email.value}
         isInvalid={email.isInvalid}
-        w={{
-          base: "75%",
-          md: "25%",
-        }}
-        mb="6"
-      >
-        <Input
-          variant="outline"
-          size="lg"
-          value={email.value}
-          placeholder="UW Email"
-          onChangeText={(value) =>
-            setEmail({ value, isInvalid: false, errorMessage: "" })
-          }
-          backgroundColor="#fff"
-        />
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-          {email.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
-      <FormControl
+        errorMessage={email.errorMessage}
+        onChangeText={setEmail}
+        my="6"
+        mt="200"
+      />
+      <TextInput
+        title="Password"
+        value={password.value}
         isInvalid={password.isInvalid}
-        w={{
-          base: "75%",
-          md: "25%",
-        }}
-      >
-        <Input
-          variant="outline"
-          size="lg"
-          value={password.value}
-          placeholder="Password"
-          onChangeText={(value) =>
-            setPassword({ value, isInvalid: false, errorMessage: "" })
-          }
-          backgroundColor="#fff"
-        />
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-          {password.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
+        errorMessage={password.errorMessage}
+        onChangeText={setPassword}
+      />
       <Button
         onPress={login}
         size="lg"
         my="6"
-        style={{ backgroundColor: "#ffc50b"}}
+        style={{ backgroundColor: "#ffc50b" }}
         width="240px"
         height="59px"
         borderRadius="20"
-        _text={{color: "#000"}}
+        _text={{ color: "#000" }}
       >
         Log In
       </Button>
       <Button
         onPress={goToSignUp}
         size="lg"
-        style={{ backgroundColor: "#ffc50b"}}
+        style={{ backgroundColor: "#ffc50b" }}
         width="240px"
         height="59px"
         borderRadius="20"
-        _text={{color: "#000"}}
+        _text={{ color: "#000" }}
       >
         Sign Up
       </Button>
@@ -141,11 +117,46 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
   );
 }
 
+type TextInputProps = {
+  isInvalid: boolean;
+  value: string;
+  onChangeText: (value: ValidationState) => void;
+  errorMessage: string;
+  title: string;
+  mt?: string;
+  my?: string;
+};
+const TextInput = (props: TextInputProps) => {
+  return (
+    <FormControl
+      isInvalid={props.isInvalid}
+      w={{
+        base: "75%",
+        md: "25%",
+      }}
+      mt={props.mt}
+      my={props.my}
+    >
+      <Input
+        variant="outline"
+        size="lg"
+        value={props.value}
+        placeholder={props.title}
+        onChangeText={(value) =>
+          props.onChangeText({ value, isInvalid: false, errorMessage: "" })
+        }
+        backgroundColor="#fff"
+      />
+      <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+        {props.errorMessage}
+      </FormControl.ErrorMessage>
+    </FormControl>
+  );
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.gold,
   },
 });
