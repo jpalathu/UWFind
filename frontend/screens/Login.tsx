@@ -9,15 +9,6 @@ import {
   WarningOutlineIcon,
 } from "native-base";
 import { RootTabScreenProps } from "../types";
-import { gql, useLazyQuery } from "@apollo/client";
-
-const LOGIN_QUERY = gql`
-  query {
-    login(email: "jpalathu@uwaterloo.ca", password: "tes1") {
-      token
-    }
-  }
-`;
 
 type ValidationState = {
   value: string;
@@ -44,15 +35,6 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
     navigation.navigate("SignUp");
   };
 
-  const [executeLogin, { data, error, loading }] = useLazyQuery(LOGIN_QUERY);
-  if (loading) {
-    console.log("loading");
-  }
-  if (error) {
-    console.log("error", error);
-  }
-  console.log("data", data);
-
   const login = () => {
     schema
       .validate(
@@ -61,7 +43,6 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
       )
       .then((value) => {
         console.log(value);
-        executeLogin();
         setEmail(initialState);
         setPassword(initialState);
         navigation.navigate("Home");
