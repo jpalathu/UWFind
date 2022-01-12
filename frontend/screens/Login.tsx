@@ -9,6 +9,15 @@ import {
   WarningOutlineIcon,
 } from "native-base";
 import { RootTabScreenProps } from "../types";
+import { gql, useLazyQuery } from "@apollo/client";
+
+const LOGIN_QUERY = gql`
+  query {
+    login(email: "jpalathu@uwaterloo.ca", password: "tes1") {
+      token
+    }
+  }
+`;
 
 type ValidationState = {
   value: string;
@@ -16,7 +25,7 @@ type ValidationState = {
   errorMessage: string;
 };
 
-export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
+export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   const schema = yup.object().shape({
     // disable required for now
     email: yup.string().required(),
@@ -35,6 +44,15 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
     navigation.navigate("SignUp");
   };
 
+  const [executeLogin, { data, error, loading }] = useLazyQuery(LOGIN_QUERY);
+  if (loading) {
+    console.log("loading");
+  }
+  if (error) {
+    console.log("error", error);
+  }
+  console.log("data", data);
+
   const login = () => {
     schema
       .validate(
@@ -43,7 +61,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
       )
       .then((value) => {
         console.log(value);
-        // authenticate the user
+        executeLogin();
         setEmail(initialState);
         setPassword(initialState);
         navigation.navigate("Home");

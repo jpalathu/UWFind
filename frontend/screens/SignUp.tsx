@@ -17,7 +17,7 @@ type ValidationState = {
   errorMessage: string;
 };
 
-export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
+export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const schema = yup.object().shape({
     // disable required for now
     firstName: yup.string().required(),
@@ -60,7 +60,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         setEmail(initialState);
         setPassword(initialState);
         setConfirmPassword(initialState);
-        navigation.navigate("SignIn");
+        navigation.navigate("Login");
       })
       .catch((err) => {
         for (const error of err.inner) {
