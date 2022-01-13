@@ -2,14 +2,9 @@ import React, { useState } from "react";
 import * as yup from "yup";
 import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
-import {
-  Button,
-  Input,
-  Box,
-  FormControl,
-  WarningOutlineIcon,
-} from "native-base";
+import { Button, Box, Text } from "native-base";
 import { RootTabScreenProps } from "../types";
+import TextInput from "../components/shared/TextInput";
 
 type ValidationState = {
   value: string;
@@ -17,7 +12,7 @@ type ValidationState = {
   errorMessage: string;
 };
 
-export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
+export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const schema = yup.object().shape({
     // disable required for now
     firstName: yup.string().required(),
@@ -55,12 +50,8 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         // create the user
 
         // reset everyting back to initial state
-        setFirstName(initialState);
-        setLastName(initialState);
-        setEmail(initialState);
-        setPassword(initialState);
-        setConfirmPassword(initialState);
-        navigation.navigate("SignIn");
+        resetFields();
+        navigation.navigate("Login");
       })
       .catch((err) => {
         for (const error of err.inner) {
@@ -95,6 +86,14 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
       });
   };
 
+  const resetFields = () => {
+    setFirstName(initialState);
+    setLastName(initialState);
+    setEmail(initialState);
+    setPassword(initialState);
+    setConfirmPassword(initialState);
+  };
+
   // TODO: compare the passwords and make sure they are the same
   // TODO: see if we can create custom error messages
   // TODO: validate that it's a UW email
@@ -107,6 +106,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         errorMessage={firstName.errorMessage}
         onChangeText={setFirstName}
         my="3"
+        icon="person"
       />
       <TextInput
         title="Last Name"
@@ -115,6 +115,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         errorMessage={lastName.errorMessage}
         onChangeText={setLastName}
         my="3"
+        icon="person"
       />
       <TextInput
         title="Email"
@@ -123,6 +124,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         errorMessage={email.errorMessage}
         onChangeText={setEmail}
         my="3"
+        icon="email"
       />
       <TextInput
         title="Password"
@@ -131,6 +133,7 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         errorMessage={password.errorMessage}
         onChangeText={setPassword}
         my="3"
+        icon="lock"
       />
       <TextInput
         title="Confirm Password"
@@ -139,59 +142,30 @@ export default function SignIn({ navigation }: RootTabScreenProps<"SignIn">) {
         errorMessage={confirmPassword.errorMessage}
         onChangeText={setConfirmPassword}
         my="3"
+        icon="lock"
       />
       <Button
         onPress={createAccount}
         size="lg"
-        style={{ backgroundColor: "#6b6b6b" }}
-        width="240px"
+        my="3"
+        style={{
+          backgroundColor: "#d4d4d4",
+          borderColor: "#000",
+          borderWidth: 1,
+          shadowOpacity: 0.3,
+          shadowRadius: 10,
+          shadowOffset: { width: 1, height: 10 },
+        }}
+        width="80%"
         height="59px"
         borderRadius="20"
-        my="3"
         _text={{ color: "#000" }}
       >
-        Create Account
+        CREATE ACCOUNT
       </Button>
     </Box>
   );
 }
-
-type TextInputProps = {
-  isInvalid: boolean;
-  value: string;
-  onChangeText: (value: ValidationState) => void;
-  errorMessage: string;
-  title: string;
-  mt?: string;
-  my?: string;
-};
-const TextInput = (props: TextInputProps) => {
-  return (
-    <FormControl
-      isInvalid={props.isInvalid}
-      w={{
-        base: "75%",
-        md: "25%",
-      }}
-      mt={props.mt}
-      my={props.my}
-    >
-      <Input
-        variant="outline"
-        size="lg"
-        value={props.value}
-        placeholder={props.title}
-        onChangeText={(value) =>
-          props.onChangeText({ value, isInvalid: false, errorMessage: "" })
-        }
-        backgroundColor="#fff"
-      />
-      <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-        {props.errorMessage}
-      </FormControl.ErrorMessage>
-    </FormControl>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {

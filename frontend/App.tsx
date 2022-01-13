@@ -5,6 +5,9 @@ import { NativeBaseProvider, Center } from "native-base";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
+import { LogBox } from "react-native";
+
+LogBox.ignoreLogs(['NativeBase:']);
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
