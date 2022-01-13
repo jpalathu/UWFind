@@ -76,70 +76,99 @@
 // //   )
 // // }
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import Colors from "../constants/Colors";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity
-} from 'react-native';
-import { Heading, Text, VStack, Center, NativeBaseProvider, Container, Divider, Modal, FormControl, Input, Button } from "native-base"
+  Heading,
+  Text,
+  VStack,
+  Center,
+  NativeBaseProvider,
+  Container,
+  Divider,
+  Modal,
+  FormControl,
+  Input,
+  Button,
+  IconButton,
+  Box,
+} from "native-base";
+import { Foundation } from "@expo/vector-icons";
 
 export default class Profile extends Component {
-
   render() {
     return (
-      
-      <View >
-
-
+      <View>
         <View style={styles.header}></View>
 
-        <Modal>
-        <Modal.Content maxWidth="400px">
-        
-          <Modal.Header>Contact Us</Modal.Header>
-          
-        </Modal.Content>
-      </Modal>
+        <Image
+          style={styles.avatar}
+          source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
+        />
 
-        
-        <Image style={styles.avatar} source={{uri: 'https://bootdey.com/img/Content/avatar/avatar6.png'}}/>
-        
-          <View style={styles.body}>
+        <View style={styles.body}>
+          <View>
+            <Text style={styles.name}>Hi James</Text>
+            <Text style={styles.info}>
+              4th Year Computer Engineering Student
+              <Container style={{ alignSelf: "flex-end" }}>
+                <Container marginLeft={360}>
+                  <IconButton
+                    variant="solid"
+                    _icon={{
+                      as: Foundation,
+                      name: "pencil",
+                    }}
+                  />
+                </Container>
+              </Container>
+            </Text>
 
-            <View>
-              <Text style={styles.name}>Hi James</Text>
-              <Text style={styles.info} >4th Year Computer Engineering Student </Text>
-         
+            <Divider my="2" />
+            <Text style={styles.name}>Email </Text>
+            <Text style={styles.info}>
+              James@email.com
+              <Container style={{ alignSelf: "flex-end" }}>
+                <Container marginLeft={360}>
+                  <IconButton
+                    variant="solid"
+                    _icon={{
+                      as: Foundation,
+                      name: "pencil",
+                    }}
+                  />
+                </Container>
+              </Container>
+            </Text>
 
-              <Divider my="2" />
-              <Text style={styles.name}>Email </Text>
-              <Text style={styles.info} >James@email.com</Text>
-
-              <Divider my="2" />
-              <Text style={styles.name}>Password</Text>
-              <Text style={styles.info} >********</Text>
-
-              <TouchableOpacity style={styles.buttonContainer}>
-                <Text>Change Password</Text>  
-              </TouchableOpacity>              
-            </View>
-            
+            <Divider my="2" />
+            <Text style={styles.name}>Password</Text>
+            <Text style={styles.info}>
+              ********
+              <Container style={{ alignSelf: "flex-end" }}>
+                <Container marginLeft={300}>
+                  <IconButton
+                    variant="solid"
+                    _icon={{
+                      as: Foundation,
+                      name: "pencil",
+                    }}
+                  />
+                </Container>
+              </Container>
+            </Text>
+          </View>
         </View>
       </View>
-
-      
-      
     );
   }
 }
 
 const styles = StyleSheet.create({
-  header:{
+  header: {
     backgroundColor: Colors.gold,
-    height:200,
+    height: 200,
   },
   avatar: {
     width: 130,
@@ -147,40 +176,40 @@ const styles = StyleSheet.create({
     borderRadius: 63,
     borderWidth: 4,
     borderColor: "white",
-    marginBottom:10,
-    alignSelf:'center',
-    position: 'absolute',
-    marginTop:130
+    marginBottom: 10,
+    alignSelf: "center",
+    position: "absolute",
+    marginTop: 130,
   },
-  name:{
-    fontSize:22,
+  name: {
+    fontSize: 22,
     color: Colors.white,
-    fontWeight:'600',
+    fontWeight: "600",
   },
-  body:{
-    marginTop:40,
+  body: {
+    marginTop: 40,
   },
-  info:{
-    fontSize:16,
+  info: {
+    fontSize: 16,
     color: "#00BFFF",
-    marginTop:10,
-    marginBottom: 15
+    marginTop: 10,
+    marginBottom: 15,
   },
-  description:{
-    fontSize:16,
+  description: {
+    fontSize: 16,
     color: "#696969",
-    marginTop:10,
-    textAlign: 'center'
+    marginTop: 10,
+    textAlign: "center",
   },
   buttonContainer: {
-    marginTop:10,
-    height:45,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom:20,
-    width:250,
-    borderRadius:30,
+    marginTop: 10,
+    height: 45,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    width: 250,
+    borderRadius: 30,
     backgroundColor: Colors.gold,
   },
 });
