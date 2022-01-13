@@ -2,9 +2,19 @@ import React, { useState } from "react";
 import * as yup from "yup";
 import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
-import { Button, Box, Text } from "native-base";
+import {
+  Button,
+  Box,
+  Text,
+  Select,
+  CheckIcon,
+  FormControl,
+  Icon,
+  WarningOutlineIcon,
+} from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type ValidationState = {
   value: string;
@@ -17,6 +27,8 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
     // disable required for now
     firstName: yup.string().required(),
     lastName: yup.string().required(),
+    year: yup.string().required(),
+    program: yup.string().required(),
     email: yup.string().required(),
     password: yup.string().required(),
     confirmPassword: yup.string().required(),
@@ -29,6 +41,8 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   };
   const [firstName, setFirstName] = useState<ValidationState>(initialState);
   const [lastName, setLastName] = useState<ValidationState>(initialState);
+  const [year, setYear] = useState<ValidationState>(initialState);
+  const [program, setProgram] = useState<ValidationState>(initialState);
   const [email, setEmail] = useState<ValidationState>(initialState);
   const [password, setPassword] = useState<ValidationState>(initialState);
   const [confirmPassword, setConfirmPassword] =
@@ -40,6 +54,8 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         {
           firstName: firstName.value,
           lastName: lastName.value,
+          year: year.value,
+          program: program.value,
           email: email.value,
           password: password.value,
         },
@@ -59,13 +75,25 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
           switch (error.path) {
             case "firstName":
               setFirstName({
-                ...password,
+                ...firstName,
                 ...errorState,
               });
               break;
             case "lastName":
               setLastName({
-                ...password,
+                ...lastName,
+                ...errorState,
+              });
+              break;
+            case "year":
+              setYear({
+                ...year,
+                ...errorState,
+              });
+              break;
+            case "program":
+              setProgram({
+                ...program,
                 ...errorState,
               });
               break;
@@ -89,6 +117,8 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const resetFields = () => {
     setFirstName(initialState);
     setLastName(initialState);
+    setYear(initialState);
+    setProgram(initialState);
     setEmail(initialState);
     setPassword(initialState);
     setConfirmPassword(initialState);
@@ -117,6 +147,72 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         my="3"
         icon="person"
       />
+      <FormControl
+        isInvalid={year.isInvalid}
+        w={{
+          base: "80%",
+          md: "25%",
+        }}
+        my="3"
+      >
+        <Select
+          selectedValue={year.value}
+          placeholder="Choose School Year"
+          _selectedItem={{
+            bg: "trueGray.300",
+            endIcon: <CheckIcon size="5" />,
+          }}
+          size="2xl"
+          borderRadius="15"
+          backgroundColor="#ffffff"
+          onValueChange={(value) =>
+            setYear({ value, isInvalid: false, errorMessage: "" })
+          }
+        >
+          <Select.Item key="1st" label="1st Year" value="1st" />
+          <Select.Item key="2nd" label="2nd Year" value="2nd" />
+          <Select.Item key="3rd" label="3rd Year" value="3rd" />
+        </Select>
+        <FormControl.ErrorMessage
+          fontSize="xl"
+          leftIcon={<WarningOutlineIcon size="xs" />}
+        >
+          {year.errorMessage}
+        </FormControl.ErrorMessage>
+      </FormControl>
+      <FormControl
+        isInvalid={program.isInvalid}
+        w={{
+          base: "80%",
+          md: "25%",
+        }}
+        my="3"
+      >
+        <Select
+          selectedValue={program.value}
+          placeholder="Choose School Program"
+          _selectedItem={{
+            bg: "trueGray.300",
+            endIcon: <CheckIcon size="5" />,
+          }}
+          size="2xl"
+          borderRadius="15"
+          backgroundColor="#ffffff"
+          onValueChange={(value) =>
+            setProgram({ value, isInvalid: false, errorMessage: "" })
+          }
+        >
+          <Select.Item key="1st" label="Computer Engineering" value="1st" />
+          <Select.Item key="2nd" label="Electrical Engineering" value="2nd" />
+          <Select.Item key="3rd" label="Mechatronics Engineering" value="3rd" />
+        </Select>
+        <FormControl.ErrorMessage
+          fontSize="xl"
+          leftIcon={<WarningOutlineIcon size="xs" />}
+        >
+          {program.errorMessage}
+        </FormControl.ErrorMessage>
+      </FormControl>
       <TextInput
         title="Email"
         value={email.value}
@@ -144,6 +240,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         my="3"
         icon="lock"
       />
+
       <Button
         onPress={createAccount}
         size="lg"
