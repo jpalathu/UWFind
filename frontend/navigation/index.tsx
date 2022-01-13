@@ -11,7 +11,7 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { ColorSchemeName, Pressable } from "react-native";
+import { ColorSchemeName, Pressable, View } from "react-native";
 
 import Colors from "../constants/Colors";
 import Home from "../screens/Home";
@@ -19,6 +19,7 @@ import Profile from "../screens/Profile";
 import Login from "../screens/Login";
 import SignUp from "../screens/SignUp";
 import ForgotPassword from "../screens/ForgotPassword";
+import Form from "../screens/Form";
 import { RootStackParamList, RootTabScreenProps } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 
@@ -79,11 +80,18 @@ function RootNavigator() {
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerRight: () => (
-            <PressableIcon
-              onPress={() => navigation.navigate("Profile")}
-              icon="user"
-              isLeft={false}
-            />
+            <View style={{flexDirection: "row"}}>
+              <PressableIcon
+                onPress={() => navigation.navigate("Profile")}
+                icon="user"
+                isLeft={false}
+              />
+              <PressableIcon
+                onPress={() => navigation.navigate("Form")}
+                icon="envelope"
+                isLeft={false}
+              />
+            </View>
           ),
         })}
       />
@@ -91,6 +99,22 @@ function RootNavigator() {
         name="Profile"
         component={Profile}
         options={({ navigation }: RootTabScreenProps<"Profile">) => ({
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("Home")}
+              icon="caret-left"
+              isLeft={true}
+            />
+          ),
+        })}
+      />
+      {/* Adding this screen to test the form stuff */}
+      <Stack.Screen
+        name="Form"
+        component={Form}
+        options={({ navigation }: RootTabScreenProps<"Form">) => ({
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (

@@ -19,6 +19,7 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   Home: undefined;
   Profile: undefined;
+  Form: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -30,6 +31,7 @@ export type RootTabParamList = {
   ForgotPassword: undefined;
   Home: undefined;
   Profile: undefined;
+  Form: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
