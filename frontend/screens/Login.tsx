@@ -85,6 +85,7 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
         onChangeText={setEmail}
         my="6"
         mt="200"
+        icon="email"
       />
       <TextInput
         title="Password"
@@ -92,6 +93,7 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
         isInvalid={password.isInvalid}
         errorMessage={password.errorMessage}
         onChangeText={setPassword}
+        icon="lock"
       />
       <Button
         onPress={login}

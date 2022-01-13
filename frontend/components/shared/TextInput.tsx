@@ -1,5 +1,6 @@
 import React from "react";
-import { Input, FormControl, WarningOutlineIcon } from "native-base";
+import { Input, FormControl, WarningOutlineIcon, Icon } from "native-base";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type ValidationState = {
   value: string;
@@ -15,6 +16,7 @@ type TextInputProps = {
   title: string;
   mt?: string;
   my?: string;
+  icon: string;
 };
 
 const TextInput = (props: TextInputProps) => {
@@ -36,9 +38,17 @@ const TextInput = (props: TextInputProps) => {
         onChangeText={(value) =>
           props.onChangeText({ value, isInvalid: false, errorMessage: "" })
         }
-        style={{ borderColor: "#000", borderWidth: 1 }}
+        // style={{ borderColor: "#000", borderWidth: 1 }}
         borderRadius="15"
         backgroundColor="#ffffff"
+        InputLeftElement={
+          <Icon
+            as={<MaterialIcons name={props.icon} />}
+            size={7}
+            ml="2"
+            color="muted.400"
+          />
+        }
       />
       <FormControl.ErrorMessage
         fontSize="xl"

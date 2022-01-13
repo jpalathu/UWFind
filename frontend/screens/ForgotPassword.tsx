@@ -56,6 +56,7 @@ export default function ForgotPassword({
         isInvalid={email.isInvalid}
         errorMessage={email.errorMessage}
         onChangeText={setEmail}
+        icon="email"
       />
       <Button
         onPress={forgotPassword}

@@ -106,6 +106,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         errorMessage={firstName.errorMessage}
         onChangeText={setFirstName}
         my="3"
+        icon="person"
       />
       <TextInput
         title="Last Name"
@@ -114,6 +115,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         errorMessage={lastName.errorMessage}
         onChangeText={setLastName}
         my="3"
+        icon="person"
       />
       <TextInput
         title="Email"
@@ -122,6 +124,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         errorMessage={email.errorMessage}
         onChangeText={setEmail}
         my="3"
+        icon="email"
       />
       <TextInput
         title="Password"
@@ -130,6 +133,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         errorMessage={password.errorMessage}
         onChangeText={setPassword}
         my="3"
+        icon="lock"
       />
       <TextInput
         title="Confirm Password"
@@ -138,6 +142,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         errorMessage={confirmPassword.errorMessage}
         onChangeText={setConfirmPassword}
         my="3"
+        icon="lock"
       />
       <Button
         onPress={createAccount}
@@ -149,7 +154,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
           borderWidth: 1,
           shadowOpacity: 0.3,
           shadowRadius: 10,
-          shadowOffset: {width: 1, height: 10}
+          shadowOffset: { width: 1, height: 10 },
         }}
         width="80%"
         height="59px"
