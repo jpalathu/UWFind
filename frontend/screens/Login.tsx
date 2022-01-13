@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import * as yup from "yup";
-import { StyleSheet, ImageBackground } from "react-native";
-import {
-  Button,
-  Input,
-  Box,
-  FormControl,
-  WarningOutlineIcon,
-} from "native-base";
+import { StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
+import { Button, Box, Text } from "native-base";
 import { RootTabScreenProps } from "../types";
+import TextInput from "../components/shared/TextInput";
 
 type ValidationState = {
   value: string;
@@ -18,7 +13,6 @@ type ValidationState = {
 
 export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   const schema = yup.object().shape({
-    // disable required for now
     email: yup.string().required(),
     password: yup.string().required(),
   });
@@ -32,7 +26,13 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   const [password, setPassword] = useState<ValidationState>(initialState);
 
   const goToSignUp = () => {
+    resetFields();
     navigation.navigate("SignUp");
+  };
+
+  const goToForgotPassword = () => {
+    resetFields();
+    navigation.navigate("ForgotPassword");
   };
 
   const login = () => {
@@ -43,8 +43,7 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
       )
       .then((value) => {
         console.log(value);
-        setEmail(initialState);
-        setPassword(initialState);
+        resetFields();
         navigation.navigate("Home");
       })
       .catch((err) => {
@@ -63,6 +62,11 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
           }
         }
       });
+  };
+
+  const resetFields = () => {
+    setEmail(initialState);
+    setPassword(initialState);
   };
 
   // TODO: Try to use svg to fix scaling issue
@@ -93,65 +97,49 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
         onPress={login}
         size="lg"
         my="6"
-        style={{ backgroundColor: "#ffc50b" }}
-        width="240px"
+        style={{
+          backgroundColor: "#ffc50b",
+          borderColor: "#000",
+          borderWidth: 1,
+          shadowOpacity: 0.3,
+          shadowRadius: 10,
+          shadowOffset: {width: 1, height: 10}
+        }}
+        width="80%"
         height="59px"
         borderRadius="20"
         _text={{ color: "#000" }}
       >
-        Log In
+        LOGIN
       </Button>
       <Button
         onPress={goToSignUp}
         size="lg"
-        style={{ backgroundColor: "#ffc50b" }}
-        width="240px"
+        style={{
+          backgroundColor: "#fff",
+          borderColor: "#000",
+          borderWidth: 1,
+          shadowOpacity: 0.3,
+          shadowRadius: 10,
+          shadowOffset: {width: 1, height: 10}
+        }}
+        width="80%"
         height="59px"
         borderRadius="20"
         _text={{ color: "#000" }}
       >
-        Sign Up
+        SIGN UP
       </Button>
+
+      <TouchableOpacity onPress={goToForgotPassword}>
+        <Text fontSize="lg" mt="6" underline style={{ alignSelf: "flex-end" }}>
+          Forgot Password?
+        </Text>
+      </TouchableOpacity>
     </Box>
   );
 }
 
-type TextInputProps = {
-  isInvalid: boolean;
-  value: string;
-  onChangeText: (value: ValidationState) => void;
-  errorMessage: string;
-  title: string;
-  mt?: string;
-  my?: string;
-};
-const TextInput = (props: TextInputProps) => {
-  return (
-    <FormControl
-      isInvalid={props.isInvalid}
-      w={{
-        base: "75%",
-        md: "25%",
-      }}
-      mt={props.mt}
-      my={props.my}
-    >
-      <Input
-        variant="outline"
-        size="lg"
-        value={props.value}
-        placeholder={props.title}
-        onChangeText={(value) =>
-          props.onChangeText({ value, isInvalid: false, errorMessage: "" })
-        }
-        backgroundColor="#fff"
-      />
-      <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-        {props.errorMessage}
-      </FormControl.ErrorMessage>
-    </FormControl>
-  );
-};
 const styles = StyleSheet.create({
   container: {
     flex: 1,

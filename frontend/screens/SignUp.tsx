@@ -2,14 +2,9 @@ import React, { useState } from "react";
 import * as yup from "yup";
 import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
-import {
-  Button,
-  Input,
-  Box,
-  FormControl,
-  WarningOutlineIcon,
-} from "native-base";
+import { Button, Box, Text } from "native-base";
 import { RootTabScreenProps } from "../types";
+import TextInput from "../components/shared/TextInput";
 
 type ValidationState = {
   value: string;
@@ -55,11 +50,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         // create the user
 
         // reset everyting back to initial state
-        setFirstName(initialState);
-        setLastName(initialState);
-        setEmail(initialState);
-        setPassword(initialState);
-        setConfirmPassword(initialState);
+        resetFields();
         navigation.navigate("Login");
       })
       .catch((err) => {
@@ -93,6 +84,14 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
           }
         }
       });
+  };
+
+  const resetFields = () => {
+    setFirstName(initialState);
+    setLastName(initialState);
+    setEmail(initialState);
+    setPassword(initialState);
+    setConfirmPassword(initialState);
   };
 
   // TODO: compare the passwords and make sure they are the same
@@ -143,55 +142,25 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
       <Button
         onPress={createAccount}
         size="lg"
-        style={{ backgroundColor: "#6b6b6b" }}
-        width="240px"
+        my="3"
+        style={{
+          backgroundColor: "#d4d4d4",
+          borderColor: "#000",
+          borderWidth: 1,
+          shadowOpacity: 0.3,
+          shadowRadius: 10,
+          shadowOffset: {width: 1, height: 10}
+        }}
+        width="80%"
         height="59px"
         borderRadius="20"
-        my="3"
         _text={{ color: "#000" }}
       >
-        Create Account
+        CREATE ACCOUNT
       </Button>
     </Box>
   );
 }
-
-type TextInputProps = {
-  isInvalid: boolean;
-  value: string;
-  onChangeText: (value: ValidationState) => void;
-  errorMessage: string;
-  title: string;
-  mt?: string;
-  my?: string;
-};
-const TextInput = (props: TextInputProps) => {
-  return (
-    <FormControl
-      isInvalid={props.isInvalid}
-      w={{
-        base: "75%",
-        md: "25%",
-      }}
-      mt={props.mt}
-      my={props.my}
-    >
-      <Input
-        variant="outline"
-        size="lg"
-        value={props.value}
-        placeholder={props.title}
-        onChangeText={(value) =>
-          props.onChangeText({ value, isInvalid: false, errorMessage: "" })
-        }
-        backgroundColor="#fff"
-      />
-      <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-        {props.errorMessage}
-      </FormControl.ErrorMessage>
-    </FormControl>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
