@@ -11,6 +11,7 @@ import {
   FormControl,
   Icon,
   WarningOutlineIcon,
+  Heading,
 } from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
@@ -129,6 +130,12 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   // TODO: validate that it's a UW email
   return (
     <Box style={styles.container}>
+      <Heading size="xl" alignSelf="flex-start" ml="8">
+        Create Account
+      </Heading>
+      <Text fontSize={20} alignSelf="flex-start" ml="8" mb="3">
+        Sign up to get started!
+      </Text>
       <TextInput
         title="First Name"
         value={firstName.value}
@@ -157,7 +164,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
       >
         <Select
           selectedValue={year.value}
-          placeholder="Choose School Year"
+          placeholder="School Year"
           _selectedItem={{
             bg: "trueGray.300",
             endIcon: <CheckIcon size="5" />,
@@ -190,7 +197,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
       >
         <Select
           selectedValue={program.value}
-          placeholder="Choose School Program"
+          placeholder="School Program"
           _selectedItem={{
             bg: "trueGray.300",
             endIcon: <CheckIcon size="5" />,

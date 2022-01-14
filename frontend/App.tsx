@@ -6,7 +6,8 @@ import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import { LogBox } from "react-native";
 
-LogBox.ignoreLogs(["NativeBase:", "VirtualizedList:"]);
+// Ignoring these annoying logs
+LogBox.ignoreLogs(["NativeBase:", "VirtualizedList:", "When server rendering,"]);
 
 export default function App() {
   const isLoadingComplete = useCachedResources();

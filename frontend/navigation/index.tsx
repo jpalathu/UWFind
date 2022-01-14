@@ -18,7 +18,6 @@ import Home from "../screens/Home";
 import Profile from "../screens/Profile";
 import Login from "../screens/Login";
 import SignUp from "../screens/SignUp";
-import ForgotPassword from "../screens/ForgotPassword";
 import Form from "../screens/Form";
 import { RootStackParamList, RootTabScreenProps } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
@@ -58,16 +57,7 @@ function RootNavigator() {
         name="SignUp"
         component={SignUp}
         options={() => ({
-          title: "Sign Up",
-          headerStyle: { backgroundColor: Colors.black },
-          headerTitleStyle: { color: Colors.white },
-        })}
-      />
-      <Stack.Screen
-        name="ForgotPassword"
-        component={ForgotPassword}
-        options={() => ({
-          title: "Forgot Password",
+          title: "",
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
         })}
@@ -80,7 +70,7 @@ function RootNavigator() {
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerRight: () => (
-            <View style={{flexDirection: "row"}}>
+            <View style={{ flexDirection: "row" }}>
               <PressableIcon
                 onPress={() => navigation.navigate("Profile")}
                 icon="user"

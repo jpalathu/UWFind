@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as yup from "yup";
 import { StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
-import { Button, Box, Text } from "native-base";
+import { Button, Box, Text, Actionsheet, Heading } from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
 
@@ -28,11 +28,6 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   const goToSignUp = () => {
     resetFields();
     navigation.navigate("SignUp");
-  };
-
-  const goToForgotPassword = () => {
-    resetFields();
-    navigation.navigate("ForgotPassword");
   };
 
   const login = () => {
@@ -105,7 +100,7 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
           borderWidth: 1,
           shadowOpacity: 0.3,
           shadowRadius: 10,
-          shadowOffset: {width: 1, height: 10}
+          shadowOffset: { width: 1, height: 10 },
         }}
         width="80%"
         height="59px"
@@ -123,7 +118,7 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
           borderWidth: 1,
           shadowOpacity: 0.3,
           shadowRadius: 10,
-          shadowOffset: {width: 1, height: 10}
+          shadowOffset: { width: 1, height: 10 },
         }}
         width="80%"
         height="59px"
@@ -133,14 +128,98 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
         SIGN UP
       </Button>
 
-      <TouchableOpacity onPress={goToForgotPassword}>
-        <Text fontSize="lg" mt="6" underline style={{ alignSelf: "flex-end" }}>
-          Forgot Password?
-        </Text>
-      </TouchableOpacity>
+      <ForgotPassword />
     </Box>
   );
 }
+
+const ForgotPassword = () => {
+  const schema = yup.object().shape({
+    email: yup.string().required(),
+  });
+
+  const initialState = {
+    value: "",
+    isInvalid: false,
+    errorMessage: "",
+  };
+  const [email, setEmail] = useState<ValidationState>(initialState);
+
+  const forgotPassword = () => {
+    schema
+      .validate({ email: email.value }, { abortEarly: false })
+      .then((value) => {
+        console.log(value);
+        closeSheet()
+      })
+      .catch((err) => {
+        for (const error of err.inner) {
+          const errorState = { isInvalid: true, errorMessage: error.message };
+          if (error.path === "email") {
+            setEmail({
+              ...email,
+              ...errorState,
+            });
+          }
+        }
+      });
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+  const openSheet = () => {
+    setIsOpen(true)
+  }
+  const closeSheet = () => {
+    setIsOpen(false)
+    setEmail(initialState)
+  }
+
+  return (
+    <Box>
+      <TouchableOpacity onPress={openSheet}>
+        <Text fontSize="lg" mt="6" underline>
+          Forgot Password?
+        </Text>
+      </TouchableOpacity>
+      <Actionsheet isOpen={isOpen} onClose={closeSheet}>
+        <Actionsheet.Content>
+          <Heading>Forgot Password</Heading>
+          <Text fontSize={16} my="4" mx="2">
+            Enter your email and we'll send you an email with a link to reset
+            your password.
+          </Text>
+          <TextInput
+            title="Email"
+            value={email.value}
+            isInvalid={email.isInvalid}
+            errorMessage={email.errorMessage}
+            onChangeText={setEmail}
+            icon="email"
+          />
+          <Button
+            onPress={forgotPassword}
+            size="lg"
+            my="6"
+            style={{
+              backgroundColor: "#d4d4d4",
+              borderColor: "#000",
+              borderWidth: 1,
+              shadowOpacity: 0.3,
+              shadowRadius: 10,
+              shadowOffset: { width: 1, height: 10 },
+            }}
+            width="80%"
+            height="59px"
+            borderRadius="20"
+            _text={{ color: "#000" }}
+          >
+            SEND RESET PASSWORD EMAIL
+          </Button>
+        </Actionsheet.Content>
+      </Actionsheet>
+    </Box>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

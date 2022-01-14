@@ -16,7 +16,6 @@ declare global {
 export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
-  ForgotPassword: undefined;
   Home: undefined;
   Profile: undefined;
   Form: undefined;
@@ -28,7 +27,6 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 export type RootTabParamList = {
   Login: undefined;
   SignUp: undefined;
-  ForgotPassword: undefined;
   Home: undefined;
   Profile: undefined;
   Form: undefined;
