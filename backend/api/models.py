@@ -2,60 +2,60 @@ from django.db import models
 
 # Create your models here.
 class User(models.Model):
-    userID = models.AutoField(primary_key=True)
-    firstName = models.CharField(max_length=500)
-    lastName = models.CharField(max_length=500)
-    email = models.CharField(max_length=500)
-    phoneNumber = models.CharField(max_length=500)
+    user_id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=500)
+    last_name = models.CharField(max_length=500)
+    email = models.CharField(max_length=500, unique=True)
+    auth0_id = models.CharField(max_length=500)
 
     class Meta:
-        db_table = "User"
+        db_table = "user"
     
 class DropOffLocation(models.Model):
-    locationID = models.AutoField(primary_key=True)
+    location_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=500)
     address = models.CharField(max_length=500)
 
     class Meta:
-        db_table = "DropOffLocation"
+        db_table = "drop_off_location"
 
 class Category(models.Model):
-    categoryID = models.AutoField(primary_key=True)
+    category_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=500)
 
     class Meta:
-        db_table = "Category"
+        db_table = "category"
 
 class Image(models.Model):
-    imageID = models.AutoField(primary_key=True)
+    image_id = models.AutoField(primary_key=True)
     image = models.BinaryField()
 
     class Meta:
         db_table = "Image"
 
 class FoundItemPost(models.Model):
-    postID = models.AutoField(primary_key=True)
+    post_id = models.AutoField(primary_key=True)
     date = models.DateTimeField()
     # Django has an issue with creating these 2, so need to specify unique related_name
-    foundUserID = models.ForeignKey(User, related_name="foundUserID", db_column="foundUserID", on_delete=models.DO_NOTHING)
-    claimedUserID = models.ForeignKey(User, related_name="claimedUserID", db_column="claimedUserID", null=True, on_delete=models.DO_NOTHING)
-    dropOffLocationID = models.ForeignKey(DropOffLocation, db_column="dropOffLocationID", on_delete=models.DO_NOTHING)
+    found_user_id = models.ForeignKey(User, related_name="found_user_id", db_column="found_user_id", on_delete=models.DO_NOTHING)
+    claimed_user_id = models.ForeignKey(User, related_name="claimed_user_id", db_column="claimed_user_id", null=True, on_delete=models.DO_NOTHING)
+    drop_off_location_id = models.ForeignKey(DropOffLocation, db_column="drop_off_location_id", on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=500)
-    foundLocation = models.CharField(max_length=500, null=True)
-    categoryID = models.ForeignKey(Category, db_column="categoryID", on_delete=models.DO_NOTHING)
-    imageID = models.OneToOneField(Image, db_column="imageID", null=True, on_delete=models.DO_NOTHING)
+    location = models.CharField(max_length=500, null=True)
+    category_id = models.ForeignKey(Category, db_column="category_id", on_delete=models.DO_NOTHING)
+    image_id = models.OneToOneField(Image, db_column="image_id", null=True, on_delete=models.DO_NOTHING)
 
     class Meta:
-        db_table = "FoundItemPost"
+        db_table = "found_item_post"
 
 class LostItemPost(models.Model):
-    postID = models.AutoField(primary_key=True)
+    post_id = models.AutoField(primary_key=True)
     date = models.DateTimeField()
-    lostUserID = models.ForeignKey(User, db_column="lostUserID", on_delete=models.DO_NOTHING)
+    lost_user_id = models.ForeignKey(User, db_column="lost_user_id", on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=500)
-    lostLocation = models.CharField(max_length=500, null=True)
-    categoryID = models.ForeignKey(Category, db_column="categoryID", on_delete=models.DO_NOTHING)
-    imageID = models.OneToOneField(Image, db_column="imageID", null=True, on_delete=models.DO_NOTHING)
+    location = models.CharField(max_length=500, null=True)
+    category_id = models.ForeignKey(Category, db_column="category_id", on_delete=models.DO_NOTHING)
+    image_id = models.OneToOneField(Image, db_column="image_id", null=True, on_delete=models.DO_NOTHING)
 
     class Meta:
-        db_table = "LostItemPost"
+        db_table = "lost_item_post"
