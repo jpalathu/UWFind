@@ -11,9 +11,13 @@ import { Picker } from "react-native-woodpicker";
 import { Button, Text, Modal, FormControl, Input, Box, Actionsheet, Heading } from "native-base";
 import DummyCategories from "../dummy/category.json";
 import DummyDropOffLocations from "../dummy/drop_off_location.json";
+import DatePicker from 'react-native-datepicker';
 
-export default function LostFoundForm() {
-  const [showModal, setShowModal] = useState(false)
+
+//export default class SettingsScreen extends React.Component {
+
+  export default class SettingsScreen extends React.Component {
+    // const [showModal, setShowModal] = useState(false);
   // const [isFoundItemForm, setIsFoundItemForm] = useState(true);
   // const [location, setLocation] = useState(null);
   // const [category, setCategory] = useState(null);
@@ -59,104 +63,133 @@ export default function LostFoundForm() {
   //   resetData();
   // };
 
-  return (
-    <Fragment>
-      <Button
-        onPress={() => setShowModal(true)}
-        size="lg"
-        my="6"
-        style={{
-          backgroundColor: "#ffc50b",
-          borderColor: "#000",
-          borderWidth: 1,
-          shadowOpacity: 0.3,
-          shadowRadius: 10,
-          shadowOffset: { width: 1, height: 10 },
-        }}
-        borderRadius="20"
-        _text={{ color: "#000" }}
-      >
-        FOUND ITEM?
-      </Button>
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModal: false,
+      date: "2022-01-15"
+    };
+  }
 
-
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.CloseButton />
-          <Modal.Header>Create a Post</Modal.Header>
-          <Modal.Body>
-            <FormControl>
-              <FormControl.Label>Title</FormControl.Label>
-              <Input />
-            </FormControl>
-            <FormControl mt="3">
-              <FormControl.Label>Date</FormControl.Label>
-              <Input />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Location</FormControl.Label>
-              <Input />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Description</FormControl.Label>
-              <Input />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Category</FormControl.Label>
-              <Input />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Upload Image</FormControl.Label>
-              <Input />
-            </FormControl>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                variant="ghost"
-                colorScheme="blueGray"
-                onPress={() => {
-                  setShowModal(false)
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onPress={() => {
-                  setShowModal(false)
-                }}
-              >
-                Post
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
-
-      {/* <Modal visible={isModalVisible}>
-        <View style={styles.modal}>
-          <View style={styles.modalContainer}>
-            <ModalHeader
-              isFoundItemForm={isFoundItemForm}
-              changeForm={changeForm}
-            />
-            <ModalBody
-              isFoundItemForm={isFoundItemForm}
-              location={location}
-              setLocation={setLocation}
-              description={description}
-              setDescription={setDescription}
-              dropOffLocation={dropOffLocation}
-              setDropOffLocation={setDropOffLocation}
-              category={category}
-              setCategory={setCategory}
-            />
-            <ModalFooter closeModal={closeModal} createPost={createPost} />
+  render() {
+    return (
+      <Fragment>
+        <Button
+          onPress={() => this.setState({ showModal: true })}
+          size="lg"
+          my="6"
+          style={{
+            backgroundColor: "#ffc50b",
+            borderColor: "#000",
+            borderWidth: 1,
+            shadowOpacity: 0.3,
+            shadowRadius: 10,
+            shadowOffset: { width: 1, height: 10 },
+          }}
+          borderRadius="20"
+          _text={{ color: "#000" }}
+        >
+          FOUND ITEM?
+        </Button>
+  
+        <Modal isOpen={this.state.showModal} onClose={() => this.setState({ showModal: false })}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Create a Post</Modal.Header>
+            <Modal.Body>
+              <FormControl>
+                <FormControl.Label>Title</FormControl.Label>
+                <Input />
+              </FormControl>
+              <FormControl mt="3">
+                <FormControl.Label>Date</FormControl.Label>
+                <DatePicker
+          style={{width: 200}}
+          date={this.state.date}
+          mode="date"
+          placeholder="select date"
+          format="YYYY-MM-DD"
+          minDate="2022-01-15"
+          maxDate="2025-06-01"
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              left: 0,
+              top: 4,
+              marginLeft: 0
+            },
+            dateInput: {
+              marginLeft: 36
+            }
+          }}
+          onDateChange={(date) => {this.setState({date: date})}}
+        />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Location</FormControl.Label>
+                <Input />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Description</FormControl.Label>
+                <Input />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Category</FormControl.Label>
+                <Input />
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Upload Image</FormControl.Label>
+                <Input />
+              </FormControl>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="ghost"
+                  colorScheme="blueGray"
+                  onPress={() => this.setState({ showModal: false })}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onPress={() => this.setState({ showModal: false })}
+                >
+                  Post
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+  
+        {/* <Modal visible={isModalVisible}>
+          <View style={styles.modal}>
+            <View style={styles.modalContainer}>
+              <ModalHeader
+                isFoundItemForm={isFoundItemForm}
+                changeForm={changeForm}
+              />
+              <ModalBody
+                isFoundItemForm={isFoundItemForm}
+                location={location}
+                setLocation={setLocation}
+                description={description}
+                setDescription={setDescription}
+                dropOffLocation={dropOffLocation}
+                setDropOffLocation={setDropOffLocation}
+                category={category}
+                setCategory={setCategory}
+              />
+              <ModalFooter closeModal={closeModal} createPost={createPost} />
+            </View>
           </View>
-        </View>
-      </Modal> */}
-    </Fragment>
-  );
+        </Modal> */}
+      </Fragment>
+    );
+
+  }
+  
 }
 
 // type HeaderProps = {
