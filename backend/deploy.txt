@@ -1,0 +1,2 @@
+1. Remove pypiwin32 and pywin32 from the requirements.txt
+2. Run `eb deploy`
