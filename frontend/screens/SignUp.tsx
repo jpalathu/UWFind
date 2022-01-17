@@ -23,9 +23,23 @@ type ValidationState = {
   errorMessage: string;
 };
 
+const initialState = {
+  value: "",
+  isInvalid: false,
+  errorMessage: "",
+};
+
 export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
+  const [firstName, setFirstName] = useState<ValidationState>(initialState);
+  const [lastName, setLastName] = useState<ValidationState>(initialState);
+  const [year, setYear] = useState<ValidationState>(initialState);
+  const [program, setProgram] = useState<ValidationState>(initialState);
+  const [email, setEmail] = useState<ValidationState>(initialState);
+  const [password, setPassword] = useState<ValidationState>(initialState);
+  const [confirmPassword, setConfirmPassword] =
+    useState<ValidationState>(initialState);
+
   const schema = yup.object().shape({
-    // disable required for now
     firstName: yup.string().required(),
     lastName: yup.string().required(),
     year: yup.string().required(),
@@ -35,19 +49,59 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
     confirmPassword: yup.string().required(),
   });
 
-  const initialState = {
-    value: "",
-    isInvalid: false,
-    errorMessage: "",
+  const resetFields = () => {
+    setFirstName(initialState);
+    setLastName(initialState);
+    setYear(initialState);
+    setProgram(initialState);
+    setEmail(initialState);
+    setPassword(initialState);
+    setConfirmPassword(initialState);
   };
-  const [firstName, setFirstName] = useState<ValidationState>(initialState);
-  const [lastName, setLastName] = useState<ValidationState>(initialState);
-  const [year, setYear] = useState<ValidationState>(initialState);
-  const [program, setProgram] = useState<ValidationState>(initialState);
-  const [email, setEmail] = useState<ValidationState>(initialState);
-  const [password, setPassword] = useState<ValidationState>(initialState);
-  const [confirmPassword, setConfirmPassword] =
-    useState<ValidationState>(initialState);
+
+  const handleFormError = (err: any) => {
+    for (const error of err.inner) {
+      const errorState = { isInvalid: true, errorMessage: error.message };
+      switch (error.path) {
+        case "firstName":
+          setFirstName({
+            ...firstName,
+            ...errorState,
+          });
+          break;
+        case "lastName":
+          setLastName({
+            ...lastName,
+            ...errorState,
+          });
+          break;
+        case "year":
+          setYear({
+            ...year,
+            ...errorState,
+          });
+          break;
+        case "program":
+          setProgram({
+            ...program,
+            ...errorState,
+          });
+          break;
+        case "email":
+          setEmail({
+            ...email,
+            ...errorState,
+          });
+          break;
+        case "password":
+          setPassword({
+            ...password,
+            ...errorState,
+          });
+          break;
+      }
+    }
+  };
 
   const createAccount = () => {
     schema
@@ -71,58 +125,8 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         navigation.navigate("Login");
       })
       .catch((err) => {
-        for (const error of err.inner) {
-          const errorState = { isInvalid: true, errorMessage: error.message };
-          switch (error.path) {
-            case "firstName":
-              setFirstName({
-                ...firstName,
-                ...errorState,
-              });
-              break;
-            case "lastName":
-              setLastName({
-                ...lastName,
-                ...errorState,
-              });
-              break;
-            case "year":
-              setYear({
-                ...year,
-                ...errorState,
-              });
-              break;
-            case "program":
-              setProgram({
-                ...program,
-                ...errorState,
-              });
-              break;
-            case "email":
-              setEmail({
-                ...email,
-                ...errorState,
-              });
-              break;
-            case "password":
-              setPassword({
-                ...password,
-                ...errorState,
-              });
-              break;
-          }
-        }
+        handleFormError(err.inner);
       });
-  };
-
-  const resetFields = () => {
-    setFirstName(initialState);
-    setLastName(initialState);
-    setYear(initialState);
-    setProgram(initialState);
-    setEmail(initialState);
-    setPassword(initialState);
-    setConfirmPassword(initialState);
   };
 
   // TODO: compare the passwords and make sure they are the same

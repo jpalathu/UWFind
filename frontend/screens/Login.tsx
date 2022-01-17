@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import * as yup from "yup";
 import { StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
 import { Button, Box, Text, Actionsheet, Heading } from "native-base";
@@ -11,57 +12,86 @@ type ValidationState = {
   errorMessage: string;
 };
 
+const initialState = {
+  value: "",
+  isInvalid: false,
+  errorMessage: "",
+};
+
 export default function Login({ navigation }: RootTabScreenProps<"Login">) {
+  const [email, setEmail] = useState<ValidationState>(initialState);
+  const [password, setPassword] = useState<ValidationState>(initialState);
+
   const schema = yup.object().shape({
     email: yup.string().required(),
     password: yup.string().required(),
   });
-
-  const initialState = {
-    value: "",
-    isInvalid: false,
-    errorMessage: "",
-  };
-  const [email, setEmail] = useState<ValidationState>(initialState);
-  const [password, setPassword] = useState<ValidationState>(initialState);
 
   const goToSignUp = () => {
     resetFields();
     navigation.navigate("SignUp");
   };
 
+  const resetFields = () => {
+    setEmail(initialState);
+    setPassword(initialState);
+  };
+
+  const handleFormError = (err: any) => {
+    for (const error of err) {
+      const errorState = { isInvalid: true, errorMessage: error.message };
+      if (error.path === "email") {
+        setEmail({
+          ...email,
+          ...errorState,
+        });
+      } else if (error.path === "password") {
+        setPassword({
+          ...password,
+          ...errorState,
+        });
+      }
+    }
+  };
+
+  const handleResult = (result: any) => {
+    const { error, data } = result;
+    if (error) {
+      // display the error message
+      console.log("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      console.log("GOOD", data);
+      // store the user details, access token, and id token somewhere
+      resetFields();
+      navigation.navigate("Home");
+    }
+  };
+
+  const LOGIN_QUERY = gql`
+    query Login($email: String!, $password: String!) {
+      login(email: $email, password: $password) {
+        token
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(LOGIN_QUERY);
   const login = () => {
     schema
       .validate(
         { email: email.value, password: password.value },
         { abortEarly: false }
       )
-      .then((value) => {
-        console.log(value);
-        resetFields();
+      .then(async (details) => {
+        // const result = await executeQuery({
+        //   variables: { email: details.email, password: details.password },
+        // });
+        // handleResult(result);
+        // TODO: remove when fully connected
         navigation.navigate("Home");
       })
       .catch((err) => {
-        for (const error of err.inner) {
-          const errorState = { isInvalid: true, errorMessage: error.message };
-          if (error.path === "email") {
-            setEmail({
-              ...email,
-              ...errorState,
-            });
-          } else if (error.path === "password") {
-            setPassword({
-              ...password,
-              ...errorState,
-            });
-          }
-        }
+        handleFormError(err.inner);
       });
-  };
-
-  const resetFields = () => {
-    setEmail(initialState);
-    setPassword(initialState);
   };
 
   // TODO: Try to use svg to fix scaling issue
@@ -127,52 +157,73 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
       >
         SIGN UP
       </Button>
-
       <ForgotPassword />
     </Box>
   );
 }
 
 const ForgotPassword = () => {
+  const [email, setEmail] = useState<ValidationState>(initialState);
+  const [isOpen, setIsOpen] = useState(false);
+
   const schema = yup.object().shape({
     email: yup.string().required(),
   });
 
-  const initialState = {
-    value: "",
-    isInvalid: false,
-    errorMessage: "",
+  const handleFormError = (err: any) => {
+    for (const error of err) {
+      const errorState = { isInvalid: true, errorMessage: error.message };
+      if (error.path === "email") {
+        setEmail({
+          ...email,
+          ...errorState,
+        });
+      }
+    }
   };
-  const [email, setEmail] = useState<ValidationState>(initialState);
 
+  const handleResult = (result: any) => {
+    const { error, data } = result;
+    if (error) {
+      // display the error message
+      console.log("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      console.log("GOOD", data);
+      closeSheet();
+    }
+  };
+
+  const RESET_PASSWORD_MUTATION = gql`
+    mutation ResetPassword($email: String!) {
+      resetPassword(email: $email) {
+        isSent
+      }
+    }
+  `;
+
+  const [executeMutation] = useMutation(RESET_PASSWORD_MUTATION);
   const forgotPassword = () => {
     schema
       .validate({ email: email.value }, { abortEarly: false })
-      .then((value) => {
-        console.log(value);
-        closeSheet()
+      .then(async (details) => {
+        const result = await executeMutation({
+          variables: { email: details.email },
+        });
+
+        handleResult(result);
       })
       .catch((err) => {
-        for (const error of err.inner) {
-          const errorState = { isInvalid: true, errorMessage: error.message };
-          if (error.path === "email") {
-            setEmail({
-              ...email,
-              ...errorState,
-            });
-          }
-        }
+        handleFormError(err.inner);
       });
   };
 
-  const [isOpen, setIsOpen] = useState(false);
   const openSheet = () => {
-    setIsOpen(true)
-  }
+    setIsOpen(true);
+  };
   const closeSheet = () => {
-    setIsOpen(false)
-    setEmail(initialState)
-  }
+    setIsOpen(false);
+    setEmail(initialState);
+  };
 
   return (
     <Box>
