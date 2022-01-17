@@ -119,6 +119,7 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
         errorMessage={password.errorMessage}
         onChangeText={setPassword}
         icon="lock"
+        hideEntry
       />
       <Button
         onPress={login}

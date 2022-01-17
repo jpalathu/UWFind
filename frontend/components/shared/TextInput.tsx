@@ -17,6 +17,7 @@ type TextInputProps = {
   mt?: string;
   my?: string;
   icon: string;
+  hideEntry?: boolean;
 };
 
 const TextInput = (props: TextInputProps) => {
@@ -31,6 +32,7 @@ const TextInput = (props: TextInputProps) => {
       my={props.my}
     >
       <Input
+        secureTextEntry={props.hideEntry}
         variant="outline"
         size="2xl"
         value={props.value}

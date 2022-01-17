@@ -241,6 +241,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         onChangeText={setPassword}
         my="3"
         icon="lock"
+        hideEntry
       />
       <TextInput
         title="Confirm Password"
@@ -250,6 +251,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         onChangeText={setConfirmPassword}
         my="3"
         icon="lock"
+        hideEntry
       />
 
       <Button
