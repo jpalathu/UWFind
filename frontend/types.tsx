@@ -18,6 +18,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   Home: undefined;
   Profile: undefined;
+  PublicProfile: undefined;
   Form: undefined;
 };
 
@@ -29,6 +30,7 @@ export type RootTabParamList = {
   SignUp: undefined;
   Home: undefined;
   Profile: undefined;
+  PublicProfile: undefined;
   Form: undefined;
 };
 
