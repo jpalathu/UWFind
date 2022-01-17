@@ -95,7 +95,6 @@ class Query(graphene.ObjectType):
         return User.objects.get(user_id=user_id)
     
     def resolve_login(root, info, email, password):
-        print("login", email, password)
         try:
             # check if user exists in database
             internal_user = User.objects.filter(email=email).first()
@@ -112,7 +111,6 @@ class Query(graphene.ObjectType):
                 scope="openid",
                 audience=AUTH0_MGMT_API_AUDIENCE
             )
-            print(ret)
             # TODO: check the users email verification status and return a message if not verified with custom error code
             return Login(token="hey")
         except Auth0Error as error:
