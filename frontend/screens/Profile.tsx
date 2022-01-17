@@ -96,7 +96,10 @@ import {
 } from "native-base";
 import { Foundation } from "@expo/vector-icons";
 
+
+
 export default class Profile extends Component {
+  
   render() {
     return (
       <View>
@@ -141,6 +144,7 @@ export default class Profile extends Component {
                 </Container>
               </Container>
             </Text>
+            
 
             <Divider my="2" />
             <Text style={styles.name}>Password</Text>
@@ -152,7 +156,7 @@ export default class Profile extends Component {
                     variant="solid"
                     _icon={{
                       as: Foundation,
-                      name: "pencil",
+                      name: "pencil"
                     }}
                   />
                 </Container>

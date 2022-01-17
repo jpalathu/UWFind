@@ -16,6 +16,7 @@ import { ColorSchemeName, Pressable, View } from "react-native";
 import Colors from "../constants/Colors";
 import Home from "../screens/Home";
 import Profile from "../screens/Profile";
+import PublicProfile from "../screens/PublicProfile";
 import Login from "../screens/Login";
 import SignUp from "../screens/SignUp";
 import Form from "../screens/Form";
@@ -77,6 +78,11 @@ function RootNavigator() {
                 isLeft={false}
               />
               <PressableIcon
+                onPress={() => navigation.navigate("PublicProfile")}
+                icon="user"
+                isLeft={false}
+              />
+              <PressableIcon
                 onPress={() => navigation.navigate("Form")}
                 icon="envelope"
                 isLeft={false}
@@ -89,6 +95,21 @@ function RootNavigator() {
         name="Profile"
         component={Profile}
         options={({ navigation }: RootTabScreenProps<"Profile">) => ({
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("Home")}
+              icon="caret-left"
+              isLeft={true}
+            />
+          ),
+        })}
+      />
+            <Stack.Screen
+        name="PublicProfile"
+        component={PublicProfile}
+        options={({ navigation }: RootTabScreenProps<"PublicProfile">) => ({
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (
