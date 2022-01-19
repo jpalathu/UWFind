@@ -26,6 +26,8 @@ class UserType(DjangoObjectType):
 class UserInput(graphene.InputObjectType):
     first_name = graphene.String()
     last_name = graphene.String()
+    term = graphene.String()
+    program = graphene.String()
     email = graphene.String()
     password = graphene.String()
 
@@ -45,14 +47,14 @@ class SignUp(graphene.Mutation):
             if internal_user:
                 raise BadRequest("User already exists")
             auth0_user = auth0_database_instance.signup(client_id=AUTH0_CLIENT_ID, email=input.email, password=input.password, connection=AUTH0_DATABASE_CONNECTION)
-            user_instance = User(first_name=input.first_name, last_name=input.last_name, email=input.email, auth0_id="auth0|" + auth0_user["_id"])
+            user_instance = User(first_name=input.first_name, last_name=input.last_name, term=input.term, program=input.program, email=input.email, auth0_id="auth0|" + auth0_user["_id"])
             user_instance.save()
             return SignUp(user=user_instance)
         except Auth0Error as error:
             raise BadRequest(error.message)
 
 class Login(graphene.ObjectType):
-    token = graphene.String()
+    token = graphene.JSONString()
 
 class ResetPassword(graphene.Mutation):
     is_sent = graphene.Boolean()
@@ -60,7 +62,6 @@ class ResetPassword(graphene.Mutation):
         email = graphene.String()
     
     def mutate(root, info, email):
-        print("reset password", email)
         try:
             # send change password email
             auth0_database_instance.change_password(client_id=AUTH0_CLIENT_ID, email=email, connection=AUTH0_DATABASE_CONNECTION)
@@ -102,7 +103,7 @@ class Query(graphene.ObjectType):
                 # TODO: change this into a 404
                 raise BadRequest("User doesn't exist")
             # check if valid login
-            ret = auth0_token_instance.login(
+            result = auth0_token_instance.login(
                 client_id=AUTH0_CLIENT_ID, 
                 client_secret=AUTH0_CLIENT_SECRET,
                 username=email, 
@@ -112,7 +113,7 @@ class Query(graphene.ObjectType):
                 audience=AUTH0_MGMT_API_AUDIENCE
             )
             # TODO: check the users email verification status and return a message if not verified with custom error code
-            return Login(token="hey")
+            return Login(token=result)
         except Auth0Error as error:
             print("error")
             # TODO: handle invalid password
