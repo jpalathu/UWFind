@@ -61,6 +61,7 @@ class FoundItemPost(models.Model):
     location = models.CharField(max_length=500, null=True)
     category_id = models.ForeignKey(Category, db_column="category_id", on_delete=models.DO_NOTHING)
     image_url = models.CharField(max_length=500, null=True)
+    is_deleted = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "found_item_post"
@@ -74,6 +75,7 @@ class LostItemPost(models.Model):
     location = models.CharField(max_length=500, null=True)
     category_id = models.ForeignKey(Category, db_column="category_id", on_delete=models.DO_NOTHING)
     image_url = models.CharField(max_length=500, null=True)
+    is_deleted = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "lost_item_post"
