@@ -16,6 +16,8 @@ import {
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
 import { MaterialIcons } from "@expo/vector-icons";
+import { validate } from "graphql";
+import { gql, useMutation } from "@apollo/client";
 
 type ValidationState = {
   value: string;
@@ -32,106 +34,146 @@ const initialState = {
 export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const [firstName, setFirstName] = useState<ValidationState>(initialState);
   const [lastName, setLastName] = useState<ValidationState>(initialState);
-  const [year, setYear] = useState<ValidationState>(initialState);
+  const [term, setTerm] = useState<ValidationState>(initialState);
   const [program, setProgram] = useState<ValidationState>(initialState);
   const [email, setEmail] = useState<ValidationState>(initialState);
   const [password, setPassword] = useState<ValidationState>(initialState);
   const [confirmPassword, setConfirmPassword] =
     useState<ValidationState>(initialState);
 
-  const schema = yup.object().shape({
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
-    year: yup.string().required(),
-    program: yup.string().required(),
-    email: yup.string().required(),
-    password: yup.string().required(),
-    confirmPassword: yup.string().required(),
-  });
-
   const resetFields = () => {
     setFirstName(initialState);
     setLastName(initialState);
-    setYear(initialState);
+    setTerm(initialState);
     setProgram(initialState);
     setEmail(initialState);
     setPassword(initialState);
     setConfirmPassword(initialState);
   };
 
-  const handleFormError = (err: any) => {
-    for (const error of err.inner) {
-      const errorState = { isInvalid: true, errorMessage: error.message };
-      switch (error.path) {
-        case "firstName":
-          setFirstName({
-            ...firstName,
-            ...errorState,
-          });
-          break;
-        case "lastName":
-          setLastName({
-            ...lastName,
-            ...errorState,
-          });
-          break;
-        case "year":
-          setYear({
-            ...year,
-            ...errorState,
-          });
-          break;
-        case "program":
-          setProgram({
-            ...program,
-            ...errorState,
-          });
-          break;
-        case "email":
-          setEmail({
-            ...email,
-            ...errorState,
-          });
-          break;
-        case "password":
-          setPassword({
-            ...password,
-            ...errorState,
-          });
-          break;
-      }
+  const validate = () => {
+    let isError = false;
+    /* Check if value exists */
+    if (!firstName.value) {
+      setFirstName({
+        ...firstName,
+        isInvalid: true,
+        errorMessage: "First name is required",
+      });
+      isError = true;
+    }
+    if (!lastName.value) {
+      setLastName({
+        ...lastName,
+        isInvalid: true,
+        errorMessage: "Last name is required",
+      });
+      isError = true;
+    }
+    if (!term.value) {
+      setTerm({
+        ...term,
+        isInvalid: true,
+        errorMessage: "Term is required",
+      });
+      isError = true;
+    }
+    if (!program.value) {
+      setProgram({
+        ...program,
+        isInvalid: true,
+        errorMessage: "Program is required",
+      });
+      isError = true;
+    }
+    if (!email.value) {
+      setEmail({
+        ...email,
+        isInvalid: true,
+        errorMessage: "Email is required",
+      });
+      isError = true;
+    }
+    if (!password.value) {
+      setPassword({
+        ...password,
+        isInvalid: true,
+        errorMessage: "Password is required",
+      });
+      isError = true;
+    }
+    /* Make sure passwords match */
+    if (password.value && password.value != confirmPassword.value) {
+      setConfirmPassword({
+        ...confirmPassword,
+        isInvalid: true,
+        errorMessage: "Passwords don't match",
+      });
+      isError = true;
+    }
+    /* Check if UW email */
+    if (email.value && !email.value.endsWith("@uwaterloo.ca")) {
+      setEmail({
+        ...email,
+        isInvalid: true,
+        errorMessage: "Use a UW email ending with @uwaterloo.ca",
+      });
+      isError = true;
+    }
+
+    return !isError;
+  };
+
+  const handleResult = (result: any) => {
+    const { error, data } = result;
+    if (error) {
+      // display the error message
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      resetFields();
+      console.log("GOOD", data);
     }
   };
 
-  const createAccount = () => {
-    schema
-      .validate(
-        {
-          firstName: firstName.value,
-          lastName: lastName.value,
-          year: year.value,
-          program: program.value,
-          email: email.value,
-          password: password.value,
-        },
-        { abortEarly: false }
-      )
-      .then((value) => {
-        console.log(value);
-        // create the user
+  const SIGN_UP_MUTATION = gql`
+    mutation (
+      $firstName: String!
+      $lastName: String!
+      $term: String!
+      $program: String!
+      $email: String!
+      $password: String!
+    ) {
+      signUp(
+        input: {
+          firstName: $firstName
+          lastName: $lastName
+          term: $term
+          program: $program
+          email: $email
+          password: $password
+        }
+      ) {
+        userId
+        firstName
+      }
+    }
+  `;
 
-        // reset everyting back to initial state
-        resetFields();
-        navigation.navigate("Login");
-      })
-      .catch((err) => {
-        handleFormError(err.inner);
+  const [executeMutation] = useMutation(SIGN_UP_MUTATION);
+  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const createAccount = async () => {
+    setIsMutationLoading(true);
+    if (validate()) {
+      const result = await executeMutation({
+        variables: { email: email.value },
       });
+
+      handleResult(result);
+    }
+    setIsMutationLoading(false);
   };
 
-  // TODO: compare the passwords and make sure they are the same
-  // TODO: see if we can create custom error messages
-  // TODO: validate that it's a UW email
   return (
     <Box style={styles.container}>
       <Heading size="xl" alignSelf="flex-start" ml="8">
@@ -159,7 +201,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         icon="person"
       />
       <FormControl
-        isInvalid={year.isInvalid}
+        isInvalid={term.isInvalid}
         w={{
           base: "80%",
           md: "25%",
@@ -167,8 +209,8 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         my="3"
       >
         <Select
-          selectedValue={year.value}
-          placeholder="School Year"
+          selectedValue={term.value}
+          placeholder="School Term"
           _selectedItem={{
             bg: "trueGray.300",
             endIcon: <CheckIcon size="5" />,
@@ -177,7 +219,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
           borderRadius="15"
           backgroundColor="#ffffff"
           onValueChange={(value) =>
-            setYear({ value, isInvalid: false, errorMessage: "" })
+            setTerm({ value, isInvalid: false, errorMessage: "" })
           }
         >
           <Select.Item key="1st" label="1st Year" value="1st" />
@@ -188,7 +230,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
           fontSize="xl"
           leftIcon={<WarningOutlineIcon size="xs" />}
         >
-          {year.errorMessage}
+          {term.errorMessage}
         </FormControl.ErrorMessage>
       </FormControl>
       <FormControl
@@ -256,6 +298,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
 
       <Button
         onPress={createAccount}
+        isLoading={isMutationLoading}
         size="lg"
         my="3"
         style={{
