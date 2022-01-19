@@ -77,12 +77,12 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   const login = async () => {
     setIsQueryLoading(true);
     if (validate()) {
-      const result = await executeQuery({
-        variables: { email: email.value, password: password.value },
-      });
-      handleResult(result);
+      // const result = await executeQuery({
+      //   variables: { email: email.value, password: password.value },
+      // });
+      // handleResult(result);
       // TODO: remove when fully connected
-      // navigation.navigate("Home");
+      navigation.navigate("Home");
     }
     setIsQueryLoading(false);
   };

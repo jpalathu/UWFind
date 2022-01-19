@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import * as yup from "yup";
 import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
 import {
@@ -9,14 +8,11 @@ import {
   Select,
   CheckIcon,
   FormControl,
-  Icon,
   WarningOutlineIcon,
   Heading,
 } from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
-import { MaterialIcons } from "@expo/vector-icons";
-import { validate } from "graphql";
 import { gql, useMutation } from "@apollo/client";
 
 type ValidationState = {
