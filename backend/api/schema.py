@@ -1,7 +1,7 @@
 import graphene
 from graphene.types import mutation
 from graphene_django.types import DjangoObjectType
-from .models import User, DropOffLocation, Category
+from .models import Building, Program, Term, User, DropOffLocation, Category
 from django.core.exceptions import BadRequest
 from auth0.v3.authentication import Database, GetToken
 from auth0.v3.exceptions import Auth0Error
@@ -79,10 +79,28 @@ class CategoryType(DjangoObjectType):
     class Meta:
         model = Category
 
+##################################################################### Building ###############################################################
+class BuildingType(DjangoObjectType):
+    class Meta:
+        model = Building
+
+##################################################################### Term ###############################################################
+class TermType(DjangoObjectType):
+    class Meta:
+        model = Term
+
+##################################################################### Program ###############################################################
+class ProgramType(DjangoObjectType):
+    class Meta:
+        model = Program
+
 #################################################################### Query and Mutation ############################################################
 class Query(graphene.ObjectType):
     drop_off_locations = graphene.List(DropOffLocationType)
     categories = graphene.List(CategoryType)
+    terms = graphene.List(TermType)
+    programs = graphene.List(ProgramType)
+    buildings = graphene.List(BuildingType)
     user_by_id = graphene.Field(UserType, user_id=graphene.Int())
     login = graphene.Field(Login, email=graphene.String(), password=graphene.String())
 
@@ -91,6 +109,15 @@ class Query(graphene.ObjectType):
 
     def resolve_categories(root, info):
         return Category.objects.all()
+
+    def resolve_terms(root, info):
+        return Term.objects.all()
+
+    def resolve_programs(root, info):
+        return Program.objects.all()
+
+    def resolve_buildings(root, info):
+        return Building.objects.all()
     
     def resolve_user_by_id(root, info, user_id):
         return User.objects.get(user_id=user_id)
