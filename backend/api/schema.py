@@ -1,11 +1,12 @@
 import graphene
 from graphene.types import mutation
 from graphene_django.types import DjangoObjectType
-from .models import Building, Program, Term, User, DropOffLocation, Category
+from .models import Building, FoundItemPost, LostItemPost, Program, Term, User, DropOffLocation, Category
 from django.core.exceptions import BadRequest
 from auth0.v3.authentication import Database, GetToken
 from auth0.v3.exceptions import Auth0Error
 from auth0.v3.management import Auth0
+from datetime import datetime
 
 AUTH0_DOMAIN = "dev-n2mrf68i.us.auth0.com"
 AUTH0_MGMT_API_AUDIENCE = "https://dev-n2mrf68i.us.auth0.com/api/v2/"
@@ -24,12 +25,12 @@ class UserType(DjangoObjectType):
         model = User
 
 class UserInput(graphene.InputObjectType):
-    first_name = graphene.String()
-    last_name = graphene.String()
-    term = graphene.String()
-    program = graphene.String()
-    email = graphene.String()
-    password = graphene.String()
+    first_name = graphene.String(required=True)
+    last_name = graphene.String(required=True)
+    term = graphene.String(required=True)
+    program = graphene.String(required=True)
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
 
 #################################################################### Authentication #############################################################
 class SignUp(graphene.Mutation):
@@ -39,8 +40,6 @@ class SignUp(graphene.Mutation):
         input = UserInput(required=True)
 
     def mutate(root, info, input):
-        print(input)
-        print(auth0_database_instance.domain)
         try:
             # make sure the user doesn't exist in our database (and ideally in auth0 too)
             internal_user = User.objects.filter(email=input.email).first()
@@ -94,6 +93,81 @@ class ProgramType(DjangoObjectType):
     class Meta:
         model = Program
 
+##################################################################### LostItemPost ###############################################################
+class LostItemPostType(DjangoObjectType):
+    class Meta:
+        model = LostItemPost
+
+class LostItemPostInput(graphene.InputObjectType):
+    title = graphene.String(required=True)
+    lost_user_id = graphene.Int(required=True)
+    description = graphene.String(required=True)
+    building_id = graphene.Int(required=True)
+    category_id = graphene.Int(required=True)
+    image_url = graphene.String()
+
+class CreateLostItemPost(graphene.Mutation):
+    lost_item_post = graphene.Field(LostItemPostType)
+
+    class Arguments:
+        input = LostItemPostInput(required=True)
+
+    def mutate(root, info, input):
+        try:
+            post_instance = LostItemPost(
+                title = input.title,
+                lost_user_id = User.objects.get(user_id=input.lost_user_id),
+                description = input.description,
+                building_id = Building.objects.get(building_id=input.building_id),
+                category_id = Category.objects.get(category_id=input.category_id),
+                image_url = input.image_url,
+                date = datetime.now()
+            )
+            post_instance.save()
+            return CreateLostItemPost(lost_item_post=post_instance)
+        except:
+            raise BadRequest("Unable to create lost item post")
+
+
+##################################################################### FoundItemPost ###############################################################
+class FoundItemPostType(DjangoObjectType):
+    class Meta:
+        model = FoundItemPost
+
+class FoundItemPostInput(graphene.InputObjectType):
+    title = graphene.String(required=True)
+    found_user_id = graphene.Int(required=True)
+    claimed_user_id = graphene.Int(required=True)
+    drop_off_location_id = graphene.Int()
+    description = graphene.String(required=True)
+    building_id = graphene.Int(required=True)
+    category_id = graphene.Int(required=True)
+    image_url = graphene.String()
+
+class CreateFoundItemPost(graphene.Mutation):
+    found_item_post = graphene.Field(FoundItemPostType)
+
+    class Arguments:
+        input = FoundItemPostInput(required=True)
+
+    def mutate(root, info, input):
+        try:
+            post_instance = FoundItemPost(
+                title = input.title,
+                found_user_id = User.objects.get(user_id=input.found_user_id),
+                claimed_user_id = User.objects.get(user_id=input.claimed_user_id),
+                drop_off_location_id = None if input.drop_off_location_id is None else DropOffLocation.objects.get(location_id=input.drop_off_location_id),
+                description = input.description,
+                building_id = Building.objects.get(building_id=input.building_id),
+                category_id = Category.objects.get(category_id=input.category_id),
+                image_url = None if input.image_url is None else input.image_url,
+                date = datetime.now()
+            )
+            post_instance.save()
+            return CreateFoundItemPost(found_item_post=post_instance)
+        except:
+            raise BadRequest("Unable to create found item post")
+
 #################################################################### Query and Mutation ############################################################
 class Query(graphene.ObjectType):
     drop_off_locations = graphene.List(DropOffLocationType)
@@ -103,6 +177,10 @@ class Query(graphene.ObjectType):
     buildings = graphene.List(BuildingType)
     user_by_id = graphene.Field(UserType, user_id=graphene.Int())
     login = graphene.Field(Login, email=graphene.String(), password=graphene.String())
+    lost_item_posts = graphene.List(LostItemPostType)
+    lost_item_post_by_id = graphene.Field(LostItemPostType, post_id=graphene.Int())
+    found_item_posts = graphene.List(FoundItemPostType)
+    found_item_post_by_id = graphene.Field(FoundItemPostType, post_id=graphene.Int())
 
     def resolve_drop_off_locations(root, info):
         return DropOffLocation.objects.all()
@@ -142,12 +220,25 @@ class Query(graphene.ObjectType):
             # TODO: check the users email verification status and return a message if not verified with custom error code
             return Login(token=result)
         except Auth0Error as error:
-            print("error")
             # TODO: handle invalid password
             raise BadRequest(error.message)
+
+    def resolve_lost_item_posts(root, info):
+        return LostItemPost.objects.filter(is_deleted=None)
+
+    def resolve_lost_item_post_by_id(root, info, post_id):
+        return LostItemPost.objects.get(post_id=post_id)
+
+    def resolve_found_item_posts(root, info):
+        return FoundItemPost.objects.filter(is_deleted=None)
+
+    def resolve_found_item_post_by_id(root, info, post_id):
+        return FoundItemPost.objects.get(post_id=post_id)
 
 class Mutation(graphene.ObjectType):
     sign_up = SignUp.Field()
     reset_password = ResetPassword.Field()
+    create_lost_item_post = CreateLostItemPost.Field()
+    create_found_item_post = CreateFoundItemPost.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

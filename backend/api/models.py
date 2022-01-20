@@ -56,7 +56,7 @@ class FoundItemPost(models.Model):
     # Django has an issue with creating these 2, so need to specify unique related_name
     found_user_id = models.ForeignKey(User, related_name="found_user_id", db_column="found_user_id", on_delete=models.DO_NOTHING)
     claimed_user_id = models.ForeignKey(User, related_name="claimed_user_id", db_column="claimed_user_id", null=True, on_delete=models.DO_NOTHING)
-    drop_off_location_id = models.ForeignKey(DropOffLocation, db_column="drop_off_location_id", on_delete=models.DO_NOTHING)
+    drop_off_location_id = models.ForeignKey(DropOffLocation, db_column="drop_off_location_id", null=True, on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=500)
     building_id = models.ForeignKey(Building, db_column="building_id", on_delete=models.DO_NOTHING)
     category_id = models.ForeignKey(Category, db_column="category_id", on_delete=models.DO_NOTHING)
