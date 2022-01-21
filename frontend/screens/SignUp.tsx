@@ -30,8 +30,7 @@ const initialState = {
 export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const [firstName, setFirstName] = useState<ValidationState>(initialState);
   const [lastName, setLastName] = useState<ValidationState>(initialState);
-  const [term, setTerm] = useState<ValidationState>(initialState);
-  const [program, setProgram] = useState<ValidationState>(initialState);
+  const [bio, setBio] = useState<ValidationState>(initialState);
   const [email, setEmail] = useState<ValidationState>(initialState);
   const [password, setPassword] = useState<ValidationState>(initialState);
   const [confirmPassword, setConfirmPassword] =
@@ -40,8 +39,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const resetFields = () => {
     setFirstName(initialState);
     setLastName(initialState);
-    setTerm(initialState);
-    setProgram(initialState);
+    setBio(initialState);
     setEmail(initialState);
     setPassword(initialState);
     setConfirmPassword(initialState);
@@ -66,19 +64,11 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
       });
       isError = true;
     }
-    if (!term.value) {
-      setTerm({
-        ...term,
+    if (!bio.value) {
+      setBio({
+        ...bio,
         isInvalid: true,
-        errorMessage: "Term is required",
-      });
-      isError = true;
-    }
-    if (!program.value) {
-      setProgram({
-        ...program,
-        isInvalid: true,
-        errorMessage: "Program is required",
+        errorMessage: "Bio is required",
       });
       isError = true;
     }
@@ -120,23 +110,11 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
     return !isError;
   };
 
-  const handleResult = (result: any) => {
-    const { error, data } = result;
-    if (error) {
-      // display the error message
-      console.error("ERROR", JSON.stringify(error, null, 2));
-    } else {
-      resetFields();
-      console.log("GOOD", data);
-    }
-  };
-
   const SIGN_UP_MUTATION = gql`
     mutation (
       $firstName: String!
       $lastName: String!
-      $term: String!
-      $program: String!
+      $bio: String!
       $email: String!
       $password: String!
     ) {
@@ -144,14 +122,15 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         input: {
           firstName: $firstName
           lastName: $lastName
-          term: $term
-          program: $program
+          bio: $bio
           email: $email
           password: $password
         }
       ) {
-        userId
-        firstName
+        user {
+          userId
+          firstName
+        }
       }
     }
   `;
@@ -161,11 +140,23 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const createAccount = async () => {
     setIsMutationLoading(true);
     if (validate()) {
-      const result = await executeMutation({
-        variables: { email: email.value },
-      });
+      try {
+        const result = await executeMutation({
+          variables: {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            bio: bio.value,
+            email: email.value,
+            password: password.value,
+          },
+        });
 
-      handleResult(result);
+        console.log("GOOD", result);
+        resetFields();
+        navigation.navigate("Login");
+      } catch (error) {
+        console.log("ERROR", JSON.stringify(error, null, 2));
+      }
     }
     setIsMutationLoading(false);
   };
@@ -196,72 +187,15 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         my="3"
         icon="person"
       />
-      <FormControl
-        isInvalid={term.isInvalid}
-        w={{
-          base: "80%",
-          md: "25%",
-        }}
+      <TextInput
+        title="Tell Us About Yourself"
+        value={bio.value}
+        isInvalid={bio.isInvalid}
+        errorMessage={bio.errorMessage}
+        onChangeText={setBio}
         my="3"
-      >
-        <Select
-          selectedValue={term.value}
-          placeholder="School Term"
-          _selectedItem={{
-            bg: "trueGray.300",
-            endIcon: <CheckIcon size="5" />,
-          }}
-          size="2xl"
-          borderRadius="15"
-          backgroundColor="#ffffff"
-          onValueChange={(value) =>
-            setTerm({ value, isInvalid: false, errorMessage: "" })
-          }
-        >
-          <Select.Item key="1st" label="1st Year" value="1st" />
-          <Select.Item key="2nd" label="2nd Year" value="2nd" />
-          <Select.Item key="3rd" label="3rd Year" value="3rd" />
-        </Select>
-        <FormControl.ErrorMessage
-          fontSize="xl"
-          leftIcon={<WarningOutlineIcon size="xs" />}
-        >
-          {term.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
-      <FormControl
-        isInvalid={program.isInvalid}
-        w={{
-          base: "80%",
-          md: "25%",
-        }}
-        my="3"
-      >
-        <Select
-          selectedValue={program.value}
-          placeholder="School Program"
-          _selectedItem={{
-            bg: "trueGray.300",
-            endIcon: <CheckIcon size="5" />,
-          }}
-          size="2xl"
-          borderRadius="15"
-          backgroundColor="#ffffff"
-          onValueChange={(value) =>
-            setProgram({ value, isInvalid: false, errorMessage: "" })
-          }
-        >
-          <Select.Item key="1st" label="Computer Engineering" value="1st" />
-          <Select.Item key="2nd" label="Electrical Engineering" value="2nd" />
-          <Select.Item key="3rd" label="Mechatronics Engineering" value="3rd" />
-        </Select>
-        <FormControl.ErrorMessage
-          fontSize="xl"
-          leftIcon={<WarningOutlineIcon size="xs" />}
-        >
-          {program.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
+        icon="person"
+      />
       <TextInput
         title="Email"
         value={email.value}

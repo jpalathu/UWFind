@@ -58,10 +58,6 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
       // display the error message
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      console.log("GOOD", data);
-      // store the user details, access token, and id token somewhere
-      resetFields();
-      navigation.navigate("Home");
     }
   };
 
@@ -77,10 +73,18 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   const login = async () => {
     setIsQueryLoading(true);
     if (validate()) {
-      // const result = await executeQuery({
+      // const { data, error } = await executeQuery({
       //   variables: { email: email.value, password: password.value },
       // });
-      // handleResult(result);
+
+      // if (error) {
+      //   console.error("ERROR", JSON.stringify(error, null, 2));
+      // } else {
+      //   console.log("GOOD", data);
+      //   // store the user details, access token, and id token somewhere
+      //   resetFields();
+      //   navigation.navigate("Home");
+      // }
       // TODO: remove when fully connected
       navigation.navigate("Home");
     }
@@ -174,17 +178,6 @@ const ForgotPassword = () => {
     return !isError;
   };
 
-  const handleResult = (result: any) => {
-    const { error, data } = result;
-    if (error) {
-      // display the error message
-      console.error("ERROR", JSON.stringify(error, null, 2));
-    } else {
-      console.log("GOOD", data);
-      closeSheet();
-    }
-  };
-
   const RESET_PASSWORD_MUTATION = gql`
     mutation ($email: String!) {
       resetPassword(email: $email) {
@@ -198,11 +191,15 @@ const ForgotPassword = () => {
   const forgotPassword = async () => {
     setIsMutationLoading(true);
     if (validate()) {
-      const result = await executeMutation({
-        variables: { email: email.value },
-      });
-
-      handleResult(result);
+      try {
+        const result = await executeMutation({
+          variables: { email: email.value },
+        });
+        console.log("GOOD", result);
+        closeSheet();
+      } catch (error) {
+        console.error("ERROR", JSON.stringify(error, null, 2));
+      }
     }
     setIsMutationLoading(false);
   };
