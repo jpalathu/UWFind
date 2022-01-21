@@ -1,7 +1,7 @@
 import graphene
 from graphene.types import mutation
 from graphene_django.types import DjangoObjectType
-from .models import Building, FoundItemPost, LostItemPost, Program, Term, User, DropOffLocation, Category
+from .models import Building, FoundItemPost, LostItemPost, User, DropOffLocation, Category
 from django.core.exceptions import BadRequest
 from auth0.v3.authentication import Database, GetToken
 from auth0.v3.exceptions import Auth0Error
@@ -27,8 +27,7 @@ class UserType(DjangoObjectType):
 class UserInput(graphene.InputObjectType):
     first_name = graphene.String(required=True)
     last_name = graphene.String(required=True)
-    term = graphene.String(required=True)
-    program = graphene.String(required=True)
+    bio = graphene.String(required=True)
     email = graphene.String(required=True)
     password = graphene.String(required=True)
 
@@ -46,7 +45,12 @@ class SignUp(graphene.Mutation):
             if internal_user:
                 raise BadRequest("User already exists")
             auth0_user = auth0_database_instance.signup(client_id=AUTH0_CLIENT_ID, email=input.email, password=input.password, connection=AUTH0_DATABASE_CONNECTION)
-            user_instance = User(first_name=input.first_name, last_name=input.last_name, term=input.term, program=input.program, email=input.email, auth0_id="auth0|" + auth0_user["_id"])
+            user_instance = User(
+                first_name=input.first_name, 
+                last_name=input.last_name,
+                bio=input.bio, 
+                email=input.email, 
+                auth0_id="auth0|" + auth0_user["_id"])
             user_instance.save()
             return SignUp(user=user_instance)
         except Auth0Error as error:
@@ -82,16 +86,6 @@ class CategoryType(DjangoObjectType):
 class BuildingType(DjangoObjectType):
     class Meta:
         model = Building
-
-##################################################################### Term ###############################################################
-class TermType(DjangoObjectType):
-    class Meta:
-        model = Term
-
-##################################################################### Program ###############################################################
-class ProgramType(DjangoObjectType):
-    class Meta:
-        model = Program
 
 ##################################################################### LostItemPost ###############################################################
 class LostItemPostType(DjangoObjectType):
@@ -172,8 +166,6 @@ class CreateFoundItemPost(graphene.Mutation):
 class Query(graphene.ObjectType):
     drop_off_locations = graphene.List(DropOffLocationType)
     categories = graphene.List(CategoryType)
-    terms = graphene.List(TermType)
-    programs = graphene.List(ProgramType)
     buildings = graphene.List(BuildingType)
     user_by_id = graphene.Field(UserType, user_id=graphene.Int())
     login = graphene.Field(Login, email=graphene.String(), password=graphene.String())
@@ -187,12 +179,6 @@ class Query(graphene.ObjectType):
 
     def resolve_categories(root, info):
         return Category.objects.all()
-
-    def resolve_terms(root, info):
-        return Term.objects.all()
-
-    def resolve_programs(root, info):
-        return Program.objects.all()
 
     def resolve_buildings(root, info):
         return Building.objects.all()

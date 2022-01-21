@@ -40,9 +40,7 @@ const generateJson = async (name) => {
 };
 
 const generateJsonFiles = () => {
-  generateJson("program");
   generateJson("category");
-  generateJson("term");
   generateJson("building");
 };
 

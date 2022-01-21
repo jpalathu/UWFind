@@ -5,8 +5,7 @@ class User(models.Model):
     user_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=500)
     last_name = models.CharField(max_length=500)
-    term = models.CharField(max_length=500)
-    program = models.CharField(max_length=500)
+    bio = models.CharField(max_length=500)
     email = models.CharField(max_length=500, unique=True)
     auth0_id = models.CharField(max_length=500)
 
@@ -27,20 +26,6 @@ class Category(models.Model):
 
     class Meta:
         db_table = "category"
-
-class Term(models.Model):
-    term_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=500)
-
-    class Meta:
-        db_table = "term"
-
-class Program(models.Model):
-    program_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=500)
-
-    class Meta:
-        db_table = "program"
 
 class Building(models.Model):
     building_id = models.AutoField(primary_key=True)
