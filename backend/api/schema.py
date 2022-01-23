@@ -133,6 +133,7 @@ class FoundItemPostInput(graphene.InputObjectType):
     found_user_id = graphene.Int(required=True)
     claimed_user_id = graphene.Int(required=True)
     drop_off_location_id = graphene.Int()
+    other_drop_off_location = graphene.String()
     description = graphene.String(required=True)
     building_id = graphene.Int(required=True)
     category_id = graphene.Int(required=True)
@@ -151,6 +152,7 @@ class CreateFoundItemPost(graphene.Mutation):
                 found_user_id = User.objects.get(user_id=input.found_user_id),
                 claimed_user_id = User.objects.get(user_id=input.claimed_user_id),
                 drop_off_location_id = None if input.drop_off_location_id is None else DropOffLocation.objects.get(location_id=input.drop_off_location_id),
+                other_drop_off_location = None if input.other_drop_off_location is None else input.other_drop_off_location
                 description = input.description,
                 building_id = Building.objects.get(building_id=input.building_id),
                 category_id = Category.objects.get(category_id=input.category_id),
