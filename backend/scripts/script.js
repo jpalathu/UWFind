@@ -21,14 +21,14 @@ const getLinesFromFile = (fileName) => {
   return lines;
 };
 
-const generateJson = async (name) => {
-  const lines = getLinesFromFile(name);
+const generateJson = async (fileName, modelName) => {
+  const lines = getLinesFromFile(fileName);
 
   const output = [];
   for await (const line of lines) {
     if (line) {
       output.push({
-        model: "api." + name,
+        model: "api." + modelName,
         fields: {
           name: line.trim(),
         },
@@ -36,12 +36,13 @@ const generateJson = async (name) => {
     }
   }
 
-  writeToFile(name, output);
+  writeToFile(fileName, output);
 };
 
 const generateJsonFiles = () => {
-  generateJson("category");
-  generateJson("building");
+  generateJson("category", "category");
+  generateJson("building", "building");
+  generateJson("drop_off_location", "dropOffLocation");
 };
 
 generateJsonFiles();

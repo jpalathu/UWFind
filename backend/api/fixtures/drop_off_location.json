@@ -1,0 +1,98 @@
+[
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Centre for Extended Learning"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Columbia Icefield"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Co-operative Education & Career Action"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Counselling Services"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Dana Porter Library"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Davis Centre Library"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Food Services"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Organizational & Human Development"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Pharmacy Library"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Physical Activities Complex"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "School of Architecture"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "School of Optometry and Vision Science"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Student Life Centre"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Student Success Office"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Police Services"
+    }
+  },
+  {
+    "model": "api.dropOffLocation",
+    "fields": {
+      "name": "Other"
+    }
+  }
+]

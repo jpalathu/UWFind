@@ -62,130 +62,6 @@ Columbia Icefield (CIF)
 
 Columbia Lake Village (CLV)
 
-Columbia Lake Village North (CLN)
-
-Columbia Lake Village North Block 1 (L01)
-
-Columbia Lake Village North Block 10 (L10)
-
-Columbia Lake Village North Block 11 (L11)
-
-Columbia Lake Village North Block 12
-
-Columbia Lake Village North Block 13 (L13)
-
-Columbia Lake Village North Block 14 (L14)
-
-Columbia Lake Village North Block 15 (L15)
-
-Columbia Lake Village North Block 16 (L16)
-
-Columbia Lake Village North Block 17 (L17)
-
-Columbia Lake Village North Block 18 (L18)
-
-Columbia Lake Village North Block 19
-
-Columbia Lake Village North Block 2 (L02)
-
-Columbia Lake Village North Block 20 (L20)
-
-Columbia Lake Village North Block 21 (L21)
-
-Columbia Lake Village North Block 22 (L22)
-
-Columbia Lake Village North Block 23 (L23)
-
-Columbia Lake Village North Block 24 (L24)
-
-Columbia Lake Village North Block 25 (L25)
-
-Columbia Lake Village North Block 26 (L26)
-
-Columbia Lake Village North Block 27
-
-Columbia Lake Village North Block 18 (L18)
-
-Columbia Lake Village North Block 19 (L19)
-
-Columbia Lake Village North Block 2 (L02)
-
-Columbia Lake Village North Block 20 (L20)
-
-Columbia Lake Village North Block 21 (L21)
-
-Columbia Lake Village North Block 22 (L22)
-
-Columbia Lake Village North Block 23 (L23)
-
-Columbia Lake Village North Block 24 (L24)
-
-Columbia Lake Village North Block 25 (L25)
-
-Columbia Lake Village North Block 26 (L26)
-
-Columbia Lake Village North Block 27 (L27)
-
-Columbia Lake Village North Block 28 (L28)
-
-Columbia Lake Village North Block 29 (L29)
-
-Columbia Lake Village North Block 3 (L03)
-
-Columbia Lake Village North Block 30 (L30)
-
-Columbia Lake Village North Block 31 (L31)
-
-Columbia Lake Village North Block 32 (L32)
-
-Columbia Lake Village North Block 33 (L33)
-
-Columbia Lake Village North Block 34 (L34)
-
-Columbia Lake Village North Block 35
-
-Columbia Lake Village North Block 4 (L04)
-
-Columbia Lake Village North Block 5 (L05)
-
-Columbia Lake Village North Block 6 (L06)
-
-Columbia Lake Village North Block 7 (L07)
-
-Columbia Lake Village North Block 8 (L08)
-
-Columbia Lake Village North Block 9 (L09)
-
-Columbia Lake Village South Block A (CTA)
-
-Columbia Lake Village South Block B (CTB)
-
-Columbia Lake Village South Block C (CTC)
-
-Columbia Lake Village South Block D (CTD)
-
-Columbia Lake Village South Block E (CTE)
-
-Columbia Lake Village South Block F (CTF)
-
-Columbia Lake Village South Block G (CTG)
-
-Columbia Lake Village South Block H
-
-Columbia Lake Village South Block J (CTJ)
-
-Columbia Lake Village South Block K (CTK)
-
-Columbia Lake Village South Block L (CTL)
-
-Columbia Lake Village South Block M (CTM)
-
-Columbia Lake Village South Block N (CTN)
-
-Columbia Lake Village South Block P (CTP)
-
-Columbia Lake Village South Laundry (CTQ)
-
 Commissary (COM)
 
 Conrad Grebel University College (CGR)
@@ -280,56 +156,6 @@ Research Advancement Centre 2 (RA2)
 
 Ron Eydt Village (REV)
 
-Ron Eydt Village Central Complex (REC)
-
-Ron Eydt Village East (VE)
-
-Ron Eydt Village East A (VEA)
-
-Ron Eydt Village East B (VEB)
-
-Ron Eydt Village East C (VEC)
-
-Ron Eydt Village East D (VED)
-
-Ron Eydt Village East E (VEE)
-
-Ron Eydt Village North (VN)
-
-Ron Eydt Village North A (VNA)
-
-Ron Eydt Village North B (VNB)
-
-Ron Eydt Village North C (VNC)
-
-Ron Eydt Village North D (VND)
-
-Ron Eydt Village North E (VNE)
-
-Ron Eydt Village South (VS)
-
-Ron Eydt Village South A (VSA)
-
-Ron Eydt Village South B (VSB)
-
-Ron Eydt Village South C (VSC)
-
-Ron Eydt Village South D (VSD)
-
-Ron Eydt Village South E (VSE)
-
-Ron Eydt Village West (VW)
-
-Ron Eydt Village West A (VWA)
-
-Ron Eydt Village West B (VWB)
-
-Ron Eydt Village West C (VWC)
-
-Ron Eydt Village West D (VWD)
-
-Ron Eydt Village West E (VWE)
-
 School of Architecture (ARC)
 
 Science Teaching Complex (STC)
@@ -344,61 +170,7 @@ St. Paul's University College (STP)
 
 Student Life Centre (SLC)
 
-Student Village 1 (V1)
-
-Student Village 1 Central Complex (V1C)
-
-Student Village 1 House East 1 (VE1)
-
-Student Village 1 House East 2 (VE2)
-
-Student Village 1 House East 3 (VE3)
-
-Student Village 1 House East 4 (VE4)
-
-Student Village 1 House East 5 (VE5)
-
-Student Village 1 House East 6 (VE6)
-
-Student Village 1 House North 1 (VN1)
-
-Student Village 1 House North 2 (VN2)
-
-Student Village 1 House North 3 (VN3)
-
-Student Village 1 House North 4 (VN4)
-
-Student Village 1 House North 5 (VN5)
-
-Student Village 1 House North 6 (VN6)
-
-Student Village 1 House South 1 (VS1)
-
-Student Village 1 House South 2 (VS2)
-
-Student Village 1 House South 3 (VS3)
-
-Student Village 1 House South 4 (VS4)
-
-Student Village 1 House South 5 (VS5)
-
-Student Village 1 House South 6 (VS6)
-
-Student Village 1 House South 7 (VS7)
-
-Student Village 1 House South 8 (VS8)
-
-Student Village 1 House West 1 (VW1)
-
-Student Village 1 House West 2 (VW2)
-
-Student Village 1 House West 3 (VW3)
-
-Student Village 1 House West 4 (VW4)
-
-Student Village 1 House West 5 (VW5)
-
-Student Village 1 House West 6 (VW6)
+V1
 
 Toby Jenkins Applied Health Research
 
@@ -416,23 +188,11 @@ UW Place Community Centre (UCC)
 
 UW Place Eby Hall (UWT)
 
-UW Place Waterloo Court (USC)
-
-UW Place Wellesley Court (UNC)
-
-UW Place Waterloo Court (USC)
-
-UW Place Wellesley Court (UNC)
-
-UW Place Wilmot Court (UWC)
-
-UW Place Woolwich Court (UEC)
+UWP
 
 Warrior Field (WF)
 
 William G. Davis Computer Research Centre (DC)
-
-William Lyon Mackenzie King Village (MKV)
 
 William Lyon Mackenzie King Village (MKV)
 
