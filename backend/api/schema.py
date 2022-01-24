@@ -1,3 +1,4 @@
+from datetime import datetime
 import graphene
 from graphene.types import mutation
 from graphene_django.types import DjangoObjectType
@@ -171,6 +172,21 @@ class UpdateLostItemPost(graphene.Mutation):
         except:
             raise BadRequest("Unable to update lost item post")
 
+class DeleteLostItemPost(graphene.Mutation):
+    lost_item_post = graphene.Field(LostItemPostType)
+
+    class Arguments:
+        id = graphene.Int(required=True)
+
+    def mutate(root, info, id):
+        try:
+            post_instance = LostItemPost.objects.get(post_id=id)
+            post_instance.is_deleted = datetime.now()
+            post_instance.save()
+            return DeleteLostItemPost(lost_item_post=post_instance)
+        except:
+            raise BadRequest("Unable to delete lost item post")
+
 
 ##################################################################### FoundItemPost ###############################################################
 class FoundItemPostType(DjangoObjectType):
@@ -237,6 +253,21 @@ class UpdateFoundItemPost(graphene.Mutation):
         except:
             raise BadRequest("Unable to update found item post")
 
+class DeleteFoundItemPost(graphene.Mutation):
+    found_item_post = graphene.Field(FoundItemPostType)
+
+    class Arguments:
+        id = graphene.Int(required=True)
+
+    def mutate(root, info, id):
+        try:
+            post_instance = FoundItemPost.objects.get(post_id=id)
+            post_instance.is_deleted = datetime.now()
+            post_instance.save()
+            return DeleteFoundItemPost(found_item_post=post_instance)
+        except:
+            raise BadRequest("Unable to delete found item post")
+
 #################################################################### Query and Mutation ############################################################
 class Query(graphene.ObjectType):
     drop_off_locations = graphene.List(DropOffLocationType)
@@ -266,7 +297,6 @@ class Query(graphene.ObjectType):
             # check if user exists in database
             internal_user = User.objects.filter(email=email).first()
             if not internal_user:
-                # TODO: change this into a 404
                 raise BadRequest("User doesn't exist")
             # check if valid login
             result = auth0_token_instance.login(
@@ -278,10 +308,8 @@ class Query(graphene.ObjectType):
                 scope="openid",
                 audience=AUTH0_MGMT_API_AUDIENCE
             )
-            # TODO: check the users email verification status and return a message if not verified with custom error code
             return Login(token=result)
         except Auth0Error as error:
-            # TODO: handle invalid password
             raise BadRequest(error.message)
 
     def resolve_lost_item_posts(root, info):
@@ -304,5 +332,7 @@ class Mutation(graphene.ObjectType):
     update_user = UpdateUser.Field()
     update_lost_item_post = UpdateLostItemPost.Field()
     update_found_item_post = UpdateFoundItemPost.Field()
+    delete_lost_item_post = DeleteLostItemPost.Field()
+    delete_found_item_post = DeleteFoundItemPost.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
