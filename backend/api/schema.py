@@ -160,16 +160,14 @@ class UpdateLostItemPost(graphene.Mutation):
     def mutate(root, info, post_id, input):
         try:
             post_instance = LostItemPost.objects.get(post_id=post_id)
-            if post_instance:
-                post_instance.title = input.title
-                post_instance.description = input.description
-                post_instance.building_id = Building.objects.get(building_id=input.building_id)
-                post_instance.category_id = Category.objects.get(category_id=input.category_id)
-                post_instance.image_url = None if input.image_url is None else input.image_url
-                post_instance.date = get_datetime(input.date)
-                post_instance.save()
-                return UpdateLostItemPost(lost_item_post=post_instance)
-            return UpdateLostItemPost(lost_item_post=None)
+            post_instance.title = input.title
+            post_instance.description = input.description
+            post_instance.building_id = Building.objects.get(building_id=input.building_id)
+            post_instance.category_id = Category.objects.get(category_id=input.category_id)
+            post_instance.image_url = None if input.image_url is None else input.image_url
+            post_instance.date = get_datetime(input.date)
+            post_instance.save()
+            return UpdateLostItemPost(lost_item_post=post_instance)
         except:
             raise BadRequest("Unable to update lost item post")
 
@@ -226,18 +224,16 @@ class UpdateFoundItemPost(graphene.Mutation):
     def mutate(root, info, post_id, input):
         try:
             post_instance = FoundItemPost.objects.get(post_id=post_id)
-            if post_instance:
-                post_instance.title = input.title
-                post_instance.description = input.description
-                post_instance.drop_off_location_id = None if input.drop_off_location_id is None else DropOffLocation.objects.get(location_id=input.drop_off_location_id)
-                post_instance.other_drop_off_location = None if input.other_drop_off_location is None else input.other_drop_off_location
-                post_instance.building_id = Building.objects.get(building_id=input.building_id)
-                post_instance.category_id = Category.objects.get(category_id=input.category_id)
-                post_instance.image_url = None if input.image_url is None else input.image_url
-                post_instance.date = get_datetime(input.date)
-                post_instance.save()
-                return UpdateFoundItemPost(found_item_post=post_instance)
-            return UpdateFoundItemPost(found_item_post=None)
+            post_instance.title = input.title
+            post_instance.description = input.description
+            post_instance.drop_off_location_id = None if input.drop_off_location_id is None else DropOffLocation.objects.get(location_id=input.drop_off_location_id)
+            post_instance.other_drop_off_location = None if input.other_drop_off_location is None else input.other_drop_off_location
+            post_instance.building_id = Building.objects.get(building_id=input.building_id)
+            post_instance.category_id = Category.objects.get(category_id=input.category_id)
+            post_instance.image_url = None if input.image_url is None else input.image_url
+            post_instance.date = get_datetime(input.date)
+            post_instance.save()
+            return UpdateFoundItemPost(found_item_post=post_instance)
         except:
             raise BadRequest("Unable to update found item post")
 
