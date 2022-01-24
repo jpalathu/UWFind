@@ -76,7 +76,7 @@
 // //   )
 // // }
 
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import Colors from "../constants/Colors";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
@@ -95,10 +95,82 @@ import {
   Box,
 } from "native-base";
 import { Foundation } from "@expo/vector-icons";
+import DatePicker from 'react-native-datepicker';
 
-
+const initialState = {
+  value: "",
+  isInvalid: false,
+  errorMessage: "",
+};
 
 export default class Profile extends Component {
+
+  // const [inputValue, setInputValue] = React.useState(null);
+
+  // const [inputValue, setInputValue] = React.useState("");
+  // const [inputValue: any, setInputValue: any] = React.useState<ValidationState>(initialState: any);
+
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      showbioModal: false,
+      showEmailModal: false,
+      showPasswordModal: false,
+      bio: "4th Year Engineering Student", 
+      email: "James@email.com",
+      password: "Thisisthepassword", 
+      input: "hello"
+    };
+  };
+
+  updateBio = () => {
+    this.setState({bio: this.state.input});
+    this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
+    this.setState(
+      {input : " "}
+  );
+    // this.setState({bio: this.state.input});
+  }
+
+  updateEmail = () => {
+    this.setState({email: this.state.input});
+    this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
+    this.setState(
+      {input : " "}
+  );
+  }
+
+  updatePassword = () => {
+
+    this.setState({password: this.state.input});
+    this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
+    this.setState(
+      {input : " "}
+  );
+  }
+
+  // UpdateField = () => {
+   
+  //    if (this.showbioModal = true){
+  //     this.setState({bio: this.state.input});
+  //   }
+  //  if (this.showEmailModal = true){
+  //     this.setState({email: this.state.input});
+  //   }
+  //   if (this.showPasswordlModal = true){
+  //     this.setState({password: this.state.input});
+  //   }
+  //   this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
+    
+  // }
+
+  setInputValue(event: string){
+    this.setState(
+        {input : event}
+    );
+}
+
+  
   
   render() {
     return (
@@ -110,58 +182,164 @@ export default class Profile extends Component {
           source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
         />
 
+        <Modal isOpen={this.state.showbioModal || this.state.showEmailModal || this.state.showPasswordModal } onClose={() => this.setState({showbioModal: false, showEmailModal: false, showPasswordModal: false })}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Edit</Modal.Header>
+            <Modal.Body>
+              <FormControl>
+                <Input 
+                type="text"  
+                onChangeText={(v) => this.setInputValue(v)} 
+                defaultValue={this.state.input}
+        
+                />
+              </FormControl>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="ghost"
+                  colorScheme="blueGray"
+                  onPress={() => this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false })}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onPress={this.updateBio}
+                >
+                  Update
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+
+        <Modal isOpen={this.state.showEmailModal } onClose={() => this.setState({showEmailModal: false})}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Edit</Modal.Header>
+            <Modal.Body>
+              <FormControl>
+                <Input 
+                type="text"  
+                onChangeText={(v) => this.setInputValue(v)} 
+                defaultValue={this.state.input}
+        
+                />
+              </FormControl>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="ghost"
+                  colorScheme="blueGray"
+                  onPress={() => this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false })}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onPress={this.updateEmail}
+                >
+                  Update
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+
+        <Modal isOpen={this.state.showPasswordModal } onClose={() => this.setState({showPasswordModal: false })}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Edit</Modal.Header>
+            <Modal.Body>
+              <FormControl>
+                <Input 
+                type="text"  
+                onChangeText={(v) => this.setInputValue(v)} 
+                defaultValue={this.state.input}
+        
+                />
+              </FormControl>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="ghost"
+                  colorScheme="blueGray"
+                  onPress={() => this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false })}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onPress={this.updatePassword}
+                >
+                  Update
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+
+
         <View style={styles.body}>
           <View>
             <Text style={styles.name}>Hi James</Text>
-            <Text style={styles.info}>
-              4th Year Computer Engineering Student
-              <Container style={{ alignSelf: "flex-end" }}>
-                <Container marginLeft={360}>
+            <Text style={styles.info}> 
+              {this.state.bio}
+  
+            </Text>
+            <Container style={{ alignSelf: "flex-end" }}>
+                <Container style={{ alignSelf: "stretch" }} >
                   <IconButton
                     variant="solid"
                     _icon={{
                       as: Foundation,
                       name: "pencil",
                     }}
+                    onPress={
+                      () => this.setState({ showbioModal: true })
+                    }
                   />
                 </Container>
               </Container>
-            </Text>
 
             <Divider my="2" />
             <Text style={styles.name}>Email </Text>
             <Text style={styles.info}>
-              James@email.com
-              <Container style={{ alignSelf: "flex-end" }}>
-                <Container marginLeft={360}>
+              {this.state.email}
+            </Text>
+            <Container style={{ alignSelf: "flex-end" }}>
+                <Container style={{ alignSelf: "stretch" }}>
                   <IconButton
                     variant="solid"
                     _icon={{
                       as: Foundation,
                       name: "pencil",
                     }}
+                    onPress={() => this.setState({ showEmailModal: true })}
                   />
                 </Container>
               </Container>
-            </Text>
             
 
             <Divider my="2" />
             <Text style={styles.name}>Password</Text>
             <Text style={styles.info}>
-              ********
-              <Container style={{ alignSelf: "flex-end" }}>
-                <Container marginLeft={300}>
+              {this.state.password}
+            </Text>
+            <Container style={{ alignSelf: "flex-end" }}>
+                <Container style={{ alignSelf: "stretch" }}>
                   <IconButton
                     variant="solid"
                     _icon={{
                       as: Foundation,
                       name: "pencil"
                     }}
+                    onPress={() => this.setState({ showPasswordModal: true })}
                   />
                 </Container>
               </Container>
-            </Text>
           </View>
         </View>
       </View>
