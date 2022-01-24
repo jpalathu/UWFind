@@ -42,12 +42,12 @@ class UpdateUser(graphene.Mutation):
     user = graphene.Field(UserType)
 
     class Arguments:
-        user_id = graphene.Int(required=True)
+        id = graphene.Int(required=True)
         input = UserInput(required=True)
 
-    def mutate(root, info, user_id, input):
+    def mutate(root, info, id, input):
         try:
-            user_instance = User.objects.get(user_id=user_id)
+            user_instance = User.objects.get(user_id=id)
             if user_instance:
                 user_instance.first_name = input.first_name
                 user_instance.last_name = input.last_name
@@ -154,12 +154,12 @@ class UpdateLostItemPost(graphene.Mutation):
     lost_item_post = graphene.Field(LostItemPostType)
 
     class Arguments:
-        post_id = graphene.Int(required=True)
+        id = graphene.Int(required=True)
         input = LostItemPostInput(required=True)
 
-    def mutate(root, info, post_id, input):
+    def mutate(root, info, id, input):
         try:
-            post_instance = LostItemPost.objects.get(post_id=post_id)
+            post_instance = LostItemPost.objects.get(post_id=id)
             post_instance.title = input.title
             post_instance.description = input.description
             post_instance.building_id = Building.objects.get(building_id=input.building_id)
@@ -218,12 +218,12 @@ class UpdateFoundItemPost(graphene.Mutation):
     found_item_post = graphene.Field(FoundItemPostType)
 
     class Arguments:
-        post_id = graphene.Int(required=True)
+        id = graphene.Int(required=True)
         input = FoundItemPostInput(required=True)
 
-    def mutate(root, info, post_id, input):
+    def mutate(root, info, id, input):
         try:
-            post_instance = FoundItemPost.objects.get(post_id=post_id)
+            post_instance = FoundItemPost.objects.get(post_id=id)
             post_instance.title = input.title
             post_instance.description = input.description
             post_instance.drop_off_location_id = None if input.drop_off_location_id is None else DropOffLocation.objects.get(location_id=input.drop_off_location_id)
@@ -242,12 +242,12 @@ class Query(graphene.ObjectType):
     drop_off_locations = graphene.List(DropOffLocationType)
     categories = graphene.List(CategoryType)
     buildings = graphene.List(BuildingType)
-    user_by_id = graphene.Field(UserType, user_id=graphene.Int())
+    user_by_id = graphene.Field(UserType, id=graphene.Int())
     login = graphene.Field(Login, email=graphene.String(), password=graphene.String())
     lost_item_posts = graphene.List(LostItemPostType)
-    lost_item_post_by_id = graphene.Field(LostItemPostType, post_id=graphene.Int())
+    lost_item_post_by_id = graphene.Field(LostItemPostType, id=graphene.Int())
     found_item_posts = graphene.List(FoundItemPostType)
-    found_item_post_by_id = graphene.Field(FoundItemPostType, post_id=graphene.Int())
+    found_item_post_by_id = graphene.Field(FoundItemPostType, id=graphene.Int())
 
     def resolve_drop_off_locations(root, info):
         return DropOffLocation.objects.all()
@@ -258,8 +258,8 @@ class Query(graphene.ObjectType):
     def resolve_buildings(root, info):
         return Building.objects.all()
     
-    def resolve_user_by_id(root, info, user_id):
-        return User.objects.get(user_id=user_id)
+    def resolve_user_by_id(root, info, id):
+        return User.objects.get(user_id=id)
     
     def resolve_login(root, info, email, password):
         try:
@@ -287,14 +287,14 @@ class Query(graphene.ObjectType):
     def resolve_lost_item_posts(root, info):
         return LostItemPost.objects.filter(is_deleted=None)
 
-    def resolve_lost_item_post_by_id(root, info, post_id):
-        return LostItemPost.objects.get(post_id=post_id)
+    def resolve_lost_item_post_by_id(root, info, id):
+        return LostItemPost.objects.get(post_id=id)
 
     def resolve_found_item_posts(root, info):
         return FoundItemPost.objects.filter(is_deleted=None)
 
-    def resolve_found_item_post_by_id(root, info, post_id):
-        return FoundItemPost.objects.get(post_id=post_id)
+    def resolve_found_item_post_by_id(root, info, id):
+        return FoundItemPost.objects.get(post_id=id)
 
 class Mutation(graphene.ObjectType):
     sign_up = SignUp.Field()
