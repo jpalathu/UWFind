@@ -6,7 +6,8 @@ from django.core.exceptions import BadRequest
 from auth0.v3.authentication import Database, GetToken
 from auth0.v3.exceptions import Auth0Error
 from auth0.v3.management import Auth0
-from datetime import datetime
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import is_aware, make_aware
 
 AUTH0_DOMAIN = "dev-n2mrf68i.us.auth0.com"
 AUTH0_MGMT_API_AUDIENCE = "https://dev-n2mrf68i.us.auth0.com/api/v2/"
@@ -19,6 +20,12 @@ auth0_database_instance = Database(AUTH0_DOMAIN)
 auth0_token_instance = GetToken(AUTH0_DOMAIN)
 # auth0_instance = Auth0(AUTH0_DOMAIN, AUTH0_MGMT_API_TOKEN)
 
+def get_datetime(date_str):
+    result = parse_datetime(date_str)
+    if not is_aware(result):
+        result = make_aware(result)
+    return result
+
 ####################################################################### User ###############################################################
 class UserType(DjangoObjectType):
     class Meta:
@@ -28,8 +35,28 @@ class UserInput(graphene.InputObjectType):
     first_name = graphene.String(required=True)
     last_name = graphene.String(required=True)
     bio = graphene.String(required=True)
-    email = graphene.String(required=True)
-    password = graphene.String(required=True)
+    email = graphene.String()
+    password = graphene.String()
+
+class UpdateUser(graphene.Mutation):
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        user_id = graphene.Int(required=True)
+        input = UserInput(required=True)
+
+    def mutate(root, info, user_id, input):
+        try:
+            user_instance = User.objects.get(user_id=user_id)
+            if user_instance:
+                user_instance.first_name = input.first_name
+                user_instance.last_name = input.last_name
+                user_instance.bio = input.bio
+                user_instance.save()
+                return UpdateUser(user=user_instance)
+            return UpdateUser(user=None)
+        except:
+            raise BadRequest("Unable to update user")
 
 #################################################################### Authentication #############################################################
 class SignUp(graphene.Mutation):
@@ -99,6 +126,7 @@ class LostItemPostInput(graphene.InputObjectType):
     building_id = graphene.Int(required=True)
     category_id = graphene.Int(required=True)
     image_url = graphene.String()
+    date = graphene.String(required=True)
 
 class CreateLostItemPost(graphene.Mutation):
     lost_item_post = graphene.Field(LostItemPostType)
@@ -114,13 +142,36 @@ class CreateLostItemPost(graphene.Mutation):
                 description = input.description,
                 building_id = Building.objects.get(building_id=input.building_id),
                 category_id = Category.objects.get(category_id=input.category_id),
-                image_url = input.image_url,
-                date = datetime.now()
+                image_url = None if input.image_url is None else input.image_url,
+                date = get_datetime(input.date)
             )
             post_instance.save()
             return CreateLostItemPost(lost_item_post=post_instance)
         except:
             raise BadRequest("Unable to create lost item post")
+
+class UpdateLostItemPost(graphene.Mutation):
+    lost_item_post = graphene.Field(LostItemPostType)
+
+    class Arguments:
+        post_id = graphene.Int(required=True)
+        input = LostItemPostInput(required=True)
+
+    def mutate(root, info, post_id, input):
+        try:
+            post_instance = LostItemPost.objects.get(post_id=post_id)
+            if post_instance:
+                post_instance.title = input.title
+                post_instance.description = input.description
+                post_instance.building_id = Building.objects.get(building_id=input.building_id)
+                post_instance.category_id = Category.objects.get(category_id=input.category_id)
+                post_instance.image_url = None if input.image_url is None else input.image_url
+                post_instance.date = get_datetime(input.date)
+                post_instance.save()
+                return UpdateLostItemPost(lost_item_post=post_instance)
+            return UpdateLostItemPost(lost_item_post=None)
+        except:
+            raise BadRequest("Unable to update lost item post")
 
 
 ##################################################################### FoundItemPost ###############################################################
@@ -138,6 +189,7 @@ class FoundItemPostInput(graphene.InputObjectType):
     building_id = graphene.Int(required=True)
     category_id = graphene.Int(required=True)
     image_url = graphene.String()
+    date = graphene.String(required=True)
 
 class CreateFoundItemPost(graphene.Mutation):
     found_item_post = graphene.Field(FoundItemPostType)
@@ -157,12 +209,37 @@ class CreateFoundItemPost(graphene.Mutation):
                 building_id = Building.objects.get(building_id=input.building_id),
                 category_id = Category.objects.get(category_id=input.category_id),
                 image_url = None if input.image_url is None else input.image_url,
-                date = datetime.now()
+                date = get_datetime(input.date)
             )
             post_instance.save()
             return CreateFoundItemPost(found_item_post=post_instance)
         except:
             raise BadRequest("Unable to create found item post")
+
+class UpdateFoundItemPost(graphene.Mutation):
+    found_item_post = graphene.Field(FoundItemPostType)
+
+    class Arguments:
+        post_id = graphene.Int(required=True)
+        input = FoundItemPostInput(required=True)
+
+    def mutate(root, info, post_id, input):
+        try:
+            post_instance = FoundItemPost.objects.get(post_id=post_id)
+            if post_instance:
+                post_instance.title = input.title
+                post_instance.description = input.description
+                post_instance.drop_off_location_id = None if input.drop_off_location_id is None else DropOffLocation.objects.get(location_id=input.drop_off_location_id)
+                post_instance.other_drop_off_location = None if input.other_drop_off_location is None else input.other_drop_off_location
+                post_instance.building_id = Building.objects.get(building_id=input.building_id)
+                post_instance.category_id = Category.objects.get(category_id=input.category_id)
+                post_instance.image_url = None if input.image_url is None else input.image_url
+                post_instance.date = get_datetime(input.date)
+                post_instance.save()
+                return UpdateFoundItemPost(found_item_post=post_instance)
+            return UpdateFoundItemPost(found_item_post=None)
+        except:
+            raise BadRequest("Unable to update found item post")
 
 #################################################################### Query and Mutation ############################################################
 class Query(graphene.ObjectType):
@@ -228,5 +305,8 @@ class Mutation(graphene.ObjectType):
     reset_password = ResetPassword.Field()
     create_lost_item_post = CreateLostItemPost.Field()
     create_found_item_post = CreateFoundItemPost.Field()
+    update_user = UpdateUser.Field()
+    update_lost_item_post = UpdateLostItemPost.Field()
+    update_found_item_post = UpdateFoundItemPost.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
