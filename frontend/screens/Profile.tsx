@@ -96,6 +96,7 @@ import {
 } from "native-base";
 import { Foundation } from "@expo/vector-icons";
 import DatePicker from 'react-native-datepicker';
+import { container } from "aws-amplify";
 
 const initialState = {
   value: "",
@@ -113,13 +114,19 @@ export default class Profile extends Component {
   constructor(props: any) {
     super(props);
     this.state = {
-      showbioModal: false,
+      showEditInfo: false,
       showEmailModal: false,
       showPasswordModal: false,
+      name: "James Palathunkal", 
       bio: "4th Year Engineering Student", 
       email: "James@email.com",
       password: "Thisisthepassword", 
-      input: "hello"
+      nameInput: "hello",
+      bioInput: "hello",
+      passwordInput: "hello",
+      nameChange: false, 
+      bioChange: false, 
+      passwordchange: false
     };
   };
 
@@ -131,23 +138,40 @@ export default class Profile extends Component {
   );
     // this.setState({bio: this.state.input});
   }
-
-  updateEmail = () => {
-    this.setState({email: this.state.input});
-    this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
+  updateProfile = () => {
+    if (this.state.nameChange){
+      this.setState({name: this.state.nameInput});
+    }
+    if (this.state.bioChange){
+      this.setState({bio: this.state.bioInput});
+    }
+    if (this.state.passwordChange){
+      this.setState({password: this.state.passwordInput});
+    }
+    // this.setState({bio: this.state.input});
+    this.setState({ showEditInfo: false, nameChange: false, bioChange: false, passwordChange: false});
     this.setState(
-      {input : " "}
+      {nameInput : " ", bioInput : " ", passwordInput: " "}
   );
+    // this.setState({bio: this.state.input});
   }
 
-  updatePassword = () => {
+  // updateEmail = () => {
+  //   this.setState({email: this.state.input});
+  //   this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
+  //   this.setState(
+  //     {input : " "}
+  // );
+  // }
 
-    this.setState({password: this.state.input});
-    this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
-    this.setState(
-      {input : " "}
-  );
-  }
+  // updatePassword = () => {
+
+  //   this.setState({password: this.state.input});
+  //   this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false});
+  //   this.setState(
+  //     {input : " "}
+  // );
+  // }
 
   // UpdateField = () => {
    
@@ -164,49 +188,102 @@ export default class Profile extends Component {
     
   // }
 
-  setInputValue(event: string){
-    this.setState(
-        {input : event}
-    );
+//   setInputValue(event: string){
+//     this.setState(
+//         {input : event}
+//     );
+// }
+// setName(event: string){
+//   this.setState(
+//       {name : event}
+//   );
+// }
+
+findNameChanges(event: string){
+  this.setState(
+    {nameInput : event}
+  );
+this.setState(
+  {nameChange : true}
+);
+
 }
 
+findBioChanges(event: string){
+  this.setState(
+    {bioInput : event}
+  );
+this.setState(
+  {bioChange : true}
+);
+
+}
+
+findPasswordChanges(event: string){
+  this.setState(
+    {passwordInput : event}
+  );
+this.setState(
+  {passwordChange : true}
+);
+
+}
   
   
   render() {
     return (
       <View>
         <View style={styles.header}></View>
-
         <Image
           style={styles.avatar}
           source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
         />
 
-        <Modal isOpen={this.state.showbioModal || this.state.showEmailModal || this.state.showPasswordModal } onClose={() => this.setState({showbioModal: false, showEmailModal: false, showPasswordModal: false })}>
+        <Modal isOpen={this.state.showEditInfo } onClose={() => this.setState({showEditInfo: false})}>
           <Modal.Content maxWidth="400px">
             <Modal.CloseButton />
             <Modal.Header>Edit</Modal.Header>
             <Modal.Body>
               <FormControl>
-                <Input 
+              <FormControl.Label>Name</FormControl.Label>
+              <Input 
                 type="text"  
-                onChangeText={(v) => this.setInputValue(v)} 
-                defaultValue={this.state.input}
-        
+                onChangeText={(v) => this.findNameChanges(v)} 
+                defaultValue={this.state.nameInput}
                 />
               </FormControl>
+              <FormControl mt="3">
+                <FormControl.Label>Bio</FormControl.Label>
+                <Input 
+                type="text"  
+                onChangeText={(v) => this.findBioChanges(v)} 
+                defaultValue={this.state.input}
+                />
+              </FormControl>
+              <FormControl mt="3">
+                <FormControl.Label>Password</FormControl.Label>
+                <Input 
+                type="text"  
+                onChangeText={(v) => this.findPasswordChanges(v)} 
+                defaultValue={this.state.input}
+                />
+              </FormControl>
+              
+
+
+             
             </Modal.Body>
             <Modal.Footer>
               <Button.Group space={2}>
                 <Button
                   variant="ghost"
                   colorScheme="blueGray"
-                  onPress={() => this.setState({ showbioModal: false, showEmailModal: false, showPasswordModal: false })}
+                  onPress={() => this.setState({ showEditInfo: false, showEmailModal: false, showPasswordModal: false })}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onPress={this.updateBio}
+                  onPress={this.updateProfile}
                 >
                   Update
                 </Button>
@@ -215,7 +292,7 @@ export default class Profile extends Component {
           </Modal.Content>
         </Modal>
 
-        <Modal isOpen={this.state.showEmailModal } onClose={() => this.setState({showEmailModal: false})}>
+        {/* <Modal isOpen={this.state.showEmailModal } onClose={() => this.setState({showEmailModal: false})}>
           <Modal.Content maxWidth="400px">
             <Modal.CloseButton />
             <Modal.Header>Edit</Modal.Header>
@@ -279,12 +356,12 @@ export default class Profile extends Component {
               </Button.Group>
             </Modal.Footer>
           </Modal.Content>
-        </Modal>
+        </Modal> */}
 
 
         <View style={styles.body}>
           <View>
-            <Text style={styles.name}>Hi James</Text>
+            <Text style={styles.name}>{this.state.name}</Text>
             <Text style={styles.info}> 
               {this.state.bio}
   
@@ -298,7 +375,7 @@ export default class Profile extends Component {
                       name: "pencil",
                     }}
                     onPress={
-                      () => this.setState({ showbioModal: true })
+                      () => this.setState({ showEditInfo: true })
                     }
                   />
                 </Container>
@@ -311,14 +388,14 @@ export default class Profile extends Component {
             </Text>
             <Container style={{ alignSelf: "flex-end" }}>
                 <Container style={{ alignSelf: "stretch" }}>
-                  <IconButton
+                  {/* <IconButton
                     variant="solid"
                     _icon={{
                       as: Foundation,
                       name: "pencil",
                     }}
                     onPress={() => this.setState({ showEmailModal: true })}
-                  />
+                  /> */}
                 </Container>
               </Container>
             
@@ -329,15 +406,15 @@ export default class Profile extends Component {
               {this.state.password}
             </Text>
             <Container style={{ alignSelf: "flex-end" }}>
-                <Container style={{ alignSelf: "stretch" }}>
-                  <IconButton
+                <Container marginLeft={300}>
+                  {/* <IconButton
                     variant="solid"
                     _icon={{
                       as: Foundation,
                       name: "pencil"
                     }}
                     onPress={() => this.setState({ showPasswordModal: true })}
-                  />
+                  /> */}
                 </Container>
               </Container>
           </View>
@@ -369,7 +446,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   body: {
-    marginTop: 40,
+    marginTop: 70,
   },
   info: {
     fontSize: 16,
