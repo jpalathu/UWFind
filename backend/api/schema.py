@@ -85,6 +85,7 @@ class SignUp(graphene.Mutation):
             raise BadRequest(error.message)
 
 class Login(graphene.ObjectType):
+    user = graphene.Field(UserType)
     token = graphene.JSONString()
 
 class ResetPassword(graphene.Mutation):
@@ -308,7 +309,7 @@ class Query(graphene.ObjectType):
                 scope="openid",
                 audience=AUTH0_MGMT_API_AUDIENCE
             )
-            return Login(token=result)
+            return Login(token=result, user=internal_user)
         except Auth0Error as error:
             raise BadRequest(error.message)
 
