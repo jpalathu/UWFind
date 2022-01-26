@@ -1,6 +1,12 @@
 import * as React from "react";
-import { Text, View, StyleSheet,TouchableOpacity, ScrollView, Image } from "react-native";
+import { Text, View, StyleSheet,TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Colors from "../constants/Colors";
+
+const arrayOfItems = [
+	{category: 'Electronics', location: 'E7', image: '', key: '1'},
+	{category: 'Jewellery', location: 'RCH', image: '', key: '2'},
+	{category: 'Clothing Item', location: 'E2', image: '', key: '3'},
+]
 
 export default function Home() {
   return (
@@ -28,66 +34,17 @@ export default function Home() {
       </View>
       
       <ScrollView style={styles.news_container}>
-      <View style={styles.news_item}>
-				<View style={styles.news_text}>
-					{/* <View style={styles.number}>
-						<Text style={styles.title}>{number}.</Text>
-					</View> */}
+		  { arrayOfItems.map((item) => {
+			return (
+				<View style={styles.news_item}>
 					<View style={styles.text_container}>
-          <Text style={styles.title}>'Gray Matter'</Text>
-						<Text style={styles.title}>'Art Makes You Smart'</Text>
-						<Text>'Museum visits increase test scores, generate social responsibility and increase appreciation of the arts by students.'</Text>
+						<Text style={styles.title}>{item.category}</Text>
+						<Text style={styles.title}>{item.location}</Text>
 					</View>
 				</View>
-				<View style={styles.news_photo}>
-					{/* <Image source={news.image} style={styles.photo} /> */}
-				</View>
-			</View>
-      <View style={styles.news_item}>
-				<View style={styles.news_text}>
-					{/* <View style={styles.number}>
-						<Text style={styles.title}>{number}.</Text>
-					</View> */}
-					<View style={styles.text_container}>
-          <Text style={styles.title}>'Testing'</Text>
-						<Text style={styles.title}>'Fuck'</Text>
-						<Text>'Museum visits increase test scores, generate social responsibility and increase appreciation of the arts by students.'</Text>
-					</View>
-				</View>
-				<View style={styles.news_photo}>
-					{/* <Image source={news.image} style={styles.photo} /> */}
-				</View>
-			</View>
-      <View style={styles.news_item}>
-				<View style={styles.news_text}>
-					{/* <View style={styles.number}>
-						<Text style={styles.title}>{number}.</Text>
-					</View> */}
-					<View style={styles.text_container}>
-          <Text style={styles.title}>'Fuck you'</Text>
-						<Text style={styles.title}>'Bitch'</Text>
-						<Text>'Museum visits increase test scores, generate social responsibility and increase appreciation of the arts by students.'</Text>
-					</View>
-				</View>
-				<View style={styles.news_photo}>
-					{/* <Image source={news.image} style={styles.photo} /> */}
-				</View>
-			</View>
-      <View style={styles.news_item}>
-				<View style={styles.news_text}>
-					{/* <View style={styles.number}>
-						<Text style={styles.title}>{number}.</Text>
-					</View> */}
-					<View style={styles.text_container}>
-          <Text style={styles.title}>'JK'</Text>
-						<Text style={styles.title}>'swag'</Text>
-						<Text>'Museum visits increase test scores, generate social responsibility and increase appreciation of the arts by students.'</Text>
-					</View>
-				</View>
-				<View style={styles.news_photo}>
-					 <Image source={require('../photos/selina.png')} style={styles.photo} /> 
-				</View>
-			</View>
+			)
+		  })}
+  
       </ScrollView>
           
     </View>
@@ -105,7 +62,6 @@ export default function Home() {
   //   </View>
   // );
 }
-
 const styles = StyleSheet.create({
   container: {
 		flex: 1
