@@ -70,6 +70,14 @@ import DatePicker from 'react-native-datepicker';
       date: "2022-01-15"
     };
   }
+  
+  /*
+   date - used to get the value
+   setDate - used to set a new value
+   useState("2022-01-15") - sets the default value to "2022-01-15".
+
+  */
+  // const [date, setDate] = useState("2022-01-15");
 
   render() {
     return (
@@ -106,6 +114,7 @@ import DatePicker from 'react-native-datepicker';
                 <DatePicker
           style={{width: 200}}
           date={this.state.date}
+          // date={date}
           mode="date"
           placeholder="select date"
           format="YYYY-MM-DD"
@@ -125,6 +134,7 @@ import DatePicker from 'react-native-datepicker';
             }
           }}
           onDateChange={(date) => {this.setState({date: date})}}
+          // onDateChange={(date) => {setDate(date)}}
         />
               </FormControl>
               <FormControl>
