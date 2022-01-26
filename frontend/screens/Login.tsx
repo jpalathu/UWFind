@@ -4,6 +4,7 @@ import { StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
 import { Button, Box, Text, Actionsheet, Heading } from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
+import { useStore } from "../store";
 
 type ValidationState = {
   value: string;
@@ -52,41 +53,36 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
     return !isError;
   };
 
-  const handleResult = (result: any) => {
-    const { error, data } = result;
-    if (error) {
-      // display the error message
-      console.error("ERROR", JSON.stringify(error, null, 2));
-    } else {
-    }
-  };
-
   const LOGIN_QUERY = gql`
     query ($email: String!, $password: String!) {
       login(email: $email, password: $password) {
+        user {
+          userId
+        }
         token
       }
     }
   `;
   const [executeQuery] = useLazyQuery(LOGIN_QUERY);
   const [isQueryLoading, setIsQueryLoading] = useState(false);
+  const { updateUserID, updateAuthToken } = useStore();
   const login = async () => {
     setIsQueryLoading(true);
     if (validate()) {
-      // const { data, error } = await executeQuery({
-      //   variables: { email: email.value, password: password.value },
-      // });
+      const { data, error } = await executeQuery({
+        variables: { email: email.value, password: password.value },
+      });
 
-      // if (error) {
-      //   console.error("ERROR", JSON.stringify(error, null, 2));
-      // } else {
-      //   console.log("GOOD", data);
-      //   // store the user details, access token, and id token somewhere
-      //   resetFields();
-      //   navigation.navigate("Home");
-      // }
-      // TODO: remove when fully connected
-      navigation.navigate("Home");
+      if (error) {
+        console.error("ERROR", JSON.stringify(error, null, 2));
+      } else {
+        console.log("GOOD", data);
+        // store the user ID and auth token
+        updateUserID(data.login.user.userId)
+        updateAuthToken(data.login.token)
+        resetFields();
+        navigation.navigate("Home");
+      }
     }
     setIsQueryLoading(false);
   };
