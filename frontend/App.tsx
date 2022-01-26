@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { NativeBaseProvider, Center } from "native-base";
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
@@ -9,8 +9,18 @@ import { LogBox } from "react-native";
 
 // Initialize Apollo Client
 const client = new ApolloClient({
-  uri: 'http://uwfind.us-east-2.elasticbeanstalk.com/graphql/',
-  cache: new InMemoryCache()
+  uri: "http://uwfind.us-east-2.elasticbeanstalk.com/graphql/",
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "no-cache",
+      errorPolicy: "ignore",
+    },
+    query: {
+      fetchPolicy: "no-cache",
+      errorPolicy: "all",
+    },
+  },
 });
 
 // Ignoring these annoying logs
