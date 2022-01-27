@@ -23,9 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6xzpapq2i(#x(bp!8+#o8a8&kc2@!t2-zk#deunppg5%a08!sv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['uwfind-env.eba-3vzk2vhm.us-east-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = [
+    'uwfind.us-east-2.elasticbeanstalk.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 # Application definition

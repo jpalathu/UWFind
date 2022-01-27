@@ -76,15 +76,11 @@
 // //   )
 // // }
 
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import Colors from "../constants/Colors";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import {
-  Heading,
   Text,
-  VStack,
-  Center,
-  NativeBaseProvider,
   Container,
   Divider,
   Modal,
@@ -92,77 +88,222 @@ import {
   Input,
   Button,
   IconButton,
-  Box,
 } from "native-base";
 import { Foundation } from "@expo/vector-icons";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useStore } from "../store";
 
-export default class Profile extends Component {
-  render() {
-    return (
-      <View>
-        <View style={styles.header}></View>
+export default function Login() {
+  const [showEditInfo, setShowEditInfo] = useState(false);
+  const [profile, setProfile] = useState({
+    firstName: "",
+    lastName: "",
+    bio: "",
+    email: "",
+  });
+  // creating another variable to hold the fields or else the values in the profile screen will
+  // change as we type in the modal fields
+  const [modalFields, setModalFields] = useState({
+    firstName: "",
+    lastName: "",
+    bio: "",
+  });
 
-        <Image
-          style={styles.avatar}
-          source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
-        />
+  const openModal = () => {
+    setShowEditInfo(true);
+    setModalFields({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      bio: profile.bio,
+    });
+  };
 
-        <View style={styles.body}>
-          <View>
-            <Text style={styles.name}>Hi James</Text>
-            <Text style={styles.info}>
-              4th Year Computer Engineering Student
-              <Container style={{ alignSelf: "flex-end" }}>
-                <Container marginLeft={360}>
-                  <IconButton
-                    variant="solid"
-                    _icon={{
-                      as: Foundation,
-                      name: "pencil",
-                    }}
-                  />
-                </Container>
-              </Container>
-            </Text>
+  const closeModal = () => {
+    setShowEditInfo(false);
+    setModalFields({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      bio: profile.bio,
+    });
+  };
 
-            <Divider my="2" />
-            <Text style={styles.name}>Email </Text>
-            <Text style={styles.info}>
-              James@email.com
-              <Container style={{ alignSelf: "flex-end" }}>
-                <Container marginLeft={360}>
-                  <IconButton
-                    variant="solid"
-                    _icon={{
-                      as: Foundation,
-                      name: "pencil",
-                    }}
-                  />
-                </Container>
-              </Container>
-            </Text>
+  const validate = () => {
+    return true;
+  };
 
-            <Divider my="2" />
-            <Text style={styles.name}>Password</Text>
-            <Text style={styles.info}>
-              ********
-              <Container style={{ alignSelf: "flex-end" }}>
-                <Container marginLeft={300}>
-                  <IconButton
-                    variant="solid"
-                    _icon={{
-                      as: Foundation,
-                      name: "pencil",
-                    }}
-                  />
-                </Container>
-              </Container>
-            </Text>
-          </View>
+  /* Updating the user */
+  const UPDATE_USER_MUTATION = gql`
+    mutation (
+      $id: Int!
+      $firstName: String!
+      $lastName: String!
+      $bio: String!
+    ) {
+      updateUser(
+        id: $id
+        input: { firstName: $firstName, lastName: $lastName, bio: $bio }
+      ) {
+        user {
+          userId
+          firstName
+          lastName
+          bio
+          email
+        }
+      }
+    }
+  `;
+  const [executeMutation] = useMutation(UPDATE_USER_MUTATION);
+  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const updateProfile = async () => {
+    setIsMutationLoading(true);
+    if (validate()) {
+      try {
+        const result = await executeMutation({
+          variables: {
+            id: userID,
+            firstName: modalFields.firstName,
+            lastName: modalFields.lastName,
+            bio: modalFields.bio,
+          },
+        });
+        console.log("GOOD", result);
+        const { bio, firstName, lastName, email } = result.data.updateUser.user;
+        setProfile({ firstName, lastName, bio, email });
+        closeModal();
+      } catch (error) {
+        console.error("ERROR", JSON.stringify(error, null, 2));
+      }
+    }
+    setIsMutationLoading(false);
+  };
+
+  /* Getting the user data initially */
+  const USER_BY_ID_QUERY = gql`
+    query ($id: Int!) {
+      userById(id: $id) {
+        firstName
+        lastName
+        bio
+        email
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(USER_BY_ID_QUERY);
+  const { userID } = useStore();
+  const loadProfile = async () => {
+    const { data, error } = await executeQuery({
+      variables: { id: userID },
+    });
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      setProfile(data.userById);
+      console.log("GOOD", data);
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  return (
+    <View>
+      <View style={styles.header}></View>
+      <Image
+        style={styles.avatar}
+        source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
+      />
+
+      <Modal isOpen={showEditInfo} onClose={closeModal}>
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header>Edit</Modal.Header>
+          <Modal.Body>
+            <FormControl>
+              <FormControl.Label>First Name</FormControl.Label>
+              <Input
+                type="text"
+                onChangeText={(v) =>
+                  setModalFields({ ...modalFields, firstName: v })
+                }
+                defaultValue={modalFields.firstName}
+              />
+            </FormControl>
+            <FormControl mt="3">
+              <FormControl.Label>Last Name</FormControl.Label>
+              <Input
+                type="text"
+                onChangeText={(v) =>
+                  setModalFields({ ...modalFields, lastName: v })
+                }
+                defaultValue={modalFields.lastName}
+              />
+            </FormControl>
+            <FormControl mt="3">
+              <FormControl.Label>Bio</FormControl.Label>
+              <Input
+                type="text"
+                onChangeText={(v) => setModalFields({ ...modalFields, bio: v })}
+                defaultValue={modalFields.bio}
+              />
+            </FormControl>
+            {/* <FormControl mt="3">
+              <FormControl.Label>Password</FormControl.Label>
+              <Input
+                type="text"
+                onChangeText={(v) => setProfile({ ...profile, password: v })}
+                defaultValue={profile.password}
+              />
+            </FormControl> */}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="ghost"
+                colorScheme="blueGray"
+                onPress={closeModal}
+              >
+                Cancel
+              </Button>
+              <Button isLoading={isMutationLoading} onPress={updateProfile}>
+                Update
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+
+      <View style={styles.body}>
+        <View>
+          <Text style={styles.name}>
+            {profile.firstName} {profile.lastName}
+          </Text>
+          <Text style={styles.info}>{profile.bio}</Text>
+          <Container style={{ alignSelf: "flex-end" }}>
+            <Container style={{ alignSelf: "stretch" }}>
+              <IconButton
+                variant="solid"
+                _icon={{
+                  as: Foundation,
+                  name: "pencil",
+                }}
+                onPress={openModal}
+              />
+            </Container>
+          </Container>
+
+          <Divider my="2" />
+          <Text style={styles.name}>Email </Text>
+          <Text style={styles.info}>{profile.email}</Text>
+
+          {/* <Divider my="2" />
+          <Text style={styles.name}>Password</Text>
+          <Text style={styles.info}>{profile.password}</Text> */}
         </View>
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -187,7 +328,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   body: {
-    marginTop: 40,
+    marginTop: 70,
+    marginHorizontal: 10,
   },
   info: {
     fontSize: 16,

@@ -15,9 +15,9 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       Login: "",
       SignUp: "signUp",
-      ForgotPassword: "forgotPassword",
       Home: "home",
       Profile: "profile",
+      PublicProfile: "publicProfile"
     },
   },
 };

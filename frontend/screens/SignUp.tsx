@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import * as yup from "yup";
 import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
 import {
@@ -9,13 +8,12 @@ import {
   Select,
   CheckIcon,
   FormControl,
-  Icon,
   WarningOutlineIcon,
   Heading,
 } from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
-import { MaterialIcons } from "@expo/vector-icons";
+import { gql, useMutation } from "@apollo/client";
 
 type ValidationState = {
   value: string;
@@ -23,111 +21,146 @@ type ValidationState = {
   errorMessage: string;
 };
 
-export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
-  const schema = yup.object().shape({
-    // disable required for now
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
-    year: yup.string().required(),
-    program: yup.string().required(),
-    email: yup.string().required(),
-    password: yup.string().required(),
-    confirmPassword: yup.string().required(),
-  });
+const initialState = {
+  value: "",
+  isInvalid: false,
+  errorMessage: "",
+};
 
-  const initialState = {
-    value: "",
-    isInvalid: false,
-    errorMessage: "",
-  };
+export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const [firstName, setFirstName] = useState<ValidationState>(initialState);
   const [lastName, setLastName] = useState<ValidationState>(initialState);
-  const [year, setYear] = useState<ValidationState>(initialState);
-  const [program, setProgram] = useState<ValidationState>(initialState);
+  const [bio, setBio] = useState<ValidationState>(initialState);
   const [email, setEmail] = useState<ValidationState>(initialState);
   const [password, setPassword] = useState<ValidationState>(initialState);
   const [confirmPassword, setConfirmPassword] =
     useState<ValidationState>(initialState);
 
-  const createAccount = () => {
-    schema
-      .validate(
-        {
-          firstName: firstName.value,
-          lastName: lastName.value,
-          year: year.value,
-          program: program.value,
-          email: email.value,
-          password: password.value,
-        },
-        { abortEarly: false }
-      )
-      .then((value) => {
-        console.log(value);
-        // create the user
-
-        // reset everyting back to initial state
-        resetFields();
-        navigation.navigate("Login");
-      })
-      .catch((err) => {
-        for (const error of err.inner) {
-          const errorState = { isInvalid: true, errorMessage: error.message };
-          switch (error.path) {
-            case "firstName":
-              setFirstName({
-                ...firstName,
-                ...errorState,
-              });
-              break;
-            case "lastName":
-              setLastName({
-                ...lastName,
-                ...errorState,
-              });
-              break;
-            case "year":
-              setYear({
-                ...year,
-                ...errorState,
-              });
-              break;
-            case "program":
-              setProgram({
-                ...program,
-                ...errorState,
-              });
-              break;
-            case "email":
-              setEmail({
-                ...email,
-                ...errorState,
-              });
-              break;
-            case "password":
-              setPassword({
-                ...password,
-                ...errorState,
-              });
-              break;
-          }
-        }
-      });
-  };
-
   const resetFields = () => {
     setFirstName(initialState);
     setLastName(initialState);
-    setYear(initialState);
-    setProgram(initialState);
+    setBio(initialState);
     setEmail(initialState);
     setPassword(initialState);
     setConfirmPassword(initialState);
   };
 
-  // TODO: compare the passwords and make sure they are the same
-  // TODO: see if we can create custom error messages
-  // TODO: validate that it's a UW email
+  const validate = () => {
+    let isError = false;
+    /* Check if value exists */
+    if (!firstName.value) {
+      setFirstName({
+        ...firstName,
+        isInvalid: true,
+        errorMessage: "First name is required",
+      });
+      isError = true;
+    }
+    if (!lastName.value) {
+      setLastName({
+        ...lastName,
+        isInvalid: true,
+        errorMessage: "Last name is required",
+      });
+      isError = true;
+    }
+    if (!bio.value) {
+      setBio({
+        ...bio,
+        isInvalid: true,
+        errorMessage: "Bio is required",
+      });
+      isError = true;
+    }
+    if (!email.value) {
+      setEmail({
+        ...email,
+        isInvalid: true,
+        errorMessage: "Email is required",
+      });
+      isError = true;
+    }
+    if (!password.value) {
+      setPassword({
+        ...password,
+        isInvalid: true,
+        errorMessage: "Password is required",
+      });
+      isError = true;
+    }
+    /* Make sure passwords match */
+    if (password.value && password.value != confirmPassword.value) {
+      setConfirmPassword({
+        ...confirmPassword,
+        isInvalid: true,
+        errorMessage: "Passwords don't match",
+      });
+      isError = true;
+    }
+    /* Check if UW email */
+    if (email.value && !email.value.endsWith("@uwaterloo.ca")) {
+      setEmail({
+        ...email,
+        isInvalid: true,
+        errorMessage: "Use a UW email ending with @uwaterloo.ca",
+      });
+      isError = true;
+    }
+
+    return !isError;
+  };
+
+  const SIGN_UP_MUTATION = gql`
+    mutation (
+      $firstName: String!
+      $lastName: String!
+      $bio: String!
+      $email: String!
+      $password: String!
+    ) {
+      signUp(
+        input: {
+          firstName: $firstName
+          lastName: $lastName
+          bio: $bio
+          email: $email
+          password: $password
+        }
+      ) {
+        user {
+          userId
+          firstName
+        }
+      }
+    }
+  `;
+
+  const [executeMutation] = useMutation(SIGN_UP_MUTATION);
+  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const createAccount = async () => {
+    setIsMutationLoading(true);
+    if (validate()) {
+      try {
+        const result = await executeMutation({
+          variables: {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            bio: bio.value,
+            email: email.value,
+            password: password.value,
+          },
+        });
+
+        console.log("GOOD", result);
+        resetFields();
+        navigation.navigate("Login");
+      } catch (error) {
+        console.log("ERROR", JSON.stringify(error, null, 2));
+      }
+    }
+    setIsMutationLoading(false);
+  };
+
   return (
     <Box style={styles.container}>
       <Heading size="xl" alignSelf="flex-start" ml="8">
@@ -154,72 +187,15 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         my="3"
         icon="person"
       />
-      <FormControl
-        isInvalid={year.isInvalid}
-        w={{
-          base: "80%",
-          md: "25%",
-        }}
+      <TextInput
+        title="Tell Us About Yourself"
+        value={bio.value}
+        isInvalid={bio.isInvalid}
+        errorMessage={bio.errorMessage}
+        onChangeText={setBio}
         my="3"
-      >
-        <Select
-          selectedValue={year.value}
-          placeholder="School Year"
-          _selectedItem={{
-            bg: "trueGray.300",
-            endIcon: <CheckIcon size="5" />,
-          }}
-          size="2xl"
-          borderRadius="15"
-          backgroundColor="#ffffff"
-          onValueChange={(value) =>
-            setYear({ value, isInvalid: false, errorMessage: "" })
-          }
-        >
-          <Select.Item key="1st" label="1st Year" value="1st" />
-          <Select.Item key="2nd" label="2nd Year" value="2nd" />
-          <Select.Item key="3rd" label="3rd Year" value="3rd" />
-        </Select>
-        <FormControl.ErrorMessage
-          fontSize="xl"
-          leftIcon={<WarningOutlineIcon size="xs" />}
-        >
-          {year.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
-      <FormControl
-        isInvalid={program.isInvalid}
-        w={{
-          base: "80%",
-          md: "25%",
-        }}
-        my="3"
-      >
-        <Select
-          selectedValue={program.value}
-          placeholder="School Program"
-          _selectedItem={{
-            bg: "trueGray.300",
-            endIcon: <CheckIcon size="5" />,
-          }}
-          size="2xl"
-          borderRadius="15"
-          backgroundColor="#ffffff"
-          onValueChange={(value) =>
-            setProgram({ value, isInvalid: false, errorMessage: "" })
-          }
-        >
-          <Select.Item key="1st" label="Computer Engineering" value="1st" />
-          <Select.Item key="2nd" label="Electrical Engineering" value="2nd" />
-          <Select.Item key="3rd" label="Mechatronics Engineering" value="3rd" />
-        </Select>
-        <FormControl.ErrorMessage
-          fontSize="xl"
-          leftIcon={<WarningOutlineIcon size="xs" />}
-        >
-          {program.errorMessage}
-        </FormControl.ErrorMessage>
-      </FormControl>
+        icon="person"
+      />
       <TextInput
         title="Email"
         value={email.value}
@@ -237,6 +213,7 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         onChangeText={setPassword}
         my="3"
         icon="lock"
+        hideEntry
       />
       <TextInput
         title="Confirm Password"
@@ -246,10 +223,12 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         onChangeText={setConfirmPassword}
         my="3"
         icon="lock"
+        hideEntry
       />
 
       <Button
         onPress={createAccount}
+        isLoading={isMutationLoading}
         size="lg"
         my="3"
         style={{

@@ -2,25 +2,67 @@
   {
     "model": "api.category",
     "fields": {
-      "name": "Clothing"
+      "name": "Clothing Item"
     }
   },
   {
     "model": "api.category",
     "fields": {
-      "name": "Electronic"
+      "name": "Footwear"
     }
   },
   {
     "model": "api.category",
     "fields": {
-      "name": "Key"
+      "name": "Gloves"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Hats"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Water Bottle"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Stationary"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Electronics"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Keys"
     }
   },
   {
     "model": "api.category",
     "fields": {
       "name": "Wallet"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Jewellery"
+    }
+  },
+  {
+    "model": "api.category",
+    "fields": {
+      "name": "Other"
     }
   }
 ]

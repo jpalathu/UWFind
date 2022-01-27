@@ -1,0 +1,11 @@
+Clothing Item
+Footwear
+Gloves
+Hats
+Water Bottle 
+Stationary
+Electronics
+Keys
+Wallet
+Jewellery
+Other

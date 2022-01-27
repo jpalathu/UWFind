@@ -1,0 +1,614 @@
+[
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "335 Gage Avenue (GA)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "44 Gaukel Street, Kitchener (GSK)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "6 Wellington Street, Stratford (WSS)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Accelerator Centre Waterloo (ACW)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Architecture Annex Rome (AAR)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Arts Lecture Hall (AL)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Autonomous Vehicle Research and Intelligence Lab (AVRIL) (AVR)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "B.C. Matthews Hall (BMH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "B.C. Matthews Hall (BMH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Bauer Warehouse (BAU)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "335 Gage Avenue (GA)\\"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "44 Gaukel Street, Kitchener (GSK)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "6 Wellington Street, Stratford (WSS)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Accelerator Centre Waterloo (ACW)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Architecture Annex Rome (AAR)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Arts Lecture Hall (AL)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Autonomous Vehicle Research and Intelligence Lab (AVRIL) (AVR)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "B.C. Matthews Hall (BMH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "B.C. Matthews Hall (BMH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Bauer Warehouse (BAU)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Biology 1 (B1)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Biology 2 (B2)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Bright Starts Co-operative Early Learning Centre (BSC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Brubacher House (BRH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Carl A. Pollock Hall (CPH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Central Services Building (CSB)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Centre for Environmental and Information Technology (EIT)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Chemistry 2 (C2)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Claudette Millar Hall (CMH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Columbia Greenhouses (COG)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Columbia Icefield (CIF)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Columbia Lake Village (CLV)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Commissary (COM)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Conrad Grebel University College (CGR)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Dana Porter Arts Library (LIB)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Digital Media Stratford (DMS)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Douglas Wright Engineering Building (DWE)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Earth Sciences & Chemistry (ESC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "East Campus 1 (EC1)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "East Campus 2 (EC2)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "East Campus 3 (EC3)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "East Campus 4 (EC4)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "East Campus 5 (EC5)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "East Campus Hall (ECH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Energy Research Centre (ERC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Engineering 2 (E2)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Engineering 3 (E3)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Engineering 5 (E5)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Engineering 6 (E6)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Engineering 7 (E7)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Environment 1 (EV1)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Environment 2 (EV2)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Environment 3 (EV3)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Expansion (EXP)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Federation Hall (FED)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "General Services Complex (GSC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Graduate House (GH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Health Services (HS)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Huntsville Summit Centre (HSC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Integrated Health Building (IHB)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Ira G. Needles Hall (NH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "J.G. Hagey Hall of the Humanities (HH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "J.R. Coutts Engineering Lecture Hall (RCH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Lyle S. Hallman Institute for Health Promotion (LHI)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Manulife Water Street (MWS)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Mathematics & Computer Building (MC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Mathematics 3 (M3)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Mike & Ophelia Lazaridis Quantum-Nano Centre (QNC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Minota Hagey Residence (MHR)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Modern Languages (ML)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Optometry (OPT)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Pharmacy (PHR)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Physical Activities Complex (PAC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Physics (PHY)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Psychology, Anthropology, Sociology (PAS)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Renison University College (REN)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Research Advancement Centre (RAC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Research Advancement Centre 2 (RA2)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Ron Eydt Village (REV)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "School of Architecture (ARC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Science Teaching Complex (STC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Shelburne Terrace, Gaithersburg, Maryland (STM)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "South Campus Hall (SCH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "St. Jerome's University (STJ)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "St. Paul's University College (STP)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Student Life Centre (SLC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "V1"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Toby Jenkins Applied Health Research"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Tutors' Houses (TH)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "United Arab Emirates Dubai (UAE)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "University Club (UC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "University of Waterloo Place (UWP)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "UW Place Beck Hall (UET)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "UW Place Community Centre (UCC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "UW Place Eby Hall (UWT)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "UWP"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "Warrior Field (WF)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "William G. Davis Computer Research Centre (DC)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "William Lyon Mackenzie King Village (MKV)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "William Lyon Mackenzie King Village East (MKE)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "William Lyon Mackenzie King Village West (MKW)"
+    }
+  },
+  {
+    "model": "api.building",
+    "fields": {
+      "name": "William M. Tatham Centre for Co-operative Education & Career Action (TC)"
+    }
+  }
+]
