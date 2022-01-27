@@ -140,7 +140,7 @@ import DatePicker from 'react-native-datepicker';
                 <Input />
               </FormControl>
               <FormControl>
-                <FormControl.Label>Upload Image</FormControl.Label>
+                <FormControl.Label>Image</FormControl.Label>
                 <Input />
               </FormControl>
             </Modal.Body>
