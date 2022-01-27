@@ -79,7 +79,7 @@ export default function Home() {
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
-            <View style={styles.news_item}>
+            <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
                 <Text style={styles.title}>{item.categoryId.name}</Text>
                 <Text style={styles.title}>{item.buildingId.name}</Text>
