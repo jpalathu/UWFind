@@ -8,16 +8,12 @@ import {
 } from "react-native";
 import { Picker } from "react-native-woodpicker";
 // import Button from "./shared/Button";
-import { Button, Text, Modal, FormControl, Input, Box, Actionsheet, Heading } from "native-base";
+import { Button, Text, Modal, FormControl, Input, Box, Actionsheet, Heading, Select } from "native-base";
 import DummyCategories from "../dummy/category.json";
 import DummyDropOffLocations from "../dummy/drop_off_location.json";
 import DatePicker from 'react-native-datepicker';
 
-
-//export default class SettingsScreen extends React.Component {
-
-  export default class SettingsScreen extends React.Component {
-    // const [showModal, setShowModal] = useState(false);
+  export default function LostFoundForm() {
   // const [isFoundItemForm, setIsFoundItemForm] = useState(true);
   // const [location, setLocation] = useState(null);
   // const [category, setCategory] = useState(null);
@@ -63,27 +59,16 @@ import DatePicker from 'react-native-datepicker';
   //   resetData();
   // };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      showModal: false,
-      date: "2022-01-15"
-    };
-  }
-  
-  /*
-   date - used to get the value
-   setDate - used to set a new value
-   useState("2022-01-15") - sets the default value to "2022-01-15".
+  const [date, setDate] = useState("2022-01-15");
+  const [showModal, setShowModal] = useState(false);
+  const [locationValue, setLocationValue] = useState("cloth");
+  const [categoryValue, setCategoryValue] = useState("l1");
 
-  */
-  // const [date, setDate] = useState("2022-01-15");
 
-  render() {
-    return (
+  return (
       <Fragment>
         <Button
-          onPress={() => this.setState({ showModal: true })}
+          onPress={() => {setShowModal(true)}}
           size="lg"
           my="6"
           style={{
@@ -99,8 +84,7 @@ import DatePicker from 'react-native-datepicker';
         >
           FOUND ITEM?
         </Button>
-  
-        <Modal isOpen={this.state.showModal} onClose={() => this.setState({ showModal: false })}>
+        <Modal isOpen={showModal} onClose={() => {setShowModal(false)}}>
           <Modal.Content maxWidth="400px">
             <Modal.CloseButton />
             <Modal.Header>Create a Post</Modal.Header>
@@ -113,8 +97,7 @@ import DatePicker from 'react-native-datepicker';
                 <FormControl.Label>Date</FormControl.Label>
                 <DatePicker
           style={{width: 200}}
-          date={this.state.date}
-          // date={date}
+          date={date}
           mode="date"
           placeholder="select date"
           format="YYYY-MM-DD"
@@ -133,20 +116,39 @@ import DatePicker from 'react-native-datepicker';
               marginLeft: 36
             }
           }}
-          onDateChange={(date) => {this.setState({date: date})}}
-          // onDateChange={(date) => {setDate(date)}}
+          onDateChange={(date) => {setDate(date)}}
         />
               </FormControl>
               <FormControl>
                 <FormControl.Label>Location</FormControl.Label>
-                <Input />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Description</FormControl.Label>
-                <Input />
+                  <Select selectedValue={locationValue} minWidth={200} accessibilityLabel="Select a Location" 
+                          placeholder="Select a Location" 
+                          onValueChange={itemValue => {setLocationValue(itemValue);}} _selectedItem={{bg: "yellow.400"}} mt={1}>
+                            <Select.Item label="Clothing Item" value="cloth" />
+                            <Select.Item label="Electronics" value="elec" />
+                            <Select.Item label="Footwear" value="foot" />
+                            <Select.Item label="Jewellery" value="jwl" />
+                            <Select.Item label="Keys" value="key" />
+                            <Select.Item label="Stationary" value="stat" />
+                            <Select.Item label="Wallet" value="walt" />
+                            <Select.Item label="Other" value="other" />
+                  </Select>
               </FormControl>
               <FormControl>
                 <FormControl.Label>Category</FormControl.Label>
+                  <Select selectedValue={categoryValue} minWidth={200} accessibilityLabel="Select a Category" 
+                          placeholder="Select a Category" 
+                          onValueChange={itemValue => {setCategoryValue(itemValue);}} _selectedItem={{bg: "yellow.400"}} mt={1}>
+                            <Select.Item label="L1" value="l1" />
+                            <Select.Item label="L2" value="l2" />
+                            <Select.Item label="L3" value="l3" />
+                            <Select.Item label="L4" value="l4" />
+                            <Select.Item label="L5" value="l5" />
+                            <Select.Item label="L6" value="l6" />
+                  </Select>
+              </FormControl>
+                 <FormControl>
+                <FormControl.Label>Description</FormControl.Label>
                 <Input />
               </FormControl>
               <FormControl>
@@ -159,13 +161,14 @@ import DatePicker from 'react-native-datepicker';
                 <Button
                   variant="ghost"
                   colorScheme="blueGray"
-                  onPress={() => this.setState({ showModal: false })}
+                  onPress={() => {setShowModal(false)}}
+
                 >
                   Cancel
                 </Button>
                 <Button
-                  onPress={() => this.setState({ showModal: false })}
-                >
+                  onPress={() => {setShowModal(false)}}
+                  >
                   Post
                 </Button>
               </Button.Group>
@@ -198,7 +201,7 @@ import DatePicker from 'react-native-datepicker';
       </Fragment>
     );
 
-  }
+  
   
 }
 
