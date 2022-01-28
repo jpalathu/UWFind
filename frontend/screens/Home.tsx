@@ -81,8 +81,15 @@ export default function Home() {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
-                <Text style={styles.title}>{item.categoryId.name}</Text>
-                <Text style={styles.title}>{item.buildingId.name}</Text>
+                <Text style={styles.title}>{item.title}</Text>
+                <View style={styles.text_container}>
+                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
+                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
+                  <Text style={styles.news_text}>Found on {item.date}</Text>
+                </View>
+              </View>
+              <View style={styles.news_photo}>
+                <Image source={{uri : item.imageUrl}} style={styles.photo}/>
               </View>
             </View>
           );
@@ -162,6 +169,7 @@ const styles = StyleSheet.create({
     flex: 2,
     flexDirection: "row",
     padding: 10,
+    color: "#FFFFFF",
   },
   number: {
     flex: 0.5,
@@ -176,7 +184,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "#FFD54F",
     // fontFamily: 'georgia'
   },
   news_photo: {
