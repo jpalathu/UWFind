@@ -20,30 +20,34 @@ const arrayOfItems = [
 export default function Home() {
   const [items, setItems] = useState<any[]>([]);
 
-  const LOST_ITEM_POSTS = gql`
+  const FOUND_ITEM_POSTS = gql`
     query {
-      lostItemPosts {
+      foundItemPosts {
         postId
         title
         description
-        date
         imageUrl
+        date
+        categoryId {
+          name
+        }
         buildingId {
           name
         }
-        categoryId {
+        otherDropOffLocation
+        dropOffLocationId {
           name
         }
       }
     }
   `;
-  const [executeQuery] = useLazyQuery(LOST_ITEM_POSTS);
+  const [executeQuery] = useLazyQuery(FOUND_ITEM_POSTS);
   const getItems = async () => {
     const { data, error } = await executeQuery();
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      setItems(data.lostItemPosts);
+      setItems(data.foundItemPosts);
       console.log("ITEMS", items);
     }
   };
@@ -89,7 +93,7 @@ export default function Home() {
                 </View>
               </View>
               <View style={styles.news_photo}>
-                <Image source={{uri : item.imageUrl}} style={styles.photo}/>
+                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
               </View>
             </View>
           );
