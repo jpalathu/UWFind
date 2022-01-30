@@ -36,7 +36,7 @@ class Building(models.Model):
 class FoundItemPost(models.Model):
     post_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=500)
-    date = models.DateTimeField()
+    date = models.DateField()
     # Django has an issue with creating these 2, so need to specify unique related_name
     found_user_id = models.ForeignKey(User, related_name="found_user_id", db_column="found_user_id", on_delete=models.DO_NOTHING)
     claimed_user_id = models.ForeignKey(User, related_name="claimed_user_id", db_column="claimed_user_id", null=True, on_delete=models.DO_NOTHING)
@@ -54,7 +54,7 @@ class FoundItemPost(models.Model):
 class LostItemPost(models.Model):
     post_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=500)
-    date = models.DateTimeField()
+    date = models.DateField()
     lost_user_id = models.ForeignKey(User, db_column="lost_user_id", on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=500)
     building_id = models.ForeignKey(Building, db_column="building_id", on_delete=models.DO_NOTHING)
