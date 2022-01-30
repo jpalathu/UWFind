@@ -21,12 +21,6 @@ auth0_database_instance = Database(AUTH0_DOMAIN)
 auth0_token_instance = GetToken(AUTH0_DOMAIN)
 # auth0_instance = Auth0(AUTH0_DOMAIN, AUTH0_MGMT_API_TOKEN)
 
-def get_datetime(date_str):
-    result = parse_datetime(date_str)
-    if not is_aware(result):
-        result = make_aware(result)
-    return result
-
 ####################################################################### User ###############################################################
 class UserType(DjangoObjectType):
     class Meta:
@@ -145,7 +139,7 @@ class CreateLostItemPost(graphene.Mutation):
                 building_id = Building.objects.get(building_id=input.building_id),
                 category_id = Category.objects.get(category_id=input.category_id),
                 image_url = None if input.image_url is None else input.image_url,
-                date = get_datetime(input.date)
+                date = input.date
             )
             post_instance.save()
             return CreateLostItemPost(lost_item_post=post_instance)
@@ -167,7 +161,7 @@ class UpdateLostItemPost(graphene.Mutation):
             post_instance.building_id = Building.objects.get(building_id=input.building_id)
             post_instance.category_id = Category.objects.get(category_id=input.category_id)
             post_instance.image_url = None if input.image_url is None else input.image_url
-            post_instance.date = get_datetime(input.date)
+            post_instance.date = input.date
             post_instance.save()
             return UpdateLostItemPost(lost_item_post=post_instance)
         except:
@@ -224,7 +218,7 @@ class CreateFoundItemPost(graphene.Mutation):
                 building_id = Building.objects.get(building_id=input.building_id),
                 category_id = Category.objects.get(category_id=input.category_id),
                 image_url = None if input.image_url is None else input.image_url,
-                date = get_datetime(input.date)
+                date = input.date
             )
             post_instance.save()
             return CreateFoundItemPost(found_item_post=post_instance)
@@ -248,7 +242,7 @@ class UpdateFoundItemPost(graphene.Mutation):
             post_instance.building_id = Building.objects.get(building_id=input.building_id)
             post_instance.category_id = Category.objects.get(category_id=input.category_id)
             post_instance.image_url = None if input.image_url is None else input.image_url
-            post_instance.date = get_datetime(input.date)
+            post_instance.date = input.date
             post_instance.save()
             return UpdateFoundItemPost(found_item_post=post_instance)
         except:
