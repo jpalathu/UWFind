@@ -34,7 +34,7 @@ import { useStore } from "../store";
   
 //     });
 
-export default function publicProfile(){
+export default function PublicProfile(){
   const [profile, setProfile] = useState({
     firstName: "", 
     lastName: "", 
