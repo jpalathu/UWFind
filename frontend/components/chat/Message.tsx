@@ -46,9 +46,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#3777f0",
     padding: 10,
-    margin: 10,
+    marginHorizontal: 10,
+    marginVertical: 5,
     borderRadius: 10,
-    // width: "75%",
   },
   leftContainer: {
     backgroundColor: "lightgrey",
