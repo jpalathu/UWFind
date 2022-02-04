@@ -418,7 +418,7 @@ class Query(graphene.ObjectType):
         res = []
 
         for item in chat_room_users.iterator():
-            other_chat_room_user = ChatRoomUser.objects.filter(chat_room_id=item.chat_room_id.chat_room_id).first()
+            other_chat_room_user = ChatRoomUser.objects.filter(chat_room_id=item.chat_room_id.chat_room_id).exclude(user_id=user_id).first()
             other_user = other_chat_room_user.user_id
             message = Message.objects.filter(chat_room_id=item.chat_room_id.chat_room_id).order_by("-created_at").first()
             res.append(CustomChatRoom(
