@@ -2,13 +2,14 @@ import React from "react";
 import { Text, Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
+import ProfileImage from "../shared/ProfileImage";
 
 const ChatRoomItem = ({ chatRoom }) => {
   const navigation = useNavigation();
   const goToChatRoom = () => {
     navigation.navigate("ChatRoom", {
       chatRoomID: chatRoom.chatRoomId,
-      name: chatRoom.name,
+      name: chatRoom.firstName + " " + chatRoom.lastName,
     });
   };
 
@@ -29,11 +30,11 @@ const ChatRoomItem = ({ chatRoom }) => {
 
   return (
     <TouchableOpacity onPress={goToChatRoom} style={styles.container}>
-      <Image
-        source={{
-          uri: chatRoom.imageUrl,
-        }}
+      <ProfileImage
         style={styles.image}
+        imageUrl={chatRoom.imageUrl}
+        firstName={chatRoom.firstName}
+        lastName={chatRoom.lastName}
       />
       {/* {chatRoom.newMessages ? (
         <View style={styles.badgeContainer}>
@@ -42,7 +43,7 @@ const ChatRoomItem = ({ chatRoom }) => {
       ) : null} */}
       <View style={styles.rightContainer}>
         <View style={styles.row}>
-          <Text style={styles.name}>{chatRoom.name}</Text>
+          <Text style={styles.name}>{chatRoom.firstName} {chatRoom.lastName}</Text>
           <Text style={styles.date}>
             {formatDateTime(chatRoom.lastModified)}
           </Text>
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 30,
-    marginRight: 10,
+    marginRight: 10
   },
   badgeContainer: {
     backgroundColor: "#3872E9",

@@ -11,7 +11,8 @@ const ChatHome = () => {
   const CHAT_ROOMS = gql`
     query ($userId: Int!) {
       chatRooms(userId: $userId) {
-        name
+        firstName
+        lastName
         chatRoomId
         imageUrl
         lastMessage
