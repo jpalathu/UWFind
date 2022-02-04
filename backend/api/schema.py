@@ -345,7 +345,8 @@ class ChatRoomUserType(DjangoObjectType):
 
 class CustomChatRoom(graphene.ObjectType):
     chat_room_id = graphene.Int()
-    name = graphene.String()
+    first_name = graphene.String()
+    last_name = graphene.String()
     image_url = graphene.String()
     last_message = graphene.String()
     last_modified = graphene.DateTime()
@@ -424,7 +425,8 @@ class Query(graphene.ObjectType):
             message = Message.objects.filter(chat_room_id=item.chat_room_id.chat_room_id).order_by("-created_at").first()
             res.append(CustomChatRoom(
                 chat_room_id=item.chat_room_id.chat_room_id,
-                name = other_user.first_name + " " + other_user.last_name,
+                first_name = other_user.first_name,
+                last_name = other_user.last_name,
                 image_url = other_user.image_url,
                 last_message = "You can now chat with" + " " + other_user.first_name + " " + other_user.last_name if message is None else message.content,
                 last_modified = item.chat_room_id.created_at if message is None else message.created_at
