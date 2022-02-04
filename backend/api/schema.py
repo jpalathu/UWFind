@@ -410,7 +410,7 @@ class Query(graphene.ObjectType):
         return FoundItemPost.objects.get(post_id=id)
 
     def resolve_messages(root, info, chat_room_id):
-        return Message.objects.filter(chat_room_id=chat_room_id).order_by("created_at")
+        return Message.objects.filter(chat_room_id=chat_room_id).order_by("-created_at")
 
     def resolve_chat_rooms(root, info, user_id):
         # get all chat rooms for this user
