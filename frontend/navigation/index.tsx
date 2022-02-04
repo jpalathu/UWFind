@@ -89,6 +89,11 @@ function RootNavigator() {
                 icon="envelope"
                 isLeft={false}
               />
+              <PressableIcon
+                onPress={() => navigation.navigate("ChatHome")}
+                icon="comment"
+                isLeft={false}
+              />
             </View>
           ),
         })}

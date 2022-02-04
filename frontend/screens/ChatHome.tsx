@@ -1,15 +1,46 @@
-import React from "react";
-import { Text, Image, View, StyleSheet, FlatList } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 import ChatRoomItem from "../components/chat/ChatRoomItem";
+import { useStore } from "../store";
 
-import chatRoomsData from "../dummy/chat_room.json";
+import { gql, useLazyQuery } from "@apollo/client";
 
 const ChatHome = () => {
+  const [chatRooms, setChatRooms] = useState<any[]>([]);
+
+  const CHAT_ROOMS = gql`
+    query ($userId: Int!) {
+      chatRooms(userId: $userId) {
+        name
+        chatRoomId
+        imageUrl
+        lastMessage
+        lastModified
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(CHAT_ROOMS);
+  const { userID } = useStore();
+  const loadChatRooms = async () => {
+    const { data, error } = await executeQuery({
+      variables: { userId: userID },
+    });
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      setChatRooms(data.chatRooms);
+      console.log("GOOD", data);
+    }
+  };
+
+  useEffect(() => {
+    loadChatRooms();
+  }, []);
+  
   return (
     <View style={styles.container}>
       <FlatList
-        data={chatRoomsData}
+        data={chatRooms}
         renderItem={({ item }) => <ChatRoomItem chatRoom={item} />}
         showsVerticalScrollIndicator={false}
       />

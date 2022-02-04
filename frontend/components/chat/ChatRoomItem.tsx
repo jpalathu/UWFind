@@ -1,35 +1,54 @@
 import React from "react";
 import { Text, Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
 
 const ChatRoomItem = ({ chatRoom }) => {
-  const user = chatRoom.users[1];
-
   const navigation = useNavigation();
   const goToChatRoom = () => {
-    navigation.navigate("ChatRoom", { id: chatRoom.id });
+    navigation.navigate("ChatRoom", {
+      chatRoomID: chatRoom.chatRoomId,
+      name: chatRoom.name,
+    });
+  };
+
+  const formatDateTime = (dateTime: String) => {
+    const current = moment(dateTime);
+    const today = moment();
+    // if today, show timestamp
+    if (current.isSame(today, "day")) {
+      return moment.utc(current).format("h:mm a");
+    }
+    // else if less than a week ago, then show day
+    else if (current.clone().add(1, "weeks").isSameOrAfter(today)) {
+      return moment.utc(current).format("ddd");
+    }
+    // else show month and day
+    return moment.utc(current).format("MMM D").toString();
   };
 
   return (
     <TouchableOpacity onPress={goToChatRoom} style={styles.container}>
       <Image
         source={{
-          uri: user.imageUri,
+          uri: chatRoom.imageUrl,
         }}
         style={styles.image}
       />
-      {chatRoom.newMessages ? (
+      {/* {chatRoom.newMessages ? (
         <View style={styles.badgeContainer}>
           <Text style={styles.badgeText}>{chatRoom.newMessages}</Text>
         </View>
-      ) : null}
+      ) : null} */}
       <View style={styles.rightContainer}>
         <View style={styles.row}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.text}>{chatRoom.lastMessage.createdAt}</Text>
+          <Text style={styles.name}>{chatRoom.name}</Text>
+          <Text style={styles.date}>
+            {formatDateTime(chatRoom.lastModified)}
+          </Text>
         </View>
         <Text style={styles.text} numberOfLines={1}>
-          {chatRoom.lastMessage.content}
+          {chatRoom.lastMessage}
         </Text>
       </View>
     </TouchableOpacity>
@@ -79,6 +98,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "grey",
+  },
+  date: {
+    color: "grey",
+    marginRight: 5,
   },
 });
 

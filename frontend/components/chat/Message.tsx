@@ -1,11 +1,11 @@
 import React from "react";
 
 import { View, Text, StyleSheet } from "react-native";
-
-const myID = "u1";
+import { useStore } from "../../store";
 
 const Message = ({ message }) => {
-  const isMe = message.user.id == myID;
+  const { userID } = useStore();
+  const isMe = message.senderId.userId == userID;
 
   return (
     <View
