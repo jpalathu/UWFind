@@ -17,14 +17,14 @@ const ChatRoomItem = ({ chatRoom }) => {
     const today = moment();
     // if today, show timestamp
     if (current.isSame(today, "day")) {
-      return moment.utc(current).format("h:mm a");
+      return moment(current).format("h:mm a");
     }
     // else if less than a week ago, then show day
     else if (current.clone().add(1, "weeks").isSameOrAfter(today)) {
-      return moment.utc(current).format("ddd");
+      return moment(current).format("ddd");
     }
     // else show month and day
-    return moment.utc(current).format("MMM D").toString();
+    return moment(current).format("MMM D").toString();
   };
 
   return (
