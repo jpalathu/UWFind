@@ -9,6 +9,7 @@ import {
   Image,
   FlatList,
 } from "react-native";
+import { Tab, TabView } from 'react-native-elements';
 import Colors from "../constants/Colors";
 
 const arrayOfItems = [
@@ -18,7 +19,68 @@ const arrayOfItems = [
 ];
 
 export default function Home() {
+
+  const [index, setIndex] = React.useState(0);
+
+  return (
+    
+    <View style={styles.container}>
+      <Tab
+        value={index}
+        onChange={(e) => setIndex(e)}
+        indicatorStyle={{
+          backgroundColor: "#FFD54F",
+          height: 3,
+        }}
+        variant="primary"
+      >
+        <Tab.Item
+          title="Lost Items"
+          titleStyle={{ fontSize: 12 }}
+          icon={{ name: 'timer', type: 'ionicon', color: 'white' }}
+        />
+        <Tab.Item
+          title="Found Items"
+          titleStyle={{ fontSize: 12 }}
+          icon={{ name: 'heart', type: 'ionicon', color: 'white' }}
+        />
+      </Tab>
+      {/*
+      <View style={styles.header}>
+         <Button
+          noDefaultStyles={true}
+                    styles={{button: styles.header_button}} 
+                    onPress={this.press.bind(this)}
+        >
+          <View style={styles.back_button}>
+            <Icon name="chevron-left" size={20} color="#397CA9" />
+                      <Text style={[styles.back_button_label]}> Sections</Text>
+          </View>
+        </Button> 
+
+        <View style={styles.header_text}>
+          <Text style={styles.header_text_label}>Lost Items</Text>
+          <Text style={styles.header_text_label}>Found Items</Text>
+        </View>
+        <View style={styles.whitespace}></View>
+      </View>
+      <View style={styles.instruction}>
+        <Text style={styles.instruction_text}>SWIPE ACROSS SECTIONS</Text>
+      </View>
+    */}
+    
+    <TabView value={index} onChange={setIndex} animationType="spring">
+        <TabView.Item style={{ backgroundColor: 'red', width: '100%' }}>
+          <LostFeed></LostFeed>
+        </TabView.Item>
+      </TabView>
+    </View>
+    
+  );
+}
+const LostFeed = () => {
   const [items, setItems] = useState<any[]>([]);
+  const [index, setIndex] = React.useState(0);
 
   const LOST_ITEM_POSTS = gql`
     query {
@@ -51,64 +113,29 @@ export default function Home() {
   useEffect(() => {
     getItems();
   }, []);
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {/* <Button
-          noDefaultStyles={true}
-                    styles={{button: styles.header_button}} 
-                    onPress={this.press.bind(this)}
-        >
-          <View style={styles.back_button}>
-            <Icon name="chevron-left" size={20} color="#397CA9" />
-                      <Text style={[styles.back_button_label]}> Sections</Text>
-          </View>
-        </Button> */}
-
-        <View style={styles.header_text}>
-          <Text style={styles.header_text_label}>Lost Items</Text>
-        </View>
-        <View style={styles.whitespace}></View>
-      </View>
-
-      <View style={styles.instruction}>
-        <Text style={styles.instruction_text}>SWIPE ACROSS SECTIONS</Text>
-      </View>
-
-      <ScrollView style={styles.news_container}>
-        {items.map((item) => {
-          return (
-            <View key={item.postId} style={styles.news_item}>
-              <View style={styles.text_container}>
-                <Text style={styles.title}>{item.title}</Text>
-                <View style={styles.text_container}>
-                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
-                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
-                  <Text style={styles.news_text}>Found on {item.date}</Text>
-                </View>
-              </View>
-              <View style={styles.news_photo}>
-                <Image source={{uri : item.imageUrl}} style={styles.photo}/>
-              </View>
+  return(
+    <View>
+    <ScrollView style={styles.news_container}>
+    {items.map((item) => {
+      return (
+        <View key={item.postId} style={styles.news_item}>
+          <View style={styles.text_container}>
+            <Text style={styles.title}>{item.title}</Text>
+            <View style={styles.text_container}>
+              <Text style={styles.news_text}>{item.categoryId.name}</Text>
+              <Text style={styles.news_text}>{item.buildingId.name}</Text>
+              <Text style={styles.news_text}>Found on {item.date}</Text>
             </View>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
-  // return (
-  //   <View style={styles.container}>
-  //     <View>
-  //       {/* <TouchableOpacity style={styles.buttonContainer}>
-  //         <Text>Change Password</Text>
-  //       </TouchableOpacity>        */}
-  //       <Text>
-  //         Fill in stuff here or create a new component and add it here
-  //       </Text>
-  //     </View>
-  //   </View>
-  // );
+          </View>
+          <View style={styles.news_photo}>
+            <Image source={{uri : item.imageUrl}} style={styles.photo}/>
+          </View>
+        </View>
+      );
+    })}
+  </ScrollView>
+  </View>
+  )
 }
 const styles = StyleSheet.create({
   container: {
