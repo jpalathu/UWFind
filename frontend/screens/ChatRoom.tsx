@@ -50,7 +50,7 @@ const ChatRoom = () => {
         renderItem={({ item }) => <Message message={item} />}
         inverted
       />
-      <MessageInput />
+      <MessageInput chatRoomID={route.params?.chatRoomID} reloadMessages={loadMessages}/>
     </SafeAreaView>
   );
 };

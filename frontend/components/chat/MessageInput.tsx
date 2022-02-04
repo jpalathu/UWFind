@@ -8,13 +8,47 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { gql, useMutation } from "@apollo/client";
+import { useStore } from "../../store";
 
-const MessageInput = () => {
+const MessageInput = ({ chatRoomID, reloadMessages }) => {
   const [message, setMessage] = useState("");
 
-  const sendMessage = () => {
-    console.log(message);
-    setMessage("");
+  const SEND_MESSAGE = gql`
+    mutation ($chatRoomId: Int!, $senderId: Int!, $content: String!) {
+      sendMessage(
+        input: {
+          chatRoomId: $chatRoomId
+          senderId: $senderId
+          content: $content
+        }
+      ) {
+        message {
+          messageId
+        }
+      }
+    }
+  `;
+  const [executeMutation] = useMutation(SEND_MESSAGE);
+  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const { userID } = useStore();
+  const sendMessage = async () => {
+    setIsMutationLoading(true);
+    try {
+      const result = await executeMutation({
+        variables: {
+          chatRoomId: chatRoomID,
+          senderId: userID,
+          content: message,
+        },
+      });
+      reloadMessages();
+      setMessage("");
+      console.log("GOOD", result);
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    }
+    setIsMutationLoading(false);
   };
 
   return (
