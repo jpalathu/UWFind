@@ -271,6 +271,7 @@ class ChatRoomType(DjangoObjectType):
 
 class CreateChatRoom(graphene.Mutation):
     chat_room = graphene.Field(ChatRoomType)
+    user = graphene.Field(UserType)
     already_exists = graphene.Boolean()
     class Arguments:
         current_user_id = graphene.Int(required=True)
@@ -279,34 +280,33 @@ class CreateChatRoom(graphene.Mutation):
     def mutate(root, info, current_user_id, other_user_id):
         try:
             # first check if a chatroom with you and the other exists
-            chat_room_users = ChatRoomUser.objects.filter(user_id=current_user_id)
-            found_chat_room = None
-            for item in chat_room_users.iterator():
-                other = ChatRoomUser.objects.filter(user_id=other_user_id, chat_room_id=item.chat_room_id.chat_room_id)
-                if other.exists():
-                    found_chat_room = item.chat_room_id
-                    break
-            
-            
             # if it does, then return already_exists True
             # else create a new chat room and add both to the chat room user table
-            if found_chat_room:
-                return CreateChatRoom(
-                    already_exists=True, 
-                    chat_room=found_chat_room
-                )
-            else:
-                chat_room_instance = ChatRoom(created_at=datetime.now())
-                chat_room_instance.save()
-                save_list = [
-                    ChatRoomUser(chat_room_id=chat_room_instance, user_id=User.objects.get(user_id=current_user_id)),
-                    ChatRoomUser(chat_room_id=chat_room_instance, user_id=User.objects.get(user_id=other_user_id))
-                ]
-                ChatRoomUser.objects.bulk_create(save_list)
-                return CreateChatRoom(
-                    already_exists=False, 
-                    chat_room=chat_room_instance
-                )
+            chat_room_users = ChatRoomUser.objects.filter(user_id=current_user_id)
+            for item in chat_room_users.iterator():
+                other = ChatRoomUser.objects.filter(user_id=other_user_id, chat_room_id=item.chat_room_id.chat_room_id).first()
+                if other:
+                    return CreateChatRoom(
+                        already_exists=True, 
+                        chat_room=item.chat_room_id,
+                        user=other.user_id
+                    )
+              
+            chat_room_instance = ChatRoom(created_at=datetime.now())
+            chat_room_instance.save()
+
+            current_user = User.objects.get(user_id=current_user_id)
+            other_user = User.objects.get(user_id=other_user_id)
+            save_list = [
+                ChatRoomUser(chat_room_id=chat_room_instance, user_id=current_user),
+                ChatRoomUser(chat_room_id=chat_room_instance, user_id=other_user)
+            ]
+            ChatRoomUser.objects.bulk_create(save_list)
+            return CreateChatRoom(
+                already_exists=False, 
+                chat_room=chat_room_instance,
+                user=other_user
+            )
         except:
             raise BadRequest("Unable to create chat room")
 
@@ -345,7 +345,8 @@ class ChatRoomUserType(DjangoObjectType):
 
 class CustomChatRoom(graphene.ObjectType):
     chat_room_id = graphene.Int()
-    name = graphene.String()
+    first_name = graphene.String()
+    last_name = graphene.String()
     image_url = graphene.String()
     last_message = graphene.String()
     last_modified = graphene.DateTime()
@@ -364,6 +365,7 @@ class Query(graphene.ObjectType):
     found_item_post_by_id = graphene.Field(FoundItemPostType, id=graphene.Int())
     messages = graphene.List(MessageType, chat_room_id=graphene.Int())
     chat_rooms = graphene.List(CustomChatRoom, user_id=graphene.Int())
+    users = graphene.List(UserType, current_user_id=graphene.Int())
 
     def resolve_drop_off_locations(root, info):
         return DropOffLocation.objects.all()
@@ -423,13 +425,18 @@ class Query(graphene.ObjectType):
             message = Message.objects.filter(chat_room_id=item.chat_room_id.chat_room_id).order_by("-created_at").first()
             res.append(CustomChatRoom(
                 chat_room_id=item.chat_room_id.chat_room_id,
-                name = other_user.first_name + " " + other_user.last_name,
+                first_name = other_user.first_name,
+                last_name = other_user.last_name,
                 image_url = other_user.image_url,
-                last_message = message.content,
-                last_modified = message.created_at
+                last_message = "You can now chat with" + " " + other_user.first_name + " " + other_user.last_name if message is None else message.content,
+                last_modified = item.chat_room_id.created_at if message is None else message.created_at
             ))
 
         return res
+
+    def resolve_users(root, info, current_user_id):
+        return User.objects.exclude(user_id=current_user_id)
+
 class Mutation(graphene.ObjectType):
     sign_up = SignUp.Field()
     reset_password = ResetPassword.Field()

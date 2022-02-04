@@ -24,6 +24,7 @@ import { RootStackParamList, RootTabScreenProps } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 import ChatHome from "../screens/ChatHome";
 import ChatRoom from "../screens/ChatRoom";
+import ChatHomeHeader from "../components/chat/ChatHomeHeader";
 
 export default function Navigation({
   colorScheme,
@@ -148,7 +149,7 @@ function RootNavigator() {
         name="ChatHome"
         component={ChatHome}
         options={({ navigation }: RootTabScreenProps<"ChatHome">) => ({
-          title: "Chat",
+          headerTitle: () => <ChatHomeHeader />,
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (
