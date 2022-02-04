@@ -22,6 +22,8 @@ import SignUp from "../screens/SignUp";
 import Form from "../screens/Form";
 import { RootStackParamList, RootTabScreenProps } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
+import ChatHome from "../screens/ChatHome";
+import ChatRoom from "../screens/ChatRoom";
 
 export default function Navigation({
   colorScheme,
@@ -87,6 +89,11 @@ function RootNavigator() {
                 icon="envelope"
                 isLeft={false}
               />
+              <PressableIcon
+                onPress={() => navigation.navigate("ChatHome")}
+                icon="comment"
+                isLeft={false}
+              />
             </View>
           ),
         })}
@@ -106,7 +113,7 @@ function RootNavigator() {
           ),
         })}
       />
-            <Stack.Screen
+      <Stack.Screen
         name="PublicProfile"
         component={PublicProfile}
         options={({ navigation }: RootTabScreenProps<"PublicProfile">) => ({
@@ -131,6 +138,38 @@ function RootNavigator() {
           headerLeft: () => (
             <PressableIcon
               onPress={() => navigation.navigate("Home")}
+              icon="caret-left"
+              isLeft={true}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="ChatHome"
+        component={ChatHome}
+        options={({ navigation }: RootTabScreenProps<"ChatHome">) => ({
+          title: "Chat",
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("Home")}
+              icon="caret-left"
+              isLeft={true}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="ChatRoom"
+        component={ChatRoom}
+        options={({ navigation, route }: RootTabScreenProps<"ChatRoom">) => ({
+          title: route.params?.title,
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("ChatHome")}
               icon="caret-left"
               isLeft={true}
             />
