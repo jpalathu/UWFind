@@ -1,14 +1,13 @@
 from datetime import datetime
+from re import U
 import graphene
 from graphene.types import mutation
 from graphene_django.types import DjangoObjectType
-from .models import Building, FoundItemPost, LostItemPost, User, DropOffLocation, Category
+from .models import Building, ChatRoom, ChatRoomUser, FoundItemPost, LostItemPost, Message, User, DropOffLocation, Category
 from django.core.exceptions import BadRequest
 from auth0.v3.authentication import Database, GetToken
 from auth0.v3.exceptions import Auth0Error
-from auth0.v3.management import Auth0
-from django.utils.dateparse import parse_datetime
-from django.utils.timezone import is_aware, make_aware
+from datetime import datetime
 
 AUTH0_DOMAIN = "dev-n2mrf68i.us.auth0.com"
 AUTH0_MGMT_API_AUDIENCE = "https://dev-n2mrf68i.us.auth0.com/api/v2/"
@@ -19,7 +18,6 @@ AUTH0_DATABASE_CONNECTION = "UWFind"
 
 auth0_database_instance = Database(AUTH0_DOMAIN)
 auth0_token_instance = GetToken(AUTH0_DOMAIN)
-# auth0_instance = Auth0(AUTH0_DOMAIN, AUTH0_MGMT_API_TOKEN)
 
 ####################################################################### User ###############################################################
 class UserType(DjangoObjectType):
@@ -31,6 +29,7 @@ class UserInput(graphene.InputObjectType):
     last_name = graphene.String(required=True)
     bio = graphene.String(required=True)
     email = graphene.String()
+    image_url = graphene.String()
     password = graphene.String()
 
 class UpdateUser(graphene.Mutation):
@@ -47,6 +46,7 @@ class UpdateUser(graphene.Mutation):
                 user_instance.first_name = input.first_name
                 user_instance.last_name = input.last_name
                 user_instance.bio = input.bio
+                user_instance.image_url = None if input.image_url is None else input.image_url
                 user_instance.save()
                 return UpdateUser(user=user_instance)
             return UpdateUser(user=None)
@@ -72,6 +72,7 @@ class SignUp(graphene.Mutation):
                 last_name=input.last_name,
                 bio=input.bio, 
                 email=input.email, 
+                image_url=None,
                 auth0_id="auth0|" + auth0_user["_id"])
             user_instance.save()
             return SignUp(user=user_instance)
@@ -176,7 +177,7 @@ class DeleteLostItemPost(graphene.Mutation):
     def mutate(root, info, id):
         try:
             post_instance = LostItemPost.objects.get(post_id=id)
-            post_instance.is_deleted = datetime.now()
+            post_instance.deleted_at = datetime.now()
             post_instance.save()
             return DeleteLostItemPost(lost_item_post=post_instance)
         except:
@@ -257,11 +258,98 @@ class DeleteFoundItemPost(graphene.Mutation):
     def mutate(root, info, id):
         try:
             post_instance = FoundItemPost.objects.get(post_id=id)
-            post_instance.is_deleted = datetime.now()
+            post_instance.deleted_at = datetime.now()
             post_instance.save()
             return DeleteFoundItemPost(found_item_post=post_instance)
         except:
             raise BadRequest("Unable to delete found item post")
+
+########################################################################### Chat ###################################################################
+class ChatRoomType(DjangoObjectType):
+    class Meta:
+        model = ChatRoom
+
+class CreateChatRoom(graphene.Mutation):
+    chat_room = graphene.Field(ChatRoomType)
+    already_exists = graphene.Boolean()
+    class Arguments:
+        current_user_id = graphene.Int(required=True)
+        other_user_id = graphene.Int(required=True)
+
+    def mutate(root, info, current_user_id, other_user_id):
+        try:
+            # first check if a chatroom with you and the other exists
+            chat_room_users = ChatRoomUser.objects.filter(user_id=current_user_id)
+            found_chat_room = None
+            for item in chat_room_users.iterator():
+                other = ChatRoomUser.objects.filter(user_id=other_user_id, chat_room_id=item.chat_room_id.chat_room_id)
+                if other.exists():
+                    found_chat_room = item.chat_room_id
+                    break
+            
+            
+            # if it does, then return already_exists True
+            # else create a new chat room and add both to the chat room user table
+            if found_chat_room:
+                return CreateChatRoom(
+                    already_exists=True, 
+                    chat_room=found_chat_room
+                )
+            else:
+                chat_room_instance = ChatRoom(created_at=datetime.now())
+                chat_room_instance.save()
+                save_list = [
+                    ChatRoomUser(chat_room_id=chat_room_instance, user_id=User.objects.get(user_id=current_user_id)),
+                    ChatRoomUser(chat_room_id=chat_room_instance, user_id=User.objects.get(user_id=other_user_id))
+                ]
+                ChatRoomUser.objects.bulk_create(save_list)
+                return CreateChatRoom(
+                    already_exists=False, 
+                    chat_room=chat_room_instance
+                )
+        except:
+            raise BadRequest("Unable to create chat room")
+
+
+class MessageType(DjangoObjectType):
+    class Meta:
+        model = Message
+
+class MessageInput(graphene.InputObjectType):
+    chat_room_id = graphene.Int(required=True)
+    sender_id = graphene.Int(required=True)
+    content = graphene.String(required=True)
+
+class SendMessage(graphene.Mutation):
+    message = graphene.Field(MessageType)
+
+    class Arguments:
+        input = MessageInput(required=True)
+
+    def mutate(root, info, input):
+        try:
+            message_instance = Message(
+                chat_room_id=ChatRoom.objects.get(chat_room_id=input.chat_room_id),
+                sender_id=User.objects.get(user_id=input.sender_id),
+                content=input.content,
+                created_at=datetime.now()
+            )
+            message_instance.save()
+            return SendMessage(message=message_instance)
+        except:
+            raise BadRequest("Unable to send message")
+
+class ChatRoomUserType(DjangoObjectType):
+    class Meta:
+        model = ChatRoomUser
+
+class CustomChatRoom(graphene.ObjectType):
+    chat_room_id = graphene.Int()
+    name = graphene.String()
+    image_url = graphene.String()
+    last_message = graphene.String()
+    last_modified = graphene.DateTime()
+
 
 #################################################################### Query and Mutation ############################################################
 class Query(graphene.ObjectType):
@@ -274,6 +362,8 @@ class Query(graphene.ObjectType):
     lost_item_post_by_id = graphene.Field(LostItemPostType, id=graphene.Int())
     found_item_posts = graphene.List(FoundItemPostType)
     found_item_post_by_id = graphene.Field(FoundItemPostType, id=graphene.Int())
+    messages = graphene.List(MessageType, chat_room_id=graphene.Int())
+    chat_rooms = graphene.List(CustomChatRoom, user_id=graphene.Int())
 
     def resolve_drop_off_locations(root, info):
         return DropOffLocation.objects.all()
@@ -308,17 +398,38 @@ class Query(graphene.ObjectType):
             raise BadRequest(error.message)
 
     def resolve_lost_item_posts(root, info):
-        return LostItemPost.objects.filter(is_deleted=None)
+        return LostItemPost.objects.filter(deleted_at=None)
 
     def resolve_lost_item_post_by_id(root, info, id):
         return LostItemPost.objects.get(post_id=id)
 
     def resolve_found_item_posts(root, info):
-        return FoundItemPost.objects.filter(is_deleted=None)
+        return FoundItemPost.objects.filter(deleted_at=None)
 
     def resolve_found_item_post_by_id(root, info, id):
         return FoundItemPost.objects.get(post_id=id)
 
+    def resolve_messages(root, info, chat_room_id):
+        return Message.objects.filter(chat_room_id=chat_room_id).order_by("created_at")
+
+    def resolve_chat_rooms(root, info, user_id):
+        # get all chat rooms for this user
+        chat_room_users = ChatRoomUser.objects.filter(user_id=user_id)
+        res = []
+
+        for item in chat_room_users.iterator():
+            other_chat_room_user = ChatRoomUser.objects.filter(chat_room_id=item.chat_room_id.chat_room_id).first()
+            other_user = other_chat_room_user.user_id
+            message = Message.objects.filter(chat_room_id=item.chat_room_id.chat_room_id).order_by("-created_at").first()
+            res.append(CustomChatRoom(
+                chat_room_id=item.chat_room_id.chat_room_id,
+                name = other_user.first_name + " " + other_user.last_name,
+                image_url = other_user.image_url,
+                last_message = message.content,
+                last_modified = message.created_at
+            ))
+
+        return res
 class Mutation(graphene.ObjectType):
     sign_up = SignUp.Field()
     reset_password = ResetPassword.Field()
@@ -329,5 +440,7 @@ class Mutation(graphene.ObjectType):
     update_found_item_post = UpdateFoundItemPost.Field()
     delete_lost_item_post = DeleteLostItemPost.Field()
     delete_found_item_post = DeleteFoundItemPost.Field()
+    create_chat_room = CreateChatRoom.Field()
+    send_message = SendMessage.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
