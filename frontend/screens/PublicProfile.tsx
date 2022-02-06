@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import Colors from "../constants/Colors";
 import { StyleSheet, View, Image, TouchableOpacity,  SafeAreaView } from "react-native";
 import {
@@ -24,6 +24,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import TextInput from "../components/shared/TextInput";
 import * as yup from "yup";
 import { RootTabScreenProps } from "../types";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useStore } from "../store";
 
 // export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
 //     const schema = yup.object().shape({
@@ -32,7 +34,58 @@ import { RootTabScreenProps } from "../types";
   
 //     });
 
-export default class PublicProfile extends Component {
+export default function PublicProfile(){
+  const [profile, setProfile] = useState({
+    firstName: "", 
+    lastName: "", 
+    bio: "",
+    email: ""
+  }); 
+
+  const validate = () => {
+    return true;
+  };
+
+
+  /* Getting the user data initially */
+  const USER_BY_ID_QUERY = gql`
+    query ($id: Int!) {
+      userById(id: $id) {
+        firstName
+        lastName
+        bio
+        email
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(USER_BY_ID_QUERY);
+  const { userID } = useStore();
+  const loadProfile = async () => {
+    const { data, error } = await executeQuery({
+      variables: { id: userID },
+    });
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      setProfile(data.userById);
+      console.log("GOOD", data);
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+    // handleEmail = (text: any) => {
+    //     this.setState({ email: text })
+    //  }
+
+
+
+
+
+
+// export default class PublicProfile extends Component {
 
    
 
@@ -42,21 +95,18 @@ export default class PublicProfile extends Component {
     //     errorMessage: "",
     //   };
 
-    // const [initialMessage, SetinitialMessage] = useState<ValidationState>(initialState);
-    state = {
-        email: '',
-        password: ''
-     }
-     handleEmail = (text: any) => {
-        this.setState({ email: text })
-     }
-     handlePassword = (text: any) => {
-        this.setState({ password: text })
-     }
+    // state = {
+    //     email: '',
+    //     password: ''
+    //  }
+    //  handleEmail = (text: any) => {
+    //     this.setState({ email: text })
+    //  }
+    //  handlePassword = (text: any) => {
+    //     this.setState({ password: text })
+    //  }
 
-    render() {
-        // const [message, onSentMessage] = React.useState(null);
-        // const [text, onChangeText] = React.useState("Useless Text");
+    // render() {
  
 
 
@@ -71,48 +121,25 @@ export default class PublicProfile extends Component {
   
           <View style={styles.body}>
             <View>
-              <Text style={styles.name}>Meet James</Text>
+              <Text style={styles.name}>
+              {profile.firstName} {profile.lastName}
+              </Text>
               <Text style={styles.info}>
-                4th Year Computer Engineering Student
+                {profile.bio}
               </Text>
   
               <Divider my="2" />
               <Text style={styles.name}>Email </Text>
               <Text style={styles.info}>
-                James@email.com
+              {profile.email}
               </Text>
             </View>
           </View>
 
-          {/* <TextInput
-        title="Email"
-        value={"hi"}
-        isInvalid={false}
-        errorMessage={"error"}
-        onChangeText={onChangeText}
-        my="6"
-        mt="200"
-        icon="email"
-        /> */}
-
-{/* <TextInput
-        style={styles.input}
-        onChangeText={onChangeNumber}
-        value={number}
-        placeholder="useless placeholder"
-        keyboardType="numeric"
-      />
-
-<TextInput
-        style={styles.input}
-        onChangeText={onChangeText}
-        value={text}
-      /> */}
-
 
 
 <Center>
- <TextInput title= " Send James a Message"
+ {/* <TextInput title= " Send James a Message"
                onChangeText = {this.handleEmail}
                value={""}
                isInvalid={true}
@@ -120,7 +147,7 @@ export default class PublicProfile extends Component {
                my="3"
                icon="mail"
                
-/>
+/> */}
 </Center>
 <Center>
 <Button
@@ -153,8 +180,10 @@ export default class PublicProfile extends Component {
 
 
       );
-    }
+    // }
   }
+
+
   
   const styles = StyleSheet.create({
     header: {

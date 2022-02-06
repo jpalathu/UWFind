@@ -14,24 +14,28 @@ declare global {
 }
 
 export type RootStackParamList = {
-  Login: undefined;
-  SignUp: undefined;
-  Home: undefined;
-  Profile: undefined;
-  PublicProfile: undefined;
-  Form: undefined;
+  Login: any;
+  SignUp: any;
+  Home: any;
+  Profile: any;
+  PublicProfile: any;
+  Form: any;
+  ChatHome: any;
+  ChatRoom: any;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
-  Login: undefined;
-  SignUp: undefined;
-  Home: undefined;
-  Profile: undefined;
-  PublicProfile: undefined;
-  Form: undefined;
+  Login: any;
+  SignUp: any;
+  Home: any;
+  Profile: any;
+  PublicProfile: any;
+  Form: any;
+  ChatHome: any;
+  ChatRoom: any;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

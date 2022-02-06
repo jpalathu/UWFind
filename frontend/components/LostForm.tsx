@@ -1,19 +1,25 @@
-import React, { Fragment, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Switch,
-  TextInput,
-  ScrollView,
-} from "react-native";
+import React, { Fragment, useEffect, useState } from "react";
+import { StyleSheet, View, Switch, TextInput, ScrollView } from "react-native";
 import { Picker } from "react-native-woodpicker";
 // import Button from "./shared/Button";
-import { Button, Text, Modal, FormControl, Input, Box, Actionsheet, Heading, Select } from "native-base";
+import {
+  Button,
+  Text,
+  Modal,
+  FormControl,
+  Input,
+  Box,
+  Actionsheet,
+  Heading,
+  Select,
+} from "native-base";
 import DummyCategories from "../dummy/category.json";
 import DummyDropOffLocations from "../dummy/drop_off_location.json";
-import DatePicker from 'react-native-datepicker';
+import DatePicker from "react-native-datepicker";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useStore } from "../store";
 
-  export default function LostForm() {
+export default function LostForm() {
   // const [isFoundItemForm, setIsFoundItemForm] = useState(true);
   // const [location, setLocation] = useState(null);
   // const [category, setCategory] = useState(null);
@@ -59,131 +65,266 @@ import DatePicker from 'react-native-datepicker';
   //   resetData();
   // };
 
-  const [date, setDate] = useState("2022-01-15");
-
   const [showModal, setShowModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [locationValue, setLocationValue] = useState("");
+  const [categoryValue, setCategoryValue] = useState("");
+  const [description, setDescription] = useState("");
+  // TODO: change default when image pop up is connected
+  const [imageUrl, setImageUrl] = useState(
+    "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
+  );
 
-  const [locationValue, setLocationValue] = useState("cloth");
-  const [categoryValue, setCategoryValue] = useState("l1");
+  // Use this to store the buildings (locations) and categories for the drop down selections
+  const [locations, setLocations] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
 
+  const resetFields = () => {
+    setTitle("");
+    setDate("");
+    setLocationValue("");
+    setCategoryValue("");
+    setDescription("");
+    // TODO: change default when image pop up is connected
+    setImageUrl(
+      "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
+    );
+  };
 
+  const closeModal = () => {
+    setShowModal(false);
+    resetFields();
+  };
 
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  /* Creating the post */
+  const CREATE_POST = gql`
+    mutation (
+      $title: String!
+      $lostUserId: Int!
+      $description: String!
+      $buildingId: Int!
+      $categoryId: Int!
+      $imageUrl: String!
+      $date: String!
+    ) {
+      createLostItemPost(
+        input: {
+          title: $title
+          lostUserId: $lostUserId
+          description: $description
+          buildingId: $buildingId
+          categoryId: $categoryId
+          imageUrl: $imageUrl
+          date: $date
+        }
+      ) {
+        lostItemPost {
+          postId
+        }
+      }
+    }
+  `;
+  const [executeMutation] = useMutation(CREATE_POST);
+  const { userID } = useStore();
+  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const createPost = async () => {
+    setIsMutationLoading(true);
+    try {
+      const result = await executeMutation({
+        variables: {
+          title,
+          lostUserId: Number(userID),
+          description,
+          buildingId: Number(locationValue),
+          categoryId: Number(categoryValue),
+          imageUrl,
+          date,
+        },
+      });
+      console.log("GOOD", result);
+      closeModal();
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    }
+    setIsMutationLoading(false);
+  };
+
+  /* Retrieving the data for the form */
+  const FORM_DATA = gql`
+    query {
+      categories {
+        name
+        categoryId
+      }
+      buildings {
+        name
+        buildingId
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(FORM_DATA);
+  const getFormData = async () => {
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      setLocations(data.buildings);
+      setCategories(data.categories);
+    }
+  };
+
+  useEffect(() => {
+    getFormData();
+  }, []);
 
   return (
-      <Fragment>
-        <Button
-          onPress={() => {setShowModal(true)}}
-          size="lg"
-          my="6"
-          style={{
-            backgroundColor: "#ffc50b",
-            borderColor: "#000",
-            borderWidth: 1,
-            shadowOpacity: 0.3,
-            shadowRadius: 10,
-            shadowOffset: { width: 1, height: 10 },
-          }}
-          borderRadius="20"
-          _text={{ color: "#000" }}
-        >
-          LOST ITEM?
-        </Button>
-        
-        <Modal isOpen={showModal} onClose={() => {setShowModal(false)}}>
-          <Modal.Content maxWidth="400px">
-            <Modal.CloseButton />
-            <Modal.Header>Create a Post</Modal.Header>
-            <Modal.Body>
-              <FormControl>
-                <FormControl.Label>Title</FormControl.Label>
-                <Input />
-              </FormControl>
-              <FormControl mt="3">
-                <FormControl.Label>Date</FormControl.Label>
-                <DatePicker
-          style={{width: 200}}
-          date={date}
-          mode="date"
-          placeholder="select date"
-          format="YYYY-MM-DD"
-          minDate="2022-01-15"
-          maxDate="2025-06-01"
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          customStyles={{
-            dateIcon: {
-              position: 'absolute',
-              left: 0,
-              top: 4,
-              marginLeft: 0
-            },
-            dateInput: {
-              marginLeft: 36
-            }
-          }}
-          onDateChange={(date) => {setDate(date)}}
-        />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Location</FormControl.Label>
-                  <Select selectedValue={locationValue} minWidth={200} accessibilityLabel="Select a Location" 
-                          placeholder="Select a Location" 
-                          onValueChange={itemValue => {setLocationValue(itemValue);}} _selectedItem={{bg: "yellow.400"}} mt={1}>
-                            {/* ADD ALL LOCATIONS HERE */}
-                            <Select.Item label="L1" value="l1" />
-                            <Select.Item label="L2" value="l2" />
-                            <Select.Item label="L3" value="l3" />
-                            <Select.Item label="L4" value="l4" />
-                            <Select.Item label="L5" value="l5" />
-                            <Select.Item label="L6" value="l6" />
-                  </Select>
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Category</FormControl.Label>
-                  <Select selectedValue={categoryValue} minWidth={200} accessibilityLabel="Select a Category" 
-                          placeholder="Select a Category" 
-                          onValueChange={itemValue => {setCategoryValue(itemValue);}} _selectedItem={{bg: "yellow.400"}} mt={1}>
-                            <Select.Item label="Clothing Item" value="cloth" />
-                            <Select.Item label="Electronics" value="elec" />
-                            <Select.Item label="Footwear" value="foot" />
-                            <Select.Item label="Jewellery" value="jwl" />
-                            <Select.Item label="Keys" value="key" />
-                            <Select.Item label="Stationary" value="stat" />
-                            <Select.Item label="Wallet" value="walt" />
-                            <Select.Item label="Other" value="other" />
-                  </Select>
-              </FormControl>
-                 <FormControl>
-                <FormControl.Label>Description</FormControl.Label>
-                <Input />
-              </FormControl>
-              <FormControl>
-                {/* NEED TO CHANGE THIS TO UPLOAD IMAGE */}
-                <FormControl.Label>Image</FormControl.Label>
-                <Input />
-              </FormControl>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button.Group space={2}>
-                <Button
-                  variant="ghost"
-                  colorScheme="blueGray"
-                  onPress={() => {setShowModal(false)}}
+    <Fragment>
+      <Button
+        onPress={() => {
+          openModal();
+        }}
+        size="lg"
+        my="6"
+        style={{
+          backgroundColor: "#ffc50b",
+          borderColor: "#000",
+          borderWidth: 1,
+          shadowOpacity: 0.3,
+          shadowRadius: 10,
+          shadowOffset: { width: 1, height: 10 },
+        }}
+        borderRadius="20"
+        _text={{ color: "#000" }}
+      >
+        LOST ITEM?
+      </Button>
 
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onPress={() => {setShowModal(false)}}
-                  >
-                  Post
-                </Button>
-              </Button.Group>
-            </Modal.Footer>
-          </Modal.Content>
-        </Modal>
-  
-        {/* <Modal visible={isModalVisible}>
+      <Modal
+        isOpen={showModal}
+        onClose={() => {
+          closeModal();
+        }}
+      >
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header>Create a Post</Modal.Header>
+          <Modal.Body>
+            <FormControl>
+              <FormControl.Label>Title</FormControl.Label>
+              <Input onChangeText={(value) => setTitle(value)} />
+            </FormControl>
+            <FormControl mt="3">
+              <FormControl.Label>Date</FormControl.Label>
+              <DatePicker
+                style={{ width: 200 }}
+                date={date}
+                mode="date"
+                placeholder="select date"
+                format="YYYY-MM-DD"
+                minDate="2022-01-15"
+                maxDate="2025-06-01"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                  dateIcon: {
+                    position: "absolute",
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0,
+                  },
+                  dateInput: {
+                    marginLeft: 36,
+                  },
+                }}
+                onDateChange={(date) => {
+                  setDate(date);
+                }}
+              />
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Location</FormControl.Label>
+              <Select
+                selectedValue={locationValue}
+                minWidth={200}
+                accessibilityLabel="Select a Location"
+                placeholder="Select a Location"
+                onValueChange={(itemValue) => {
+                  setLocationValue(itemValue);
+                }}
+                _selectedItem={{ bg: "yellow.400" }}
+                mt={1}
+              >
+                {locations.map((location) => (
+                  <Select.Item
+                    key={location.buildingId}
+                    label={location.name}
+                    value={location.buildingId}
+                  />
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Category</FormControl.Label>
+              <Select
+                selectedValue={categoryValue}
+                minWidth={200}
+                accessibilityLabel="Select a Category"
+                placeholder="Select a Category"
+                onValueChange={(itemValue) => {
+                  setCategoryValue(itemValue);
+                }}
+                _selectedItem={{ bg: "yellow.400" }}
+                mt={1}
+              >
+                {categories.map((category) => (
+                  <Select.Item
+                    key={category.categoryId}
+                    label={category.name}
+                    value={category.categoryId}
+                  />
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Description</FormControl.Label>
+              <Input onChangeText={(value) => setDescription(value)} />
+            </FormControl>
+            <FormControl>
+              {/* NEED TO CHANGE THIS TO UPLOAD IMAGE */}
+              <FormControl.Label>Image</FormControl.Label>
+              <Input />
+            </FormControl>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="ghost"
+                colorScheme="blueGray"
+                onPress={() => {
+                  closeModal();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                isLoading={isMutationLoading}
+                onPress={() => {
+                  createPost();
+                }}
+              >
+                Post
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+
+      {/* <Modal visible={isModalVisible}>
           <View style={styles.modal}>
             <View style={styles.modalContainer}>
               <ModalHeader
@@ -205,11 +346,8 @@ import DatePicker from 'react-native-datepicker';
             </View>
           </View>
         </Modal> */}
-      </Fragment>
-    );
-
-  
-  
+    </Fragment>
+  );
 }
 
 // type HeaderProps = {

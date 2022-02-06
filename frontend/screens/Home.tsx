@@ -10,16 +10,13 @@ import {
   FlatList,
 } from "react-native";
 import Colors from "../constants/Colors";
-
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
   { category: "Jewellery", location: "RCH", image: "", key: "2" },
   { category: "Clothing Item", location: "E2", image: "", key: "3" },
 ];
-
 export default function Home() {
   const [items, setItems] = useState<any[]>([]);
-
   const LOST_ITEM_POSTS = gql`
     query {
       lostItemPosts {
@@ -47,11 +44,9 @@ export default function Home() {
       console.log("ITEMS", items);
     }
   };
-
   useEffect(() => {
     getItems();
   }, []);
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -65,23 +60,20 @@ export default function Home() {
                       <Text style={[styles.back_button_label]}> Sections</Text>
           </View>
         </Button> */}
-
         <View style={styles.header_text}>
           <Text style={styles.header_text_label}>Lost Items</Text>
         </View>
         <View style={styles.whitespace}></View>
       </View>
-
       <View style={styles.instruction}>
         <Text style={styles.instruction_text}>SWIPE ACROSS SECTIONS</Text>
       </View>
-
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
-                <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
                   <Text style={styles.news_text}>{item.categoryId.name}</Text>
                   <Text style={styles.news_text}>{item.buildingId.name}</Text>
