@@ -1,16 +1,20 @@
 import * as React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
-import LostFoundForm from "../components/LostFoundForm";
+import FoundForm from "../components/FoundForm";
+import LostForm from "../components/LostForm";
+
 import SettingsScreen from "../components/Test";
 
 export default function Form() {
   return (
     <View style={styles.container}>
       <View>
-        <LostFoundForm />
+        <FoundForm />
       </View>
-
+      <View>
+        <LostForm />
+      </View>
       {/* <View>
         <SettingsScreen />
       </View> */}
