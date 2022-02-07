@@ -19,30 +19,14 @@ const arrayOfItems = [
 ];
 const FirstRoute = () => (
   <View style={styles.container}>
-  <View style={styles.header}>
-    <View style={styles.header_text}>
-      <Text style={styles.header_text_label}>Lost Items</Text>
-    </View>
-    <View style={styles.whitespace}></View>
-  </View>
-  <View style={styles.instruction}>
-    <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
-  </View>
+  <View style={styles.header}></View>
   <LostFeed></LostFeed>
 </View>
 );
 
 const SecondRoute = () => (
   <View style={styles.container}>
-  <View style={styles.header}>
-    <View style={styles.header_text}>
-      <Text style={styles.header_text_label}>Lost Items</Text>
-    </View>
-    <View style={styles.whitespace}></View>
-  </View>
-  <View style={styles.instruction}>
-    <Text style={styles.instruction_text}>SWIPE RIGHT FOR LOST ITEMS</Text>
-  </View>
+  <View style={styles.header}></View>
   <FoundFeed></FoundFeed>
 </View>
 );
@@ -117,7 +101,16 @@ const LostFeed = () => {
     getItems();
   }, []);
   return (
-
+    <View style={styles.container}>
+    <View style={styles.header}>
+      <View style={styles.header_text}>
+        <Text style={styles.header_text_label}>Lost Items</Text>
+      </View>
+      <View style={styles.whitespace}></View>
+    </View>
+    <View style={styles.instruction}>
+      <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
+    </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
@@ -137,7 +130,9 @@ const LostFeed = () => {
           );
         })}
       </ScrollView>
+      </View>
   );
+  
 }
 
 const FoundFeed = () => {
@@ -177,7 +172,16 @@ const FoundFeed = () => {
     getItems();
   }, []);
   return (
-
+    <View style={styles.container}>
+    <View style={styles.header}>
+      <View style={styles.header_text}>
+        <Text style={styles.header_text_label}>Found Items</Text>
+      </View>
+      <View style={styles.whitespace}></View>
+    </View>
+    <View style={styles.instruction}>
+      <Text style={styles.instruction_text}>SWIPE LEFT FOR LOST ITEMS</Text>
+    </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
@@ -197,6 +201,7 @@ const FoundFeed = () => {
           );
         })}
       </ScrollView>
+      </View>
   );
 }
 
