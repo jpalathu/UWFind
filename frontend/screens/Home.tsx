@@ -8,14 +8,83 @@ import {
   ScrollView,
   Image,
   FlatList,
+  useWindowDimensions,
 } from "react-native";
 import Colors from "../constants/Colors";
+import { TabView, SceneMap } from 'react-native-tab-view';
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
   { category: "Jewellery", location: "RCH", image: "", key: "2" },
   { category: "Clothing Item", location: "E2", image: "", key: "3" },
 ];
+const FirstRoute = () => (
+  <View style={styles.container}>
+  <View style={styles.header}>
+    <View style={styles.header_text}>
+      <Text style={styles.header_text_label}>Lost Items</Text>
+    </View>
+    <View style={styles.whitespace}></View>
+  </View>
+  <View style={styles.instruction}>
+    <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
+  </View>
+  <LostFeed></LostFeed>
+</View>
+);
+
+const SecondRoute = () => (
+  <View style={styles.container}>
+  <View style={styles.header}>
+    <View style={styles.header_text}>
+      <Text style={styles.header_text_label}>Lost Items</Text>
+    </View>
+    <View style={styles.whitespace}></View>
+  </View>
+  <View style={styles.instruction}>
+    <Text style={styles.instruction_text}>SWIPE RIGHT FOR LOST ITEMS</Text>
+  </View>
+  <FoundFeed></FoundFeed>
+</View>
+);
+
+const renderScene = SceneMap({
+  first: FirstRoute,
+  second: SecondRoute,
+});
 export default function Home() {
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'First' },
+    { key: 'second', title: 'Second' },
+  ]);
+
+  return (
+    
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width }}
+    />
+  );
+  <View style={styles.container}>
+  <View style={styles.header}>
+
+    <View style={styles.header_text}>
+      <Text style={styles.header_text_label}>Lost Items</Text>
+    </View>
+    <View style={styles.whitespace}></View>
+  </View>
+  <View style={styles.instruction}>
+    <Text style={styles.instruction_text}>SWIPE ACROSS SECTIONS</Text>
+  </View>
+  <LostFeed></LostFeed>
+</View>
+
+}
+const LostFeed = () => {
   const [items, setItems] = useState<any[]>([]);
   const LOST_ITEM_POSTS = gql`
     query {
@@ -48,26 +117,67 @@ export default function Home() {
     getItems();
   }, []);
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {/* <Button
-          noDefaultStyles={true}
-                    styles={{button: styles.header_button}} 
-                    onPress={this.press.bind(this)}
-        >
-          <View style={styles.back_button}>
-            <Icon name="chevron-left" size={20} color="#397CA9" />
-                      <Text style={[styles.back_button_label]}> Sections</Text>
-          </View>
-        </Button> */}
-        <View style={styles.header_text}>
-          <Text style={styles.header_text_label}>Lost Items</Text>
-        </View>
-        <View style={styles.whitespace}></View>
-      </View>
-      <View style={styles.instruction}>
-        <Text style={styles.instruction_text}>SWIPE ACROSS SECTIONS</Text>
-      </View>
+
+      <ScrollView style={styles.news_container}>
+        {items.map((item) => {
+          return (
+            <View key={item.postId} style={styles.news_item}>
+              <View style={styles.text_container}>
+              <Text style={styles.title}>{item.title}</Text>
+                <View style={styles.text_container}>
+                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
+                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
+                  <Text style={styles.news_text}>Lost on {item.date}</Text>
+                </View>
+              </View>
+              <View style={styles.news_photo}>
+                <Image source={{uri : item.imageUrl}} style={styles.photo}/>
+              </View>
+            </View>
+          );
+        })}
+      </ScrollView>
+  );
+}
+
+const FoundFeed = () => {
+  const [items, setItems] = useState<any[]>([]);
+  const FOUND_ITEM_POSTS = gql`
+    query {
+      foundItemPosts {
+        postId
+        title
+        description
+        imageUrl
+        date
+        categoryId {
+          name
+        }
+        buildingId {
+          name
+        }
+        otherDropOffLocation
+        dropOffLocationId {
+          name
+        }
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(FOUND_ITEM_POSTS);
+  const getItems = async () => {
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      setItems(data.foundItemPosts);
+      console.log("ITEMS", items);
+    }
+  };
+  useEffect(() => {
+    getItems();
+  }, []);
+  return (
+
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
@@ -87,21 +197,9 @@ export default function Home() {
           );
         })}
       </ScrollView>
-    </View>
   );
-  // return (
-  //   <View style={styles.container}>
-  //     <View>
-  //       {/* <TouchableOpacity style={styles.buttonContainer}>
-  //         <Text>Change Password</Text>
-  //       </TouchableOpacity>        */}
-  //       <Text>
-  //         Fill in stuff here or create a new component and add it here
-  //       </Text>
-  //     </View>
-  //   </View>
-  // );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
