@@ -26,6 +26,7 @@ import * as yup from "yup";
 import { RootTabScreenProps } from "../types";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
+import ProfileImage from "../components/shared/ProfileImage";
 
 // export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
 //     const schema = yup.object().shape({
@@ -39,7 +40,8 @@ export default function PublicProfile(){
     firstName: "", 
     lastName: "", 
     bio: "",
-    email: ""
+    email: "",
+    imageUrl: ""
   }); 
 
   const validate = () => {
@@ -55,6 +57,7 @@ export default function PublicProfile(){
         lastName
         bio
         email
+        imageUrl
       }
     }
   `;
@@ -112,12 +115,20 @@ export default function PublicProfile(){
 
       return (
         <View>
-          <View style={styles.header}></View>
+          <View style={styles.header}>
+
+          <ProfileImage
+        style={styles.avatar}
+        imageUrl={profile.imageUrl}
+        firstName={profile.firstName}
+        lastName={profile.lastName}
+      />
+          </View>
   
-          <Image
+          {/* <Image
             style={styles.avatar}
             source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
-          />
+          /> */}
   
           <View style={styles.body}>
             <View>
