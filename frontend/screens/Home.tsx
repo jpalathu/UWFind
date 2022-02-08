@@ -182,8 +182,13 @@ const FoundFeed = () => {
     <View style={styles.instruction}>
       <Text style={styles.instruction_text}>SWIPE LEFT FOR LOST ITEMS</Text>
     </View>
-      <View>
+    <View style={{flexDirection: "row"}}>
+      <View style ={styles.header_button}>
         <FoundForm />
+      </View>
+      <View style ={styles.header_button}>
+        <FilterForm />
+      </View>
       </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
