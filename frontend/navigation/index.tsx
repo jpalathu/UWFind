@@ -86,11 +86,6 @@ function RootNavigator() {
                 isLeft={false}
               />
               <PressableIcon
-                onPress={() => navigation.navigate("Form")}
-                icon="envelope"
-                isLeft={false}
-              />
-              <PressableIcon
                 onPress={() => navigation.navigate("ChatHome")}
                 icon="comment"
                 isLeft={false}
