@@ -1,4 +1,5 @@
 import { gql, useLazyQuery } from "@apollo/client";
+import { FontAwesome, AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   Text,
@@ -7,9 +8,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Pressable,
   FlatList,
 } from "react-native";
 import Colors from "../constants/Colors";
+import DetailedItem from "../components/DetailedItem";
+
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
   { category: "Jewellery", location: "RCH", image: "", key: "2" },
@@ -73,6 +77,11 @@ export default function Home() {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
+              <PressableIcon
+                onPress={() => navigation.navigate("DetailedItem")}
+                icon="arrow-up"
+                isLeft={false}
+              />
               <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
                   <Text style={styles.news_text}>{item.categoryId.name}</Text>
@@ -102,6 +111,31 @@ export default function Home() {
   //   </View>
   // );
 }
+
+type PressableIconProps = {
+  icon: any;
+  onPress: () => void;
+  isLeft: boolean;
+};
+/**
+ * Perform an action when pressing the icon (like navigate to a new screen).
+ */
+const PressableIcon = (props: PressableIconProps) => (
+  <Pressable
+    onPress={props.onPress}
+    style={({ pressed }) => ({
+      opacity: pressed ? 0.5 : 1,
+    })}
+  >
+    <FontAwesome
+      name={props.icon}
+      size={30}
+      color={Colors.white}
+      style={props.isLeft ? { marginLeft: 15 } : { marginRight: 15 }}
+    />
+  </Pressable>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
