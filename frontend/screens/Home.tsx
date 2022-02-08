@@ -14,6 +14,7 @@ import Colors from "../constants/Colors";
 import { TabView, SceneMap } from 'react-native-tab-view';
 import FoundForm from "../components/FoundForm";
 import LostForm from "../components/LostForm";
+import FilterForm from "../components/FilterForm";
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
   { category: "Jewellery", location: "RCH", image: "", key: "2" },
@@ -100,9 +101,14 @@ const LostFeed = () => {
     <View style={styles.instruction}>
       <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
     </View>
-    <View>
+    <View style={{flexDirection: "row"}}>
+      <View style ={styles.header_button}>
         <LostForm />
       </View>
+      <View style ={styles.header_button}>
+        <FilterForm />
+      </View>
+    </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
@@ -176,8 +182,13 @@ const FoundFeed = () => {
     <View style={styles.instruction}>
       <Text style={styles.instruction_text}>SWIPE LEFT FOR LOST ITEMS</Text>
     </View>
-      <View>
+    <View style={{flexDirection: "row"}}>
+      <View style ={styles.header_button}>
         <FoundForm />
+      </View>
+      <View style ={styles.header_button}>
+        <FilterForm />
+      </View>
       </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {

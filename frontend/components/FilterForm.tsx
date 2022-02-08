@@ -19,7 +19,7 @@ import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 
-export default function LostForm() {
+export default function FilterForm() {
   // const [isFoundItemForm, setIsFoundItemForm] = useState(true);
   // const [location, setLocation] = useState(null);
   // const [category, setCategory] = useState(null);
@@ -66,30 +66,28 @@ export default function LostForm() {
   // };
 
   const [showModal, setShowModal] = useState(false);
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [locationValue, setLocationValue] = useState("");
   const [categoryValue, setCategoryValue] = useState("");
-  const [description, setDescription] = useState("");
+
   // TODO: change default when image pop up is connected
-  const [imageUrl, setImageUrl] = useState(
-    "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
-  );
+
 
   // Use this to store the buildings (locations) and categories for the drop down selections
   const [locations, setLocations] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-
+  const [filters, setFilters] = useState<any[]>([]);
   const resetFields = () => {
-    setTitle("");
-    setDate("");
+
+    setStartDate("");
+    setEndDate("");
     setLocationValue("");
     setCategoryValue("");
-    setDescription("");
+
     // TODO: change default when image pop up is connected
-    setImageUrl(
-      "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
-    );
+
   };
 
   const closeModal = () => {
@@ -101,58 +99,6 @@ export default function LostForm() {
     setShowModal(true);
   };
 
-  /* Creating the post */
-  const CREATE_POST = gql`
-    mutation (
-      $title: String!
-      $lostUserId: Int!
-      $description: String!
-      $buildingId: Int!
-      $categoryId: Int!
-      $imageUrl: String!
-      $date: String!
-    ) {
-      createLostItemPost(
-        input: {
-          title: $title
-          lostUserId: $lostUserId
-          description: $description
-          buildingId: $buildingId
-          categoryId: $categoryId
-          imageUrl: $imageUrl
-          date: $date
-        }
-      ) {
-        lostItemPost {
-          postId
-        }
-      }
-    }
-  `;
-  const [executeMutation] = useMutation(CREATE_POST);
-  const { userID } = useStore();
-  const [isMutationLoading, setIsMutationLoading] = useState(false);
-  const createPost = async () => {
-    setIsMutationLoading(true);
-    try {
-      const result = await executeMutation({
-        variables: {
-          title,
-          lostUserId: Number(userID),
-          description,
-          buildingId: Number(locationValue),
-          categoryId: Number(categoryValue),
-          imageUrl,
-          date,
-        },
-      });
-      console.log("GOOD", result);
-      closeModal();
-    } catch (error) {
-      console.error("ERROR", JSON.stringify(error, null, 2));
-    }
-    setIsMutationLoading(false);
-  };
 
   /* Retrieving the data for the form */
   const FORM_DATA = gql`
@@ -182,6 +128,10 @@ export default function LostForm() {
     getFormData();
   }, []);
 
+  const filter=() => {
+    
+  }
+
   return (
     <Fragment>
       <Button
@@ -201,7 +151,7 @@ export default function LostForm() {
         borderRadius="20"
         _text={{ color: "#000" }}
       >
-        LOST ITEM?
+        FILTER
       </Button>
 
       <Modal
@@ -212,17 +162,13 @@ export default function LostForm() {
       >
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
-          <Modal.Header>Create a Post</Modal.Header>
+          <Modal.Header>Filter Feed</Modal.Header>
           <Modal.Body>
-            <FormControl>
-              <FormControl.Label>Title</FormControl.Label>
-              <Input onChangeText={(value) => setTitle(value)} />
-            </FormControl>
             <FormControl mt="3">
-              <FormControl.Label>Date</FormControl.Label>
+              <FormControl.Label>Start Date</FormControl.Label>
               <DatePicker
                 style={{ width: 200 }}
-                date={date}
+                date={startDate}
                 mode="date"
                 placeholder="select date"
                 format="YYYY-MM-DD"
@@ -242,7 +188,35 @@ export default function LostForm() {
                   },
                 }}
                 onDateChange={(date) => {
-                  setDate(date);
+                  setStartDate(date);
+                }}
+              />
+            </FormControl>
+            <FormControl mt="3">
+              <FormControl.Label>End Date</FormControl.Label>
+              <DatePicker
+                style={{ width: 200 }}
+                date={endDate}
+                mode="date"
+                placeholder="select date"
+                format="YYYY-MM-DD"
+                minDate="2022-01-15"
+                maxDate="2025-06-01"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                  dateIcon: {
+                    position: "absolute",
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0,
+                  },
+                  dateInput: {
+                    marginLeft: 36,
+                  },
+                }}
+                onDateChange={(date) => {
+                  setEndDate(date);
                 }}
               />
             </FormControl>
@@ -290,15 +264,6 @@ export default function LostForm() {
                 ))}
               </Select>
             </FormControl>
-            <FormControl>
-              <FormControl.Label>Description</FormControl.Label>
-              <Input onChangeText={(value) => setDescription(value)} />
-            </FormControl>
-            <FormControl>
-              {/* NEED TO CHANGE THIS TO UPLOAD IMAGE */}
-              <FormControl.Label>Image</FormControl.Label>
-              <Input />
-            </FormControl>
           </Modal.Body>
           <Modal.Footer>
             <Button.Group space={2}>
@@ -312,12 +277,11 @@ export default function LostForm() {
                 Cancel
               </Button>
               <Button
-                isLoading={isMutationLoading}
                 onPress={() => {
-                  createPost();
+                  filter();
                 }}
               >
-                Post
+                Apply Filters
               </Button>
             </Button.Group>
           </Modal.Footer>
