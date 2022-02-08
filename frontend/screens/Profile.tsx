@@ -92,6 +92,8 @@ import {
 import { Foundation } from "@expo/vector-icons";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
+import ProfileImage from "../components/shared/ProfileImage";
+
 
 export default function Login() {
   const [showEditInfo, setShowEditInfo] = useState(false);
@@ -100,6 +102,7 @@ export default function Login() {
     lastName: "",
     bio: "",
     email: "",
+    imageUrl: ""
   });
   // creating another variable to hold the fields or else the values in the profile screen will
   // change as we type in the modal fields
@@ -168,8 +171,8 @@ export default function Login() {
           },
         });
         console.log("GOOD", result);
-        const { bio, firstName, lastName, email } = result.data.updateUser.user;
-        setProfile({ firstName, lastName, bio, email });
+        const { bio, firstName, lastName, email, imageUrl } = result.data.updateUser.user;
+        setProfile({ firstName, lastName, bio, email, imageUrl });
         closeModal();
       } catch (error) {
         console.error("ERROR", JSON.stringify(error, null, 2));
@@ -186,6 +189,7 @@ export default function Login() {
         lastName
         bio
         email
+        imageUrl
       }
     }
   `;
@@ -209,12 +213,19 @@ export default function Login() {
 
   return (
     <View>
-      <View style={styles.header}></View>
-      <Image
+      <View style={styles.header}>
+      <ProfileImage
+        style={styles.avatar}
+        imageUrl={profile.imageUrl}
+        firstName={profile.firstName}
+        lastName={profile.lastName}
+      />
+        
+      </View>
+      {/* <Image
         style={styles.avatar}
         source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
-      />
-
+      /> */}
       <Modal isOpen={showEditInfo} onClose={closeModal}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
@@ -354,4 +365,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: Colors.gold,
   },
+  image: {
+    height: 50,
+    width: 50,
+    borderRadius: 30,
+    marginRight: 10
+  }
 });
