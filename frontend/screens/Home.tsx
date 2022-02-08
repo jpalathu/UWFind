@@ -12,6 +12,9 @@ import {
 } from "react-native";
 import Colors from "../constants/Colors";
 import { TabView, SceneMap } from 'react-native-tab-view';
+import FoundForm from "../components/FoundForm";
+import LostForm from "../components/LostForm";
+import FilterForm from "../components/FilterForm";
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
   { category: "Jewellery", location: "RCH", image: "", key: "2" },
@@ -53,19 +56,6 @@ export default function Home() {
       initialLayout={{ width: layout.width }}
     />
   );
-  <View style={styles.container}>
-  <View style={styles.header}>
-
-    <View style={styles.header_text}>
-      <Text style={styles.header_text_label}>Lost Items</Text>
-    </View>
-    <View style={styles.whitespace}></View>
-  </View>
-  <View style={styles.instruction}>
-    <Text style={styles.instruction_text}>SWIPE ACROSS SECTIONS</Text>
-  </View>
-  <LostFeed></LostFeed>
-</View>
 
 }
 const LostFeed = () => {
@@ -111,6 +101,14 @@ const LostFeed = () => {
     <View style={styles.instruction}>
       <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
     </View>
+    <View style={{flexDirection: "row"}}>
+      <View style ={styles.header_button}>
+        <LostForm />
+      </View>
+      <View style ={styles.header_button}>
+        <FilterForm />
+      </View>
+    </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
@@ -137,6 +135,7 @@ const LostFeed = () => {
 
 const FoundFeed = () => {
   const [items, setItems] = useState<any[]>([]);
+  const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const FOUND_ITEM_POSTS = gql`
     query {
       foundItemPosts {
@@ -171,6 +170,7 @@ const FoundFeed = () => {
   useEffect(() => {
     getItems();
   }, []);
+  
   return (
     <View style={styles.container}>
     <View style={styles.header}>
@@ -182,6 +182,14 @@ const FoundFeed = () => {
     <View style={styles.instruction}>
       <Text style={styles.instruction_text}>SWIPE LEFT FOR LOST ITEMS</Text>
     </View>
+    <View style={{flexDirection: "row"}}>
+      <View style ={styles.header_button}>
+        <FoundForm />
+      </View>
+      <View style ={styles.header_button}>
+        <FilterForm />
+      </View>
+      </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (

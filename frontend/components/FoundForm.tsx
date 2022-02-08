@@ -205,7 +205,7 @@ export default function FoundForm() {
           openModal();
         }}
         size="lg"
-        my="6"
+        my="0"
         style={{
           backgroundColor: "#ffc50b",
           borderColor: "#000",
