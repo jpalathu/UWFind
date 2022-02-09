@@ -8,6 +8,7 @@ from django.core.exceptions import BadRequest
 from auth0.v3.authentication import Database, GetToken
 from auth0.v3.exceptions import Auth0Error
 from datetime import datetime
+import channels_graphql_ws
 
 AUTH0_DOMAIN = "dev-n2mrf68i.us.auth0.com"
 AUTH0_MGMT_API_AUDIENCE = "https://dev-n2mrf68i.us.auth0.com/api/v2/"
@@ -302,6 +303,7 @@ class CreateChatRoom(graphene.Mutation):
                 ChatRoomUser(chat_room_id=chat_room_instance, user_id=other_user)
             ]
             ChatRoomUser.objects.bulk_create(save_list)
+
             return CreateChatRoom(
                 already_exists=False, 
                 chat_room=chat_room_instance,
@@ -309,7 +311,6 @@ class CreateChatRoom(graphene.Mutation):
             )
         except:
             raise BadRequest("Unable to create chat room")
-
 
 class MessageType(DjangoObjectType):
     class Meta:
@@ -335,9 +336,23 @@ class SendMessage(graphene.Mutation):
                 created_at=datetime.now()
             )
             message_instance.save()
+ 
+            OnNewMessage.broadcast(payload=message_instance, group="{}".format(input.chat_room_id))
             return SendMessage(message=message_instance)
         except:
             raise BadRequest("Unable to send message")
+
+class OnNewMessage(channels_graphql_ws.Subscription):
+    message = graphene.Field(MessageType)
+
+    class Arguments:
+        chat_room_id = graphene.Int()
+
+    def subscribe(root, info, chat_room_id=None):
+        return ["{}".format(chat_room_id)] if chat_room_id is not None else None
+
+    def publish(root, info, chat_room_id):
+        return OnNewMessage(message=root)
 
 class ChatRoomUserType(DjangoObjectType):
     class Meta:
@@ -436,6 +451,7 @@ class Query(graphene.ObjectType):
 
     def resolve_users(root, info, current_user_id):
         return User.objects.exclude(user_id=current_user_id)
+        
 
 class Mutation(graphene.ObjectType):
     sign_up = SignUp.Field()
@@ -450,4 +466,13 @@ class Mutation(graphene.ObjectType):
     create_chat_room = CreateChatRoom.Field()
     send_message = SendMessage.Field()
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+class Subscription(graphene.ObjectType):
+    on_new_message = OnNewMessage.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation, subscription=Subscription)
+
+class MyGraphqlWsConsumer(channels_graphql_ws.GraphqlWsConsumer):
+    schema = schema
+
+    async def on_connect(self, payload):
+        print("connected", payload)

@@ -3,21 +3,17 @@ import { Text, View, StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
 import FoundForm from "./FoundForm";
 import LostForm from "./LostForm";
-
+import {Button} from "native-base";
+import { Alert } from 'react-native';
 import SettingsScreen from "./Test";
 
 export default function DetailedItem() {
   return (
     <View style={styles.container}>
-      <View>
-        <FoundForm />
-      </View>
-      <View>
-        <LostForm />
-      </View>
-      {/* <View>
-        <SettingsScreen />
-      </View> */}
+     <Button
+        title="Press me"
+        onPress={() => Alert.alert('Simple Button pressed')}
+      />
     </View>
   );
 }

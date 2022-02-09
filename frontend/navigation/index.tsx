@@ -25,6 +25,7 @@ import LinkingConfiguration from "./LinkingConfiguration";
 import ChatHome from "../screens/ChatHome";
 import ChatRoom from "../screens/ChatRoom";
 import ChatHomeHeader from "../components/chat/ChatHomeHeader";
+import DetailedItem from "../components/DetailedItem";
 
 export default function Navigation({
   colorScheme,
@@ -66,6 +67,21 @@ function RootNavigator() {
           headerTitleStyle: { color: Colors.white },
         })}
       />
+     <Stack.Screen
+        name="DetailedItem"
+        component={DetailedItem}
+        options={({ navigation }: RootTabScreenProps<"DetailedItem">) => ({
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("Home")}
+              icon="caret-left"
+              isLeft={true}
+            />
+          ),
+        })}
+      />
       <Stack.Screen
         name="Home"
         component={Home}
@@ -86,12 +102,12 @@ function RootNavigator() {
                 isLeft={false}
               />
               <PressableIcon
-                onPress={() => navigation.navigate("Form")}
-                icon="envelope"
+                onPress={() => navigation.navigate("ChatHome")}
+                icon="comment"
                 isLeft={false}
               />
-              <PressableIcon
-                onPress={() => navigation.navigate("ChatHome")}
+                 <PressableIcon
+                onPress={() => navigation.navigate("DetailedItem")}
                 icon="comment"
                 isLeft={false}
               />
@@ -129,6 +145,10 @@ function RootNavigator() {
           ),
         })}
       />
+
+    
+
+      
       {/* Adding this screen to test the form stuff */}
       <Stack.Screen
         name="Form"
