@@ -126,6 +126,12 @@ class LostItemPostInput(graphene.InputObjectType):
     image_url = graphene.String()
     date = graphene.String(required=True)
 
+class LostItemPostFilterInput(graphene.InputObjectType):
+    start_date = graphene.String()
+    end_date = graphene.String()
+    building_id = graphene.Int()
+    category_id = graphene.Int()
+
 class CreateLostItemPost(graphene.Mutation):
     lost_item_post = graphene.Field(LostItemPostType)
 
@@ -201,6 +207,12 @@ class FoundItemPostInput(graphene.InputObjectType):
     category_id = graphene.Int(required=True)
     image_url = graphene.String()
     date = graphene.String(required=True)
+
+class FoundItemPostFilterInput(graphene.InputObjectType):
+    start_date = graphene.String()
+    end_date = graphene.String()
+    building_id = graphene.Int()
+    category_id = graphene.Int()
 
 class CreateFoundItemPost(graphene.Mutation):
     found_item_post = graphene.Field(FoundItemPostType)
@@ -374,9 +386,9 @@ class Query(graphene.ObjectType):
     buildings = graphene.List(BuildingType)
     user_by_id = graphene.Field(UserType, id=graphene.Int())
     login = graphene.Field(Login, email=graphene.String(), password=graphene.String())
-    lost_item_posts = graphene.List(LostItemPostType)
+    lost_item_posts = graphene.List(LostItemPostType, filter=LostItemPostFilterInput())
     lost_item_post_by_id = graphene.Field(LostItemPostType, id=graphene.Int())
-    found_item_posts = graphene.List(FoundItemPostType)
+    found_item_posts = graphene.List(FoundItemPostType, filter=FoundItemPostFilterInput())
     found_item_post_by_id = graphene.Field(FoundItemPostType, id=graphene.Int())
     messages = graphene.List(MessageType, chat_room_id=graphene.Int())
     chat_rooms = graphene.List(CustomChatRoom, user_id=graphene.Int())
@@ -414,14 +426,38 @@ class Query(graphene.ObjectType):
         except Auth0Error as error:
             raise BadRequest(error.message)
 
-    def resolve_lost_item_posts(root, info):
-        return LostItemPost.objects.filter(deleted_at=None)
+    def resolve_lost_item_posts(root, info, filter):
+        category_exists = filter.category_id is not None
+        building_exists = filter.building_id is not None
+        date_range_exists = filter.start_date is not None and filter.end_date is not None
+        
+        posts = LostItemPost.objects.filter(deleted_at=None)
+        if category_exists:
+            posts = posts.filter(category_id=filter.category_id)
+        if building_exists:
+            posts = posts.filter(building_id=filter.building_id)
+        if date_range_exists:
+            posts = posts.filter(date__range=[filter.start_date, filter.end_date])
+
+        return posts
 
     def resolve_lost_item_post_by_id(root, info, id):
         return LostItemPost.objects.get(post_id=id)
 
-    def resolve_found_item_posts(root, info):
-        return FoundItemPost.objects.filter(deleted_at=None)
+    def resolve_found_item_posts(root, info, filter):
+        category_exists = filter.category_id is not None
+        building_exists = filter.building_id is not None
+        date_range_exists = filter.start_date is not None and filter.end_date is not None
+        
+        posts = FoundItemPost.objects.filter(deleted_at=None)
+        if category_exists:
+            posts = posts.filter(category_id=filter.category_id)
+        if building_exists:
+            posts = posts.filter(building_id=filter.building_id)
+        if date_range_exists:
+            posts = posts.filter(date__range=[filter.start_date, filter.end_date])
+
+        return posts
 
     def resolve_found_item_post_by_id(root, info, id):
         return FoundItemPost.objects.get(post_id=id)

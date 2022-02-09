@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import Colors from "../constants/Colors";
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap } from "react-native-tab-view";
 import FoundForm from "../components/FoundForm";
 import LostForm from "../components/LostForm";
 import FilterForm from "../components/FilterForm";
@@ -22,16 +22,16 @@ const arrayOfItems = [
 ];
 const FirstRoute = () => (
   <View style={styles.container}>
-  <View style={styles.header}></View>
-  <LostFeed></LostFeed>
-</View>
+    <View style={styles.header}></View>
+    <LostFeed></LostFeed>
+  </View>
 );
 
 const SecondRoute = () => (
   <View style={styles.container}>
-  <View style={styles.header}></View>
-  <FoundFeed></FoundFeed>
-</View>
+    <View style={styles.header}></View>
+    <FoundFeed></FoundFeed>
+  </View>
 );
 
 const renderScene = SceneMap({
@@ -43,12 +43,11 @@ export default function Home() {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'first', title: 'First' },
-    { key: 'second', title: 'Second' },
+    { key: "first", title: "First" },
+    { key: "second", title: "Second" },
   ]);
 
   return (
-    
     <TabView
       navigationState={{ index, routes }}
       renderScene={renderScene}
@@ -56,13 +55,18 @@ export default function Home() {
       initialLayout={{ width: layout.width }}
     />
   );
-
 }
+
 const LostFeed = () => {
   const [items, setItems] = useState<any[]>([]);
+
+  const setFilteredItems = (filteredItems: any[]) => {
+    setItems(filteredItems);
+  };
+
   const LOST_ITEM_POSTS = gql`
     query {
-      lostItemPosts {
+      lostItemPosts(filter: {}) {
         postId
         title
         description
@@ -92,29 +96,33 @@ const LostFeed = () => {
   }, []);
   return (
     <View style={styles.container}>
-    <View style={styles.header}>
-      <View style={styles.header_text}>
-        <Text style={styles.header_text_label}>Lost Items</Text>
+      <View style={styles.header}>
+        <View style={styles.header_text}>
+          <Text style={styles.header_text_label}>Lost Items</Text>
+        </View>
+        <View style={styles.whitespace}></View>
       </View>
-      <View style={styles.whitespace}></View>
-    </View>
-    <View style={styles.instruction}>
-      <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
-    </View>
-    <View style={{flexDirection: "row"}}>
-      <View style ={styles.header_button}>
-        <LostForm />
+      <View style={styles.instruction}>
+        <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
       </View>
-      <View style ={styles.header_button}>
-        <FilterForm />
+      <View style={{ flexDirection: "row" }}>
+        <View style={styles.header_button}>
+          <LostForm />
+        </View>
+        <View style={styles.header_button}>
+          <FilterForm
+            isLost={true}
+            items={items}
+            setFilteredItems={setFilteredItems}
+          />
+        </View>
       </View>
-    </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
-              <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
                   <Text style={styles.news_text}>{item.categoryId.name}</Text>
                   <Text style={styles.news_text}>{item.buildingId.name}</Text>
@@ -122,23 +130,26 @@ const LostFeed = () => {
                 </View>
               </View>
               <View style={styles.news_photo}>
-                <Image source={{uri : item.imageUrl}} style={styles.photo}/>
+                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
               </View>
             </View>
           );
         })}
       </ScrollView>
-      </View>
+    </View>
   );
-  
-}
+};
 
 const FoundFeed = () => {
   const [items, setItems] = useState<any[]>([]);
-  const [filteredItems, setFilteredItems] = useState<any[]>([]);
+
+  const setFilteredItems = (filteredItems: any[]) => {
+    setItems(filteredItems);
+  };
+
   const FOUND_ITEM_POSTS = gql`
     query {
-      foundItemPosts {
+      foundItemPosts(filter: {}) {
         postId
         title
         description
@@ -170,32 +181,36 @@ const FoundFeed = () => {
   useEffect(() => {
     getItems();
   }, []);
-  
+
   return (
     <View style={styles.container}>
-    <View style={styles.header}>
-      <View style={styles.header_text}>
-        <Text style={styles.header_text_label}>Found Items</Text>
+      <View style={styles.header}>
+        <View style={styles.header_text}>
+          <Text style={styles.header_text_label}>Found Items</Text>
+        </View>
+        <View style={styles.whitespace}></View>
       </View>
-      <View style={styles.whitespace}></View>
-    </View>
-    <View style={styles.instruction}>
-      <Text style={styles.instruction_text}>SWIPE RIGHT FOR LOST ITEMS</Text>
-    </View>
-    <View style={{flexDirection: "row"}}>
-      <View style ={styles.header_button}>
-        <FoundForm />
+      <View style={styles.instruction}>
+        <Text style={styles.instruction_text}>SWIPE RIGHT FOR LOST ITEMS</Text>
       </View>
-      <View style ={styles.header_button}>
-        <FilterForm />
-      </View>
+      <View style={{ flexDirection: "row" }}>
+        <View style={styles.header_button}>
+          <FoundForm />
+        </View>
+        <View style={styles.header_button}>
+          <FilterForm
+            isLost={false}
+            items={items}
+            setFilteredItems={setFilteredItems}
+          />
+        </View>
       </View>
       <ScrollView style={styles.news_container}>
         {items.map((item) => {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
-              <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
                   <Text style={styles.news_text}>{item.categoryId.name}</Text>
                   <Text style={styles.news_text}>{item.buildingId.name}</Text>
@@ -203,15 +218,15 @@ const FoundFeed = () => {
                 </View>
               </View>
               <View style={styles.news_photo}>
-                <Image source={{uri : item.imageUrl}} style={styles.photo}/>
+                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
               </View>
             </View>
           );
         })}
       </ScrollView>
-      </View>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
