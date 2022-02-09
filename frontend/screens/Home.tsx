@@ -180,7 +180,7 @@ const FoundFeed = () => {
       <View style={styles.whitespace}></View>
     </View>
     <View style={styles.instruction}>
-      <Text style={styles.instruction_text}>SWIPE LEFT FOR LOST ITEMS</Text>
+      <Text style={styles.instruction_text}>SWIPE RIGHT FOR LOST ITEMS</Text>
     </View>
     <View style={{flexDirection: "row"}}>
       <View style ={styles.header_button}>
