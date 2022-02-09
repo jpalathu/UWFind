@@ -15,7 +15,6 @@ import { ColorSchemeName, Pressable, View } from "react-native";
 
 import Colors from "../constants/Colors";
 import Home from "../screens/Home";
-import LostFeed from "../screens/Home";
 import Profile from "../screens/Profile";
 import PublicProfile from "../screens/PublicProfile";
 import Login from "../screens/Login";
@@ -70,15 +69,7 @@ function RootNavigator() {
           headerTitleStyle: { color: Colors.white },
         })}
       />
-      <Stack.Screen
-        name="LostFeed"
-        component={LostFeed}
-        options={() => ({
-          title: "",
-          headerStyle: { backgroundColor: Colors.black },
-          headerTitleStyle: { color: Colors.white },
-        })}
-      />
+
      <Stack.Screen
         name="LostDetailedItem"
         component={LostDetailedItem}
