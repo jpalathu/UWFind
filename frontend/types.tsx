@@ -22,7 +22,8 @@ export type RootStackParamList = {
   Form: any;
   ChatHome: any;
   ChatRoom: any;
-  DetailedItem: any;
+  LostDetailedItem: any;
+  FoundDetailedItem: any;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -37,7 +38,8 @@ export type RootTabParamList = {
   Form: any;
   ChatHome: any;
   ChatRoom: any;
-  DetailedItem: any;
+  LostDetailedItem: any;
+  FoundDetailedItem: any;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

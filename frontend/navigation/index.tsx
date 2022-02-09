@@ -15,6 +15,7 @@ import { ColorSchemeName, Pressable, View } from "react-native";
 
 import Colors from "../constants/Colors";
 import Home from "../screens/Home";
+import LostFeed from "../screens/Home";
 import Profile from "../screens/Profile";
 import PublicProfile from "../screens/PublicProfile";
 import Login from "../screens/Login";
@@ -25,7 +26,9 @@ import LinkingConfiguration from "./LinkingConfiguration";
 import ChatHome from "../screens/ChatHome";
 import ChatRoom from "../screens/ChatRoom";
 import ChatHomeHeader from "../components/chat/ChatHomeHeader";
-import DetailedItem from "../components/DetailedItem";
+import LostDetailedItem from "../components/LostDetailedItem";
+import FoundDetailedItem from "../components/FoundDetailedItem";
+
 
 export default function Navigation({
   colorScheme,
@@ -67,10 +70,34 @@ function RootNavigator() {
           headerTitleStyle: { color: Colors.white },
         })}
       />
+      <Stack.Screen
+        name="LostFeed"
+        component={LostFeed}
+        options={() => ({
+          title: "",
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+        })}
+      />
      <Stack.Screen
-        name="DetailedItem"
-        component={DetailedItem}
-        options={({ navigation }: RootTabScreenProps<"DetailedItem">) => ({
+        name="LostDetailedItem"
+        component={LostDetailedItem}
+        options={({ navigation }: RootTabScreenProps<"LostDetailedItem">) => ({
+          headerStyle: { backgroundColor: Colors.black },
+          headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("Home")}
+              icon="caret-left"
+              isLeft={true}
+            />
+          ),
+        })}
+      />
+        <Stack.Screen
+        name="FoundDetailedItem"
+        component={FoundDetailedItem}
+        options={({ navigation }: RootTabScreenProps<"FoundDetailedItem">) => ({
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (
@@ -103,11 +130,6 @@ function RootNavigator() {
               />
               <PressableIcon
                 onPress={() => navigation.navigate("ChatHome")}
-                icon="comment"
-                isLeft={false}
-              />
-                 <PressableIcon
-                onPress={() => navigation.navigate("DetailedItem")}
                 icon="comment"
                 isLeft={false}
               />

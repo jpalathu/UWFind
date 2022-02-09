@@ -15,19 +15,15 @@ import {
 import {Button} from "native-base";
 
 import Colors from "../constants/Colors";
-import DetailedItem from "../components/DetailedItem";
 import { RootTabScreenProps } from "../types";
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { TabView, SceneMap } from 'react-native-tab-view';
 import FoundForm from "../components/FoundForm";
 import LostForm from "../components/LostForm";
-import { StackNavigator } from 'react-navigation';
 import FilterForm from "../components/FilterForm";
+import { useNavigation } from '@react-navigation/native';
 
-const Stack = createNativeStackNavigator();
 
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
@@ -70,7 +66,10 @@ export default function Home() {
     />
   );
 }
-const LostFeed = ({ navigation }: RootTabScreenProps<"DetailedItem">) => {
+
+const LostFeed = () => {
+  const navigation = useNavigation();
+
   const [items, setItems] = useState<any[]>([]);
 
   const setFilteredItems = (filteredItems: any[]) => {
@@ -111,6 +110,7 @@ const LostFeed = ({ navigation }: RootTabScreenProps<"DetailedItem">) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.header_text}>
+          
           <Text style={styles.header_text_label}>Lost Items</Text>
         </View>
         <View style={styles.whitespace}></View>
@@ -135,10 +135,23 @@ const LostFeed = ({ navigation }: RootTabScreenProps<"DetailedItem">) => {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
-                  <Button
-                    title="Go to Details"
-                    onPress={() => navigation.navigate('DetailedItem')}
-                  />
+
+              <PressableIcon
+                  onPress={() => {
+                    /* 1. Navigate to the Details route with params */
+                    navigation.navigate('LostDetailedItem', {
+                      itemPostId: item.postId,
+                      itemTitle: item.title,
+                      itemCategory: item.categoryId.name,
+                      itemLocation: item.buildingId.name,
+                      itemDate: item.date,
+                      itemDescription: item.description,
+                      itemImage: item.imageUrl, 
+                    });
+                  }}             
+                  icon="arrow-up"
+                  isLeft={true}
+            />
 
                 <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
@@ -159,6 +172,8 @@ const LostFeed = ({ navigation }: RootTabScreenProps<"DetailedItem">) => {
 };
 
 const FoundFeed = () => {
+  const navigation = useNavigation();
+
   const [items, setItems] = useState<any[]>([]);
 
   const setFilteredItems = (filteredItems: any[]) => {
@@ -228,6 +243,24 @@ const FoundFeed = () => {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
+
+              <PressableIcon
+                  onPress={() => {
+                    /* 1. Navigate to the Details route with params */
+                    navigation.navigate('FoundDetailedItem', {
+                      itemPostId: item.postId,
+                      itemTitle: item.title,
+                      itemCategory: item.categoryId.name,
+                      itemLocation: item.buildingId.name,
+                      itemOtherLocation: item.otherDropOffLocation,
+                      itemDate: item.date,
+                      itemDescription: item.description,
+                      itemImage: item.imageUrl, 
+                    });
+                  }}             
+                  icon="arrow-up"
+                  isLeft={true}
+            />
                 <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
                   <Text style={styles.news_text}>{item.categoryId.name}</Text>
@@ -269,6 +302,7 @@ const PressableIcon = (props: PressableIconProps) => (
     />
   </Pressable>
 );
+
 
 const styles = StyleSheet.create({
   container: {
