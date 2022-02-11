@@ -292,7 +292,7 @@ export default function LostForm() {
             </FormControl>
             <FormControl>
               <FormControl.Label>Description</FormControl.Label>
-              <Input onChangeText={(value) => setDescription(value)} />
+              <Input multiline = {true} onChangeText={(value) => setDescription(value)} />
             </FormControl>
             <FormControl>
               {/* NEED TO CHANGE THIS TO UPLOAD IMAGE */}
