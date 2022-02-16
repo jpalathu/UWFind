@@ -223,14 +223,13 @@ export default function LostForm() {
               <FormControl.Label>Title</FormControl.Label>
               <Input onChangeText={(value) => setTitle(value)} />
             </FormControl>
-            <Button  
+            {/* <Button  
                 onPress={() => {
-                 pickImage()
                 }}
               >
              Upload a photo
               </Button>
-              {/* <Image source={{ uri: "https://media.istockphoto.com/photos/bottle-of-spring-water-picture-id185072125?b=1&k=20&m=185072125&s=170667a&w=0&h=pkXkUz4xBGGakD9J-_9uodwVHmrvNK_-drPXI-EQdcI=" }} />  */}
+              <Image source={{ uri: "https://media.istockphoto.com/photos/bottle-of-spring-water-picture-id185072125?b=1&k=20&m=185072125&s=170667a&w=0&h=pkXkUz4xBGGakD9J-_9uodwVHmrvNK_-drPXI-EQdcI=" }} />  */}
 
             <FormControl mt="3">
               <FormControl.Label>Date</FormControl.Label>
