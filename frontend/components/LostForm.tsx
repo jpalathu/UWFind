@@ -1,6 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { StyleSheet, View, Switch, TextInput, ScrollView } from "react-native";
+import { StyleSheet, View, Switch, TextInput, ScrollView, Image } from "react-native";
 import { Picker } from "react-native-woodpicker";
+import {takePhoto} from "../utils/imagePicker";
+import {pickImage} from "../utils/imagePicker";
+import {handleImagePicked} from "../utils/imagePicker";
+
 // import Button from "./shared/Button";
 import {
   Button,
@@ -131,6 +135,7 @@ export default function LostForm() {
   `;
   const [executeMutation] = useMutation(CREATE_POST);
   const { userID } = useStore();
+  // const {imageURL} = pickImage(); 
   const [isMutationLoading, setIsMutationLoading] = useState(false);
   const createPost = async () => {
     setIsMutationLoading(true);
@@ -218,6 +223,15 @@ export default function LostForm() {
               <FormControl.Label>Title</FormControl.Label>
               <Input onChangeText={(value) => setTitle(value)} />
             </FormControl>
+            <Button  
+                onPress={() => {
+                 pickImage()
+                }}
+              >
+             Upload a photo
+              </Button>
+              {/* <Image source={{ uri: "https://media.istockphoto.com/photos/bottle-of-spring-water-picture-id185072125?b=1&k=20&m=185072125&s=170667a&w=0&h=pkXkUz4xBGGakD9J-_9uodwVHmrvNK_-drPXI-EQdcI=" }} />  */}
+
             <FormControl mt="3">
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
