@@ -74,6 +74,7 @@ function RootNavigator() {
         name="LostDetailedItem"
         component={LostDetailedItem}
         options={({ navigation }: RootTabScreenProps<"LostDetailedItem">) => ({
+          title: "Details",
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (
@@ -89,6 +90,7 @@ function RootNavigator() {
         name="FoundDetailedItem"
         component={FoundDetailedItem}
         options={({ navigation }: RootTabScreenProps<"FoundDetailedItem">) => ({
+          title: "Details",
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (
@@ -114,11 +116,11 @@ function RootNavigator() {
                 icon="user"
                 isLeft={false}
               />
-              <PressableIcon
+              {/* <PressableIcon
                 onPress={() => navigation.navigate("PublicProfile")}
                 icon="user"
                 isLeft={false}
-              />
+              /> */}
               <PressableIcon
                 onPress={() => navigation.navigate("ChatHome")}
                 icon="comment"
