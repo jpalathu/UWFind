@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     flex: 2,
     flexDirection: "row",
     padding: 10,
-    color: "#000000",
+    color: "#FFFFFF",
   },
   number: {
     flex: 0.5,
