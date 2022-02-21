@@ -68,21 +68,25 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   const { updateUserID, updateAuthToken } = useStore();
   const login = async () => {
     setIsQueryLoading(true);
-    if (validate()) {
-      const { data, error } = await executeQuery({
-        variables: { email: email.value, password: password.value },
-      });
+    try {
+      if (validate()) {
+        const { data, error } = await executeQuery({
+          variables: { email: email.value, password: password.value },
+        });
 
-      if (error) {
-        console.error("ERROR", JSON.stringify(error, null, 2));
-      } else {
-        console.log("GOOD", data);
-        // store the user ID and auth token
-        updateUserID(data.login.user.userId);
-        updateAuthToken(data.login.token);
-        resetFields();
-        navigation.navigate("Home");
+        if (error) {
+          console.error("ERROR", JSON.stringify(error, null, 2));
+        } else {
+          console.log("GOOD", data);
+          // store the user ID and auth token
+          updateUserID(data.login.user.userId);
+          updateAuthToken(data.login.token);
+          resetFields();
+          navigation.navigate("Home");
+        }
       }
+    } catch (err) {
+      console.log(err);
     }
     setIsQueryLoading(false);
   };
