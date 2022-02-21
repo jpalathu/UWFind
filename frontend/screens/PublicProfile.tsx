@@ -33,7 +33,7 @@ import { RootTabScreenProps } from "../types";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 // export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
 //     const schema = yup.object().shape({
@@ -43,6 +43,7 @@ import { useRoute } from "@react-navigation/native";
 //     });
 
 export default function PublicProfile() {
+  const navigation = useNavigation();
   const route = useRoute();
 
   const [profile, setProfile] = useState({
@@ -82,6 +83,46 @@ export default function PublicProfile() {
   useEffect(() => {
     loadProfile();
   }, []);
+
+
+  /********** Create a chat room between yourself and the other user to send messages ********** */
+  const CREATE_CHAT_ROOM = gql`
+    mutation ($currentUserId: Int!, $otherUserId: Int!) {
+      createChatRoom(currentUserId: $currentUserId, otherUserId: $otherUserId) {
+        alreadyExists
+        chatRoom {
+          chatRoomId
+        }
+        user {
+          firstName
+          lastName
+        }
+      }
+    }
+  `;
+  const [executeMutation] = useMutation(CREATE_CHAT_ROOM);
+  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const { userID } = useStore();
+  const createChatRoom = async () => {
+    setIsMutationLoading(true);
+    try {
+      const result = await executeMutation({
+        variables: {
+          currentUserId: userID,
+          otherUserId: route.params?.userID,
+        },
+      });
+      console.log("GOOD", result);
+      const { user, chatRoom } = result.data.createChatRoom;
+      navigation.navigate("ChatRoom", {
+        chatRoomID: chatRoom.chatRoomId,
+        name: user.firstName + " " + user.lastName,
+      });
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    }
+    setIsMutationLoading(false);
+  };
 
   // handleEmail = (text: any) => {
   //     this.setState({ email: text })
@@ -150,6 +191,8 @@ export default function PublicProfile() {
       </Center>
       <Center>
         <Button
+          onPress={createChatRoom}
+          isLoading={isMutationLoading}
           size="lg"
           my="6"
           style={{
