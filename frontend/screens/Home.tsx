@@ -211,6 +211,12 @@ const FoundFeed = () => {
           lastName
           imageUrl
         }
+        claimedUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
       }
     }
   `;
@@ -269,7 +275,8 @@ const FoundFeed = () => {
                       itemDate: item.date,
                       itemDescription: item.description,
                       itemImage: item.imageUrl, 
-                      itemFoundUser: item.foundUserId
+                      itemFoundUser: item.foundUserId,
+                      itemClaimedUser: item.claimedUserId
                     });
                   }}             
                   icon="arrow-up"

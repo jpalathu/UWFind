@@ -17,11 +17,12 @@ import {
   IconButton,
   Select,
 } from "native-base";
-import { Foundation } from "@expo/vector-icons";
+import { Foundation, AntDesign } from "@expo/vector-icons";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import ProfileImage from "./shared/ProfileImage";
 import { useNavigation } from "@react-navigation/native";
+import { useStore } from "../store";
 
 export default function FoundDetailedItem({ route }) {
   const navigation = useNavigation();
@@ -36,6 +37,7 @@ export default function FoundDetailedItem({ route }) {
     itemDescription,
     itemOtherLocation,
     itemFoundUser,
+    itemClaimedUser,
   } = route.params;
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [date, setDate] = useState(itemDate);
@@ -118,6 +120,38 @@ export default function FoundDetailedItem({ route }) {
   useEffect(() => {
     getFormData();
   }, []);
+
+  /******************* Claim an item ******************* */
+  const CLAIM_ITEM = gql`
+    mutation ($postId: Int!, $claimedUserId: Int!) {
+      updateFoundItemPost(
+        id: $postId
+        input: { claimedUserId: $claimedUserId }
+      ) {
+        foundItemPost {
+          postId
+        }
+      }
+    }
+  `;
+  const [executeMutation] = useMutation(CLAIM_ITEM);
+  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const { userID } = useStore();
+  const claimItem = async () => {
+    setIsMutationLoading(true);
+    try {
+      const result = await executeMutation({
+        variables: {
+          postId: itemPostId,
+          claimedUserId: userID,
+        },
+      });
+      console.log("GOOD", result);
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    }
+    setIsMutationLoading(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -325,24 +359,36 @@ export default function FoundDetailedItem({ route }) {
               <Image source={{ uri: itemImage }} style={styles.photo} />
             </View>
 
-            <Button
-              size="lg"
-              my="6"
-              style={{
-                backgroundColor: "#ffc50b",
-                borderColor: "#000",
-                borderWidth: 1,
-                shadowOpacity: 0.3,
-                shadowRadius: 10,
-                shadowOffset: { width: 1, height: 10 },
-              }}
-              width="40%"
-              height="39px"
-              borderRadius="20"
-              _text={{ color: "#000" }}
-            >
-              Claim Item
-            </Button>
+            {itemClaimedUser ? (
+              <View style={styles.claimed_user}>
+                <AntDesign name="checkcircle" size={24} color="#45fc03" />
+                <Text style={styles.claimed_user_text}>
+                  Claimed by {itemClaimedUser.firstName}{" "}
+                  {itemClaimedUser.lastName} ({itemClaimedUser.email})
+                </Text>
+              </View>
+            ) : (
+              <Button
+                onPress={claimItem}
+                isLoading={isMutationLoading}
+                size="lg"
+                my="6"
+                style={{
+                  backgroundColor: "#ffc50b",
+                  borderColor: "#000",
+                  borderWidth: 1,
+                  shadowOpacity: 0.3,
+                  shadowRadius: 10,
+                  shadowOffset: { width: 1, height: 10 },
+                }}
+                width="40%"
+                height="39px"
+                borderRadius="20"
+                _text={{ color: "#000" }}
+              >
+                Claim Item
+              </Button>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -446,5 +492,15 @@ const styles = StyleSheet.create({
   photo: {
     width: 120,
     height: 120,
+  },
+  claimed_user: {
+    marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  claimed_user_text: {
+    color: "#45fc03",
+    paddingLeft: 10,
   },
 });
