@@ -90,6 +90,12 @@ const LostFeed = () => {
         categoryId {
           name
         }
+        lostUserId {
+          userId
+          firstName
+          lastName
+          imageUrl
+        }
       }
     }
   `;
@@ -147,6 +153,7 @@ const LostFeed = () => {
                       itemDate: item.date,
                       itemDescription: item.description,
                       itemImage: item.imageUrl, 
+                      itemLostUser: item.lostUserId
                     });
                   }}             
                   icon="arrow-up"
@@ -197,6 +204,12 @@ const FoundFeed = () => {
         otherDropOffLocation
         dropOffLocationId {
           name
+        }
+        foundUserId {
+          userId
+          firstName
+          lastName
+          imageUrl
         }
       }
     }
@@ -256,6 +269,7 @@ const FoundFeed = () => {
                       itemDate: item.date,
                       itemDescription: item.description,
                       itemImage: item.imageUrl, 
+                      itemFoundUser: item.foundUserId
                     });
                   }}             
                   icon="arrow-up"
