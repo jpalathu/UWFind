@@ -39,6 +39,8 @@ export default function FoundDetailedItem({ route }) {
     itemFoundUser,
     itemClaimedUser,
   } = route.params;
+
+  const [claimedUser, setClaimedUser] = useState(itemClaimedUser)
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [date, setDate] = useState(itemDate);
   const [locationValue, setLocationValue] = useState(itemLocation);
@@ -130,6 +132,12 @@ export default function FoundDetailedItem({ route }) {
       ) {
         foundItemPost {
           postId
+          claimedUserId {
+            userId
+            firstName
+            lastName
+            email
+          }
         }
       }
     }
@@ -147,6 +155,8 @@ export default function FoundDetailedItem({ route }) {
         },
       });
       console.log("GOOD", result);
+      // update the claimed user
+      setClaimedUser(result.data.updateFoundItemPost.foundItemPost.claimedUserId)
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     }
@@ -359,12 +369,12 @@ export default function FoundDetailedItem({ route }) {
               <Image source={{ uri: itemImage }} style={styles.photo} />
             </View>
 
-            {itemClaimedUser ? (
+            {claimedUser ? (
               <View style={styles.claimed_user}>
                 <AntDesign name="checkcircle" size={24} color="#45fc03" />
                 <Text style={styles.claimed_user_text}>
-                  Claimed by {itemClaimedUser.firstName}{" "}
-                  {itemClaimedUser.lastName} ({itemClaimedUser.email})
+                  Claimed by {claimedUser.firstName}{" "}
+                  {claimedUser.lastName} ({claimedUser.email})
                 </Text>
               </View>
             ) : (
