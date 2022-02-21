@@ -118,13 +118,13 @@ class LostItemPostType(DjangoObjectType):
         model = LostItemPost
 
 class LostItemPostInput(graphene.InputObjectType):
-    title = graphene.String(required=True)
-    lost_user_id = graphene.Int(required=True)
-    description = graphene.String(required=True)
-    building_id = graphene.Int(required=True)
-    category_id = graphene.Int(required=True)
+    title = graphene.String()
+    lost_user_id = graphene.Int()
+    description = graphene.String()
+    building_id = graphene.Int()
+    category_id = graphene.Int()
     image_url = graphene.String()
-    date = graphene.String(required=True)
+    date = graphene.String()
 
 class LostItemPostFilterInput(graphene.InputObjectType):
     start_date = graphene.String()
@@ -164,12 +164,12 @@ class UpdateLostItemPost(graphene.Mutation):
     def mutate(root, info, id, input):
         try:
             post_instance = LostItemPost.objects.get(post_id=id)
-            post_instance.title = input.title
-            post_instance.description = input.description
-            post_instance.building_id = Building.objects.get(building_id=input.building_id)
-            post_instance.category_id = Category.objects.get(category_id=input.category_id)
-            post_instance.image_url = None if input.image_url is None else input.image_url
-            post_instance.date = input.date
+            if "title" in input: post_instance.title = input.title
+            if "description" in input: post_instance.description = input.description
+            if "building_id" in input: post_instance.building_id = Building.objects.get(building_id=input.building_id)
+            if "category_id" in input: post_instance.category_id = Category.objects.get(category_id=input.category_id)
+            if "image_url" in input: post_instance.image_url = input.image_url
+            if "date" in input: post_instance.date = input.date
             post_instance.save()
             return UpdateLostItemPost(lost_item_post=post_instance)
         except:
@@ -197,16 +197,16 @@ class FoundItemPostType(DjangoObjectType):
         model = FoundItemPost
 
 class FoundItemPostInput(graphene.InputObjectType):
-    title = graphene.String(required=True)
-    found_user_id = graphene.Int(required=True)
+    title = graphene.String()
+    found_user_id = graphene.Int()
     claimed_user_id = graphene.Int()
     drop_off_location_id = graphene.Int()
     other_drop_off_location = graphene.String()
-    description = graphene.String(required=True)
-    building_id = graphene.Int(required=True)
-    category_id = graphene.Int(required=True)
+    description = graphene.String()
+    building_id = graphene.Int()
+    category_id = graphene.Int()
     image_url = graphene.String()
-    date = graphene.String(required=True)
+    date = graphene.String()
 
 class FoundItemPostFilterInput(graphene.InputObjectType):
     start_date = graphene.String()
@@ -249,14 +249,15 @@ class UpdateFoundItemPost(graphene.Mutation):
     def mutate(root, info, id, input):
         try:
             post_instance = FoundItemPost.objects.get(post_id=id)
-            post_instance.title = input.title
-            post_instance.description = input.description
-            post_instance.drop_off_location_id = None if input.drop_off_location_id is None else DropOffLocation.objects.get(location_id=input.drop_off_location_id)
-            post_instance.other_drop_off_location = None if input.other_drop_off_location is None else input.other_drop_off_location
-            post_instance.building_id = Building.objects.get(building_id=input.building_id)
-            post_instance.category_id = Category.objects.get(category_id=input.category_id)
-            post_instance.image_url = None if input.image_url is None else input.image_url
-            post_instance.date = input.date
+            if "title" in input: post_instance.title = input.title
+            if "claimed_user_id" in input: post_instance.claimed_user_id = User.objects.get(user_id=input.claimed_user_id)
+            if "description" in input: post_instance.description = input.description
+            if "drop_off_location_id" in input: post_instance.drop_off_location_id = DropOffLocation.objects.get(location_id=input.drop_off_location_id)
+            if "other_drop_off_location" in input: post_instance.other_drop_off_location = input.other_drop_off_location
+            if "building_id" in input: post_instance.building_id = Building.objects.get(building_id=input.building_id)
+            if "category_id" in input: post_instance.category_id = Category.objects.get(category_id=input.category_id)
+            if "image_url" in input: post_instance.image_url = input.image_url
+            if "date" in input: post_instance.date = input.date
             post_instance.save()
             return UpdateFoundItemPost(found_item_post=post_instance)
         except:
