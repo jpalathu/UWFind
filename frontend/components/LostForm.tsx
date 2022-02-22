@@ -1,8 +1,15 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { StyleSheet, View, Switch, TextInput, ScrollView, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Switch,
+  TextInput,
+  ScrollView,
+  Image,
+} from "react-native";
 import { Picker } from "react-native-woodpicker";
-import {takePhoto} from "../utils/imagePicker";
-import {pickImage} from "../utils/imagePicker";
+import { takePhoto } from "../utils/imagePicker";
+import { pickImage } from "../utils/imagePicker";
 // import {handleImagePicked} from "../utils/imagePicker";
 
 // import Button from "./shared/Button";
@@ -23,7 +30,7 @@ import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 
-export default function LostForm() {
+export default function LostForm(props) {
   // const [isFoundItemForm, setIsFoundItemForm] = useState(true);
   // const [location, setLocation] = useState(null);
   // const [category, setCategory] = useState(null);
@@ -75,10 +82,7 @@ export default function LostForm() {
   const [locationValue, setLocationValue] = useState("");
   const [categoryValue, setCategoryValue] = useState("");
   const [description, setDescription] = useState("");
-  // TODO: change default when image pop up is connected
-  const [imageUrl, setImageUrl] = useState(
-    "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
-  );
+  const [imageUrl, setImageUrl] = useState("");
 
   // Use this to store the buildings (locations) and categories for the drop down selections
   const [locations, setLocations] = useState<any[]>([]);
@@ -90,10 +94,7 @@ export default function LostForm() {
     setLocationValue("");
     setCategoryValue("");
     setDescription("");
-    // TODO: change default when image pop up is connected
-    setImageUrl(
-      "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
-    );
+    setImageUrl("");
   };
 
   const closeModal = () => {
@@ -105,10 +106,10 @@ export default function LostForm() {
     setShowModal(true);
   };
 
-  // const dealWithPictures = () => {
-  //  const image = pickImage(); 
-  //  if ()
-  // }
+  const handlePickedImage = async () => {
+    const image = await pickImage();
+    setImageUrl(image);
+  };
 
   /* Creating the post */
   const CREATE_POST = gql`
@@ -140,7 +141,7 @@ export default function LostForm() {
   `;
   const [executeMutation] = useMutation(CREATE_POST);
   const { userID } = useStore();
-  // const {imageURL} = pickImage(); 
+  // const {imageURL} = pickImage();
   const [isMutationLoading, setIsMutationLoading] = useState(false);
   const createPost = async () => {
     setIsMutationLoading(true);
@@ -157,6 +158,7 @@ export default function LostForm() {
         },
       });
       console.log("GOOD", result);
+      props.refreshPosts();
       closeModal();
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
@@ -214,8 +216,6 @@ export default function LostForm() {
         LOST ITEM?
       </Button>
 
-      
-
       <Modal
         isOpen={showModal}
         onClose={() => {
@@ -235,21 +235,13 @@ export default function LostForm() {
             </FormControl>
 
             <FormControl mt="3">
-            <Button  
-                onPress={() => {
-                  pickImage();
-                }}
-              >
-             Upload a photo
-              </Button>
-            
+              <Button onPress={handlePickedImage}>Upload a photo</Button>
             </FormControl>
 
-{/* <FormControl>
+            {/* <FormControl>
 <Image source={{ uri: 'https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/84C05669-2526-4BF7-A06B-D93710EFFA9C.png'}} />
 
 </FormControl> */}
-  
 
             <FormControl mt="3">
               <FormControl.Label>Date</FormControl.Label>
@@ -330,7 +322,7 @@ export default function LostForm() {
             <FormControl>
               {/* NEED TO CHANGE THIS TO UPLOAD IMAGE */}
               <FormControl.Label>Image</FormControl.Label>
-              <Input />
+              <Input value={imageUrl} />
             </FormControl>
           </Modal.Body>
           <Modal.Footer>
