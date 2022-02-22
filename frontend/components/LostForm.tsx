@@ -3,7 +3,7 @@ import { StyleSheet, View, Switch, TextInput, ScrollView, Image } from "react-na
 import { Picker } from "react-native-woodpicker";
 import {takePhoto} from "../utils/imagePicker";
 import {pickImage} from "../utils/imagePicker";
-import {handleImagePicked} from "../utils/imagePicker";
+// import {handleImagePicked} from "../utils/imagePicker";
 
 // import Button from "./shared/Button";
 import {
@@ -104,6 +104,11 @@ export default function LostForm() {
   const openModal = () => {
     setShowModal(true);
   };
+
+  // const dealWithPictures = () => {
+  //  const image = pickImage(); 
+  //  if ()
+  // }
 
   /* Creating the post */
   const CREATE_POST = gql`
@@ -209,6 +214,8 @@ export default function LostForm() {
         LOST ITEM?
       </Button>
 
+      
+
       <Modal
         isOpen={showModal}
         onClose={() => {
@@ -218,18 +225,31 @@ export default function LostForm() {
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header>Create a Post</Modal.Header>
+          {/* <Image
+            source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
+          /> */}
           <Modal.Body>
             <FormControl>
               <FormControl.Label>Title</FormControl.Label>
               <Input onChangeText={(value) => setTitle(value)} />
             </FormControl>
-            {/* <Button  
+
+            <FormControl mt="3">
+            <Button  
                 onPress={() => {
+                  pickImage();
                 }}
               >
              Upload a photo
               </Button>
-              <Image source={{ uri: "https://media.istockphoto.com/photos/bottle-of-spring-water-picture-id185072125?b=1&k=20&m=185072125&s=170667a&w=0&h=pkXkUz4xBGGakD9J-_9uodwVHmrvNK_-drPXI-EQdcI=" }} />  */}
+            
+            </FormControl>
+
+{/* <FormControl>
+<Image source={{ uri: 'https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/84C05669-2526-4BF7-A06B-D93710EFFA9C.png'}} />
+
+</FormControl> */}
+  
 
             <FormControl mt="3">
               <FormControl.Label>Date</FormControl.Label>

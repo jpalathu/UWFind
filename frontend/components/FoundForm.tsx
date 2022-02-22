@@ -18,6 +18,8 @@ import DummyDropOffLocations from "../dummy/drop_off_location.json";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
+import {takePhoto} from "../utils/imagePicker";
+import {pickImage} from "../utils/imagePicker";
 
 export default function FoundForm() {
   // const [isFoundItemForm, setIsFoundItemForm] = useState(true);
@@ -234,6 +236,18 @@ export default function FoundForm() {
               <FormControl.Label>Title</FormControl.Label>
               <Input onChangeText={(value) => setTitle(value)} />
             </FormControl>
+
+            <FormControl mt="3">
+            <Button  
+                onPress={() => {
+                  pickImage();
+                }}
+              >
+             Upload a photo
+              </Button>
+            
+            </FormControl>
+
             <FormControl mt="3">
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
