@@ -12,18 +12,16 @@ import {
   FlatList,
   useWindowDimensions,
 } from "react-native";
-import {Button} from "native-base";
+import { Button } from "native-base";
 
 import Colors from "../constants/Colors";
 import { RootTabScreenProps } from "../types";
 
-
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap } from "react-native-tab-view";
 import FoundForm from "../components/FoundForm";
 import LostForm from "../components/LostForm";
 import FilterForm from "../components/FilterForm";
-import { useNavigation } from '@react-navigation/native';
-
+import { useNavigation } from "@react-navigation/native";
 
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
@@ -90,6 +88,12 @@ const LostFeed = () => {
         categoryId {
           name
         }
+        lostUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
       }
     }
   `;
@@ -110,7 +114,6 @@ const LostFeed = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.header_text}>
-          
           <Text style={styles.header_text_label}>Lost Items</Text>
         </View>
         <View style={styles.whitespace}></View>
@@ -120,7 +123,7 @@ const LostFeed = () => {
       </View>
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
-          <LostForm refreshPosts={getItems}/>
+          <LostForm refreshPosts={getItems} />
         </View>
         <View style={styles.header_button}>
           <FilterForm
@@ -135,23 +138,23 @@ const LostFeed = () => {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
-
-              <PressableIcon
+                <PressableIcon
                   onPress={() => {
                     /* 1. Navigate to the Details route with params */
-                    navigation.navigate('LostDetailedItem', {
+                    navigation.navigate("LostDetailedItem", {
                       itemPostId: item.postId,
                       itemTitle: item.title,
                       itemCategory: item.categoryId.name,
                       itemLocation: item.buildingId.name,
                       itemDate: item.date,
                       itemDescription: item.description,
-                      itemImage: item.imageUrl, 
+                      itemImage: item.imageUrl,
+                      itemLostUser: item.lostUserId,
                     });
-                  }}             
+                  }}
                   icon="arrow-up"
                   isLeft={true}
-            />
+                />
 
                 <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
@@ -198,6 +201,18 @@ const FoundFeed = () => {
         dropOffLocationId {
           name
         }
+        foundUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+        claimedUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
       }
     }
   `;
@@ -228,7 +243,7 @@ const FoundFeed = () => {
       </View>
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
-          <FoundForm refreshPosts={getItems}/>
+          <FoundForm refreshPosts={getItems} />
         </View>
         <View style={styles.header_button}>
           <FilterForm
@@ -243,11 +258,10 @@ const FoundFeed = () => {
           return (
             <View key={item.postId} style={styles.news_item}>
               <View style={styles.text_container}>
-
-              <PressableIcon
+                <PressableIcon
                   onPress={() => {
                     /* 1. Navigate to the Details route with params */
-                    navigation.navigate('FoundDetailedItem', {
+                    navigation.navigate("FoundDetailedItem", {
                       itemPostId: item.postId,
                       itemTitle: item.title,
                       itemCategory: item.categoryId.name,
@@ -255,12 +269,14 @@ const FoundFeed = () => {
                       itemOtherLocation: item.otherDropOffLocation,
                       itemDate: item.date,
                       itemDescription: item.description,
-                      itemImage: item.imageUrl, 
+                      itemImage: item.imageUrl,
+                      itemFoundUser: item.foundUserId,
+                      itemClaimedUser: item.claimedUserId,
                     });
-                  }}             
+                  }}
                   icon="arrow-up"
                   isLeft={true}
-            />
+                />
                 <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.text_container}>
                   <Text style={styles.news_text}>{item.categoryId.name}</Text>
@@ -302,7 +318,6 @@ const PressableIcon = (props: PressableIconProps) => (
     />
   </Pressable>
 );
-
 
 const styles = StyleSheet.create({
   container: {

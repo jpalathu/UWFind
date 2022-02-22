@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import {
   Container,
@@ -19,15 +20,22 @@ import {
 import { Foundation } from "@expo/vector-icons";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useNavigation } from "@react-navigation/native";
+import ProfileImage from "./shared/ProfileImage";
 
 export default function LostDetailedItem({ route }) {
-  const { itemPostId } = route.params;
-  const { itemTitle } = route.params;
-  const { itemDate } = route.params;
-  const { itemImage} = route.params;
-  const { itemCategory} = route.params;
-  const { itemLocation } = route.params;
-  const { itemDescription } = route.params;
+  const navigation = useNavigation();
+
+  const {
+    itemPostId,
+    itemTitle,
+    itemDate,
+    itemImage,
+    itemCategory,
+    itemLocation,
+    itemDescription,
+    itemLostUser,
+  } = route.params;
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [date, setDate] = useState(itemDate);
   const [locationValue, setLocationValue] = useState(itemLocation);
@@ -35,6 +43,10 @@ export default function LostDetailedItem({ route }) {
 
   const [locations, setLocations] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+
+  const goToPublicProfile = () => {
+    navigation.navigate("PublicProfile", { userID: itemLostUser.userId });
+  };
 
   const [post, setpost] = useState({
     title: "",
@@ -336,7 +348,20 @@ export default function LostDetailedItem({ route }) {
                 <Text style={styles.title}>{itemTitle}</Text>
                 
                 <View style={styles.text_container}>
-                <Text style={styles.news_text}>*PLACEHOLDER FOR LINK TO PUBLIC PROFILE*</Text>
+                <TouchableOpacity
+                style={styles.found_user_profile}
+                onPress={goToPublicProfile}
+              >
+                <ProfileImage
+                  style={styles.profile_pic}
+                  imageUrl={itemLostUser.imageUrl}
+                  firstName={itemLostUser.firstName}
+                  lastName={itemLostUser.lastName}
+                />
+                <Text style={styles.news_text}>
+                  {itemLostUser.firstName} {itemLostUser.lastName}
+                </Text>
+              </TouchableOpacity> 
 
                   <Text style={styles.news_text}>{itemCategory}</Text>
                   <Text style={styles.news_text}>{itemLocation}</Text>
@@ -376,6 +401,17 @@ const styles = StyleSheet.create({
   },
   whitespace: {
     flex: 1,
+  },
+  found_user_profile: {
+    marginTop: 10,
+    marginBottom: 5,
+    marginLeft: 10,
+    flexDirection: "row",
+  },
+  profile_pic: {
+    height: 35,
+    width: 35,
+    borderRadius: 30,
   },
   back_button: {
     flexDirection: "row",
