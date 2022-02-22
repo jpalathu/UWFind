@@ -431,7 +431,7 @@ class Query(graphene.ObjectType):
         building_exists = filter.building_id is not None
         date_range_exists = filter.start_date is not None and filter.end_date is not None
         
-        posts = LostItemPost.objects.filter(deleted_at=None)
+        posts = LostItemPost.objects.filter(deleted_at=None).order_by("-date")
         if category_exists:
             posts = posts.filter(category_id=filter.category_id)
         if building_exists:
@@ -449,7 +449,7 @@ class Query(graphene.ObjectType):
         building_exists = filter.building_id is not None
         date_range_exists = filter.start_date is not None and filter.end_date is not None
         
-        posts = FoundItemPost.objects.filter(deleted_at=None)
+        posts = FoundItemPost.objects.filter(deleted_at=None).order_by("-date")
         if category_exists:
             posts = posts.filter(category_id=filter.category_id)
         if building_exists:
