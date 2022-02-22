@@ -18,8 +18,10 @@ import DummyDropOffLocations from "../dummy/drop_off_location.json";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
+import { takePhoto } from "../utils/imagePicker";
+import { pickImage } from "../utils/imagePicker";
 
-export default function FoundForm() {
+export default function FoundForm(props) {
   // const [isFoundItemForm, setIsFoundItemForm] = useState(true);
   // const [location, setLocation] = useState(null);
   // const [category, setCategory] = useState(null);
@@ -73,10 +75,7 @@ export default function FoundForm() {
   const [dropOffLocationValue, setDropOffLocationValue] = useState("");
   const [otherDropOffLocation, setOtherDropOffLocation] = useState("");
   const [description, setDescription] = useState("");
-  // TODO: change default when image pop up is connected
-  const [imageUrl, setImageUrl] = useState(
-    "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
-  );
+  const [imageUrl, setImageUrl] = useState("");
 
   // Use this to store the buildings (locations), categories, and drop off locations for the drop down selections
   const [locations, setLocations] = useState<any[]>([]);
@@ -91,10 +90,7 @@ export default function FoundForm() {
     setDropOffLocationValue("");
     setOtherDropOffLocation("");
     setDescription("");
-    // TODO: change default when image pop up is connected
-    setImageUrl(
-      "https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/test.jpg"
-    );
+    setImageUrl("");
   };
 
   const closeModal = () => {
@@ -104,6 +100,11 @@ export default function FoundForm() {
 
   const openModal = () => {
     setShowModal(true);
+  };
+
+  const handlePickedImage = async () => {
+    const image = await pickImage();
+    setImageUrl(image);
   };
 
   /* Creating the post */
@@ -158,6 +159,7 @@ export default function FoundForm() {
         },
       });
       console.log("GOOD", result);
+      props.refreshPosts();
       closeModal();
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
@@ -234,6 +236,11 @@ export default function FoundForm() {
               <FormControl.Label>Title</FormControl.Label>
               <Input onChangeText={(value) => setTitle(value)} />
             </FormControl>
+
+            <FormControl mt="3">
+              <Button onPress={handlePickedImage}>Upload a photo</Button>
+            </FormControl>
+
             <FormControl mt="3">
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
@@ -341,12 +348,15 @@ export default function FoundForm() {
             )}
             <FormControl>
               <FormControl.Label>Description</FormControl.Label>
-              <Input multiline = {true} onChangeText={(value) => setDescription(value)} />
+              <Input
+                multiline={true}
+                onChangeText={(value) => setDescription(value)}
+              />
             </FormControl>
             <FormControl>
               {/* NEED TO CHANGE THIS TO UPLOAD IMAGE */}
               <FormControl.Label>Image</FormControl.Label>
-              <Input />
+              <Input value={imageUrl} />
             </FormControl>
           </Modal.Body>
           <Modal.Footer>

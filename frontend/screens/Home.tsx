@@ -120,7 +120,7 @@ const LostFeed = () => {
       </View>
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
-          <LostForm />
+          <LostForm refreshPosts={getItems}/>
         </View>
         <View style={styles.header_button}>
           <FilterForm
@@ -257,7 +257,7 @@ const FoundFeed = () => {
       </View>
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
-          <FoundForm />
+          <FoundForm refreshPosts={getItems}/>
         </View>
         <View style={styles.header_button}>
           <FilterForm

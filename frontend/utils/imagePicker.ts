@@ -23,7 +23,7 @@ const fetchImageFromUri = async (uri: RequestInfo) => {
   return { blob, filename: parts[parts.length - 1] };
 };
 
-const uploadImage = (filename: string, img: Blob) => {
+const uploadImage = (filename: string, img: Blob): Promise<string> => {
   return new Promise((resolve, reject) => {
     const params = {
       Bucket: S3_BUCKET_NAME,
@@ -45,10 +45,10 @@ const uploadImage = (filename: string, img: Blob) => {
 
 const handleImagePicked = async (
   pickerResult: ImagePicker.ImagePickerResult
-) => {
+): Promise<string> => {
   try {
     if (pickerResult.cancelled) {
-      return;
+      return "";
     }
     const data = await fetchImageFromUri(pickerResult.uri);
     const uploadUrl = await uploadImage(data.filename, data.blob);
@@ -57,10 +57,11 @@ const handleImagePicked = async (
   } catch (e) {
     console.log(e);
     alert("Upload to S3 failed");
+    return ""
   }
 };
 
-const pickImage = async () => {
+const pickImage = async (): Promise<string> => {
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     aspect: [4, 3],
@@ -69,7 +70,7 @@ const pickImage = async () => {
   return handleImagePicked(result);
 };
 
-const takePhoto = async () => {
+const takePhoto = async (): Promise<string> => {
   const result = await ImagePicker.launchCameraAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     aspect: [4, 3],

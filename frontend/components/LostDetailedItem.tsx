@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  TouchableOpacity,
 } from "react-native";
 import {
   Container,
@@ -20,22 +19,15 @@ import {
 import { Foundation } from "@expo/vector-icons";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { useNavigation } from "@react-navigation/native";
-import ProfileImage from "./shared/ProfileImage";
 
 export default function LostDetailedItem({ route }) {
-  const navigation = useNavigation();
-
-  const {
-    itemPostId,
-    itemTitle,
-    itemDate,
-    itemImage,
-    itemCategory,
-    itemLocation,
-    itemDescription,
-    itemLostUser,
-  } = route.params;
+  const { itemPostId } = route.params;
+  const { itemTitle } = route.params;
+  const { itemDate } = route.params;
+  const { itemImage} = route.params;
+  const { itemCategory} = route.params;
+  const { itemLocation } = route.params;
+  const { itemDescription } = route.params;
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [date, setDate] = useState(itemDate);
   const [locationValue, setLocationValue] = useState(itemLocation);
@@ -44,19 +36,15 @@ export default function LostDetailedItem({ route }) {
   const [locations, setLocations] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
 
-  const goToPublicProfile = () => {
-    navigation.navigate("PublicProfile", { userID: itemLostUser.userId });
-  };
-
   const [post, setpost] = useState({
     title: "",
     date: "",
     image: "",
     category: "",
     location: "",
-    description: "",
+    description: ""
   });
-
+ 
   const [modalFields, setModalFields] = useState({
     title: "",
     date: "",
@@ -65,6 +53,7 @@ export default function LostDetailedItem({ route }) {
     location: "",
     description: "",
   });
+
 
   const openModal = () => {
     setShowEditInfo(true);
@@ -94,29 +83,30 @@ export default function LostDetailedItem({ route }) {
     return true;
   };
 
-  /* Updating the user */
-  //    const UPDATE_USER_MUTATION = gql`
-  //    mutation (
-  //      $title: String!
-  //      $date: String!
-  //      $category: String!
-  //      $location: String!
-  //      $description: String!
-  //    ) {
-  //      updatePost(
-  //       postId: $postId
-  //        input: { title: $title, date: $date, category: $category, location: $location, description: $description}
-  //      ) {
-  //        post {
-  //          title
-  //          date
-  //          category
-  //          location
-  //          description
-  //        }
-  //      }
-  //    }
-  //  `;
+
+   /* Updating the user */
+//    const UPDATE_USER_MUTATION = gql`
+//    mutation (
+//      $title: String!
+//      $date: String!
+//      $category: String!
+//      $location: String!
+//      $description: String!
+//    ) {
+//      updatePost(
+//       postId: $postId
+//        input: { title: $title, date: $date, category: $category, location: $location, description: $description}
+//      ) {
+//        post {
+//          title
+//          date
+//          category
+//          location
+//          description
+//        }
+//      }
+//    }
+//  `;
 
   // const [executeMutation] = useMutation(UPDATE_USER_MUTATION);
   // const [isMutationLoading, setIsMutationLoading] = useState(false);
@@ -131,7 +121,7 @@ export default function LostDetailedItem({ route }) {
   //           image: modalFields.image,
   //           category: modalFields.category,
   //           location: modalFields.location,
-  //           description: modalFields.description,
+  //           description: modalFields.description,       
   //         },
   //       });
   //       console.log("GOOD", result);
@@ -146,17 +136,17 @@ export default function LostDetailedItem({ route }) {
   // };
 
   const FORM_DATA = gql`
-    query {
-      categories {
-        name
-        categoryId
-      }
-      buildings {
-        name
-        buildingId
-      }
+  query {
+    categories {
+      name
+      categoryId
     }
-  `;
+    buildings {
+      name
+      buildingId
+    }
+  }
+`;
 
   const [executeQuery] = useLazyQuery(FORM_DATA);
   const getFormData = async () => {
@@ -174,8 +164,13 @@ export default function LostDetailedItem({ route }) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Modal isOpen={showEditInfo} onClose={closeModal}>
+
+
+
+<View style={styles.container}>
+
+
+<Modal isOpen={showEditInfo} onClose={closeModal}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
@@ -215,32 +210,33 @@ export default function LostDetailedItem({ route }) {
                   },
                 }}
                 onDateChange={(v) => {
-                  setModalFields({ ...modalFields, date: v });
+                  setModalFields({ ...modalFields, date: v })
                   setDate(v);
                 }}
               />
+
             </FormControl>
             <FormControl mt="3">
               <FormControl.Label>Location</FormControl.Label>
-              <Select
-                selectedValue={locationValue}
-                minWidth={200}
-                accessibilityLabel="Select a Location"
-                placeholder="Select a Location"
-                onValueChange={(v) => {
-                  setModalFields({ ...modalFields, location: v });
-                  setLocationValue(v);
-                }}
-                _selectedItem={{ bg: "yellow.400" }}
-                mt={1}
-              >
-                {locations.map((location) => (
-                  <Select.Item
-                    key={location.buildingId}
-                    label={location.name}
-                    value={location.buildingId}
-                  />
-                ))}
+              <Select 
+             selectedValue={locationValue}
+             minWidth={200}
+             accessibilityLabel="Select a Location"
+             placeholder="Select a Location"
+             onValueChange={(v) => {
+               setModalFields({ ...modalFields, location: v })
+               setLocationValue(v);
+             }}
+             _selectedItem={{ bg: "yellow.400" }}
+             mt={1}
+           >
+              {locations.map((location) => (
+                        <Select.Item
+                          key={location.buildingId}
+                          label={location.name}
+                          value={location.buildingId}
+                        />
+                      ))}
               </Select>
               {/* <Input
                 type="text"
@@ -257,7 +253,7 @@ export default function LostDetailedItem({ route }) {
                 accessibilityLabel="Select a Category"
                 placeholder="Select a Category"
                 onValueChange={(itemValue) => {
-                  setModalFields({ ...modalFields, location: itemValue });
+                  setModalFields({ ...modalFields, location: itemValue })
                   setCategoryValue(itemValue);
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
@@ -281,9 +277,7 @@ export default function LostDetailedItem({ route }) {
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"
-                onChangeText={(v) =>
-                  setModalFields({ ...modalFields, description: v })
-                }
+                onChangeText={(v) => setModalFields({ ...modalFields, description: v })}
                 defaultValue={modalFields.description}
               />
             </FormControl>
@@ -291,12 +285,12 @@ export default function LostDetailedItem({ route }) {
               <FormControl.Label>Image</FormControl.Label>
               <Input
                 type="text"
-                onChangeText={(v) =>
-                  setModalFields({ ...modalFields, image: v })
-                }
+                onChangeText={(v) => setModalFields({ ...modalFields, image: v })}
                 defaultValue={modalFields.image}
               />
             </FormControl>
+    
+           
           </Modal.Body>
           <Modal.Footer>
             <Button.Group space={2}>
@@ -317,58 +311,51 @@ export default function LostDetailedItem({ route }) {
 
       <View style={styles.header}>
         <View style={styles.header_text}>
+          
           <Text style={styles.header_text_label}>Details</Text>
         </View>
         <View style={styles.whitespace}></View>
       </View>
 
       <ScrollView style={styles.news_container}>
-        <View style={styles.news_item}>
-          <View style={styles.text_container}>
-            {/* <Text style={styles.title}>{itemPostId}</Text> */}
-            <Container style={{ alignSelf: "flex-end" }}>
-              <Container style={{ alignSelf: "stretch" }}>
-                <IconButton
-                  variant="solid"
-                  _icon={{
-                    as: Foundation,
-                    name: "pencil",
-                  }}
-                  onPress={openModal}
-                />
-              </Container>
+      <View style={styles.news_item}>
+              <View style={styles.text_container}>
+              {/* <Text style={styles.title}>{itemPostId}</Text> */}
+              <Container style={{ alignSelf: "flex-end" }}>
+            <Container style={{ alignSelf: "stretch" }}>
+              <IconButton
+                variant="solid"
+                _icon={{
+                  as: Foundation,
+                  name: "pencil",
+                }}
+                onPress={openModal}
+              />
             </Container>
-            <Text style={styles.title}>{itemTitle}</Text>
+          </Container>
+                <Text style={styles.title}>{itemTitle}</Text>
+                
+                <View style={styles.text_container}>
+                <Text style={styles.news_text}>*PLACEHOLDER FOR LINK TO PUBLIC PROFILE*</Text>
 
-            <View style={styles.text_container}>
-              <TouchableOpacity
-                style={styles.found_user_profile}
-                onPress={goToPublicProfile}
-              >
-                <ProfileImage
-                  style={styles.profile_pic}
-                  imageUrl={itemLostUser.imageUrl}
-                  firstName={itemLostUser.firstName}
-                  lastName={itemLostUser.lastName}
-                />
-                <Text style={styles.news_text}>
-                  {itemLostUser.firstName} {itemLostUser.lastName}
-                </Text>
-              </TouchableOpacity>
+                  <Text style={styles.news_text}>{itemCategory}</Text>
+                  <Text style={styles.news_text}>{itemLocation}</Text>
+                  <Text style={styles.news_text}>Lost on {itemDate}</Text>
+                  <Text style={styles.news_text}>{itemDescription}</Text>
 
-              <Text style={styles.news_text}>{itemCategory}</Text>
-              <Text style={styles.news_text}>{itemLocation}</Text>
-              <Text style={styles.news_text}>Lost on {itemDate}</Text>
-              <Text style={styles.news_text}>{itemDescription}</Text>
+                </View>
+
+              <View style={styles.news_photo}>
+                <Image source={{ uri: itemImage }} style={styles.photo} />
+              </View>
+
+              </View>
+             
             </View>
-
-            <View style={styles.news_photo}>
-              <Image source={{ uri: itemImage }} style={styles.photo} />
-            </View>
-          </View>
-        </View>
       </ScrollView>
     </View>
+
+    
   );
 }
 
@@ -389,17 +376,6 @@ const styles = StyleSheet.create({
   },
   whitespace: {
     flex: 1,
-  },
-  found_user_profile: {
-    marginTop: 10,
-    marginBottom: 5,
-    marginLeft: 10,
-    flexDirection: "row",
-  },
-  profile_pic: {
-    height: 35,
-    width: 35,
-    borderRadius: 30,
   },
   back_button: {
     flexDirection: "row",
