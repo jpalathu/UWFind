@@ -16,14 +16,14 @@ import {Button} from "native-base";
 
 import Colors from "../constants/Colors";
 import { RootTabScreenProps } from "../types";
-
+import { SearchBar } from 'react-native-elements';
 
 import { TabView, SceneMap } from 'react-native-tab-view';
 import FoundForm from "../components/FoundForm";
 import LostForm from "../components/LostForm";
 import FilterForm from "../components/FilterForm";
 import { useNavigation } from '@react-navigation/native';
-
+import { FlatGrid } from 'react-native-super-grid';
 
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
@@ -90,12 +90,6 @@ const LostFeed = () => {
         categoryId {
           name
         }
-        lostUserId {
-          userId
-          firstName
-          lastName
-          imageUrl
-        }
       }
     }
   `;
@@ -136,15 +130,17 @@ const LostFeed = () => {
           />
         </View>
       </View>
-      <ScrollView style={styles.news_container}>
-        {items.map((item) => {
-          return (
-            <View key={item.postId} style={styles.news_item}>
-              <View style={styles.text_container}>
-
-              <PressableIcon
-                  onPress={() => {
-                    /* 1. Navigate to the Details route with params */
+      <FlatGrid
+      itemDimension={130}
+      data={items}
+      style={styles.gridView}
+      // staticDimension={300}
+      // fixed
+      spacing={10}
+      renderItem={({ item }) => (
+        <View style={[styles.news_container, { backgroundColor: "#000" }]}>
+          <TouchableOpacity                   onPress={() => {
+                    
                     navigation.navigate('LostDetailedItem', {
                       itemPostId: item.postId,
                       itemTitle: item.title,
@@ -153,7 +149,33 @@ const LostFeed = () => {
                       itemDate: item.date,
                       itemDescription: item.description,
                       itemImage: item.imageUrl, 
-                      itemLostUser: item.lostUserId
+                    });
+                  }}   >
+          <View style={styles.news_photo}>
+                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+          </View>
+          </TouchableOpacity>
+          <Text style={styles.title}>{item.title}</Text>
+        </View>
+      )}
+    />
+      {/* <ScrollView style={styles.news_container}>
+        {items.map((item) => {
+          return (
+            <View key={item.postId} style={styles.news_item}>
+              <View style={styles.text_container}>
+
+              <PressableIcon
+                  onPress={() => {
+                    
+                    navigation.navigate('LostDetailedItem', {
+                      itemPostId: item.postId,
+                      itemTitle: item.title,
+                      itemCategory: item.categoryId.name,
+                      itemLocation: item.buildingId.name,
+                      itemDate: item.date,
+                      itemDescription: item.description,
+                      itemImage: item.imageUrl, 
                     });
                   }}             
                   icon="arrow-up"
@@ -173,7 +195,7 @@ const LostFeed = () => {
             </View>
           );
         })}
-      </ScrollView>
+      </ScrollView> */}
     </View>
   );
 };
@@ -204,18 +226,6 @@ const FoundFeed = () => {
         otherDropOffLocation
         dropOffLocationId {
           name
-        }
-        foundUserId {
-          userId
-          firstName
-          lastName
-          imageUrl
-        }
-        claimedUserId {
-          userId
-          firstName
-          lastName
-          email
         }
       }
     }
@@ -275,19 +285,17 @@ const FoundFeed = () => {
                       itemDate: item.date,
                       itemDescription: item.description,
                       itemImage: item.imageUrl, 
-                      itemFoundUser: item.foundUserId,
-                      itemClaimedUser: item.claimedUserId
                     });
                   }}             
                   icon="arrow-up"
                   isLeft={true}
             />
                 <Text style={styles.title}>{item.title}</Text>
-                <View style={styles.text_container}>
+                {/* <View style={styles.text_container}>
                   <Text style={styles.news_text}>{item.categoryId.name}</Text>
                   <Text style={styles.news_text}>{item.buildingId.name}</Text>
                   <Text style={styles.news_text}>Found on {item.date}</Text>
-                </View>
+                </View> */}
               </View>
               <View style={styles.news_photo}>
                 <Image source={{ uri: item.imageUrl }} style={styles.photo} />
@@ -369,6 +377,7 @@ const styles = StyleSheet.create({
   news_container: {
     flex: 1,
     flexDirection: "column",
+ 
   },
   news_item: {
     flex: 1,
@@ -397,19 +406,25 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#FFD54F",
+    alignSelf: "center",
     // fontFamily: 'georgia'
   },
   news_photo: {
     flex: 1,
+    paddingTop: 20,
     justifyContent: "center",
     alignItems: "center",
   },
   photo: {
-    width: 120,
-    height: 120,
+    width: 170,
+    height: 170,
+  },
+  gridView: {
+    marginTop: 10,
+    flex: 1,
   },
   // container: {
   //   flex: 1,
