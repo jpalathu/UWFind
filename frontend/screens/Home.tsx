@@ -154,6 +154,7 @@ const LostFeed = () => {
                       itemDate: item.date,
                       itemDescription: item.description,
                       itemImage: item.imageUrl, 
+                      itemLostUser: item.lostUserId
                     });
                   }}   >
           <View style={styles.news_photo}>
