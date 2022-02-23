@@ -144,8 +144,8 @@ const LostFeed = () => {
       spacing={10}
       renderItem={({ item }) => (
         <View style={[styles.news_container, { backgroundColor: "#000" }]}>
-          <TouchableOpacity                   onPress={() => {
-                    
+          <TouchableOpacity                  
+             onPress={() => {        
                     navigation.navigate('LostDetailedItem', {
                       itemPostId: item.postId,
                       itemTitle: item.title,
@@ -165,43 +165,7 @@ const LostFeed = () => {
         </View>
       )}
     />
-      {/* <ScrollView style={styles.news_container}>
-        {items.map((item) => {
-          return (
-            <View key={item.postId} style={styles.news_item}>
-              <View style={styles.text_container}>
-                <PressableIcon
-                  onPress={() => {
-                    
-                    navigation.navigate('LostDetailedItem', {
-                      itemPostId: item.postId,
-                      itemTitle: item.title,
-                      itemCategory: item.categoryId.name,
-                      itemLocation: item.buildingId.name,
-                      itemDate: item.date,
-                      itemDescription: item.description,
-                      itemImage: item.imageUrl,
-                      itemLostUser: item.lostUserId,
-                    });
-                  }}
-                  icon="arrow-up"
-                  isLeft={true}
-                />
 
-                <Text style={styles.title}>{item.title}</Text>
-                <View style={styles.text_container}>
-                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
-                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
-                  <Text style={styles.news_text}>Lost on {item.date}</Text>
-                </View>
-              </View>
-              <View style={styles.news_photo}>
-                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView> */}
     </View>
   );
 };
@@ -285,13 +249,17 @@ const FoundFeed = () => {
           />
         </View>
       </View>
-      <ScrollView style={styles.news_container}>
-        {items.map((item) => {
-          return (
-            <View key={item.postId} style={styles.news_item}>
-              <View style={styles.text_container}>
-                <PressableIcon
-                  onPress={() => {
+      <FlatGrid
+      itemDimension={130}
+      data={items}
+      style={styles.gridView}
+      // staticDimension={300}
+      // fixed
+      spacing={10}
+      renderItem={({ item }) => (
+        <View style={[styles.news_container, { backgroundColor: "#000" }]}>
+          <TouchableOpacity                 
+           onPress={() => {
                     /* 1. Navigate to the Details route with params */
                     navigation.navigate("FoundDetailedItem", {
                       itemPostId: item.postId,
@@ -305,24 +273,15 @@ const FoundFeed = () => {
                       itemFoundUser: item.foundUserId,
                       itemClaimedUser: item.claimedUserId,
                     });
-                  }}
-                  icon="arrow-up"
-                  isLeft={true}
-                />
-                <Text style={styles.title}>{item.title}</Text>
-                {/* <View style={styles.text_container}>
-                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
-                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
-                  <Text style={styles.news_text}>Found on {item.date}</Text>
-                </View> */}
-              </View>
-              <View style={styles.news_photo}>
+                  }} >
+          <View style={styles.news_photo}>
                 <Image source={{ uri: item.imageUrl }} style={styles.photo} />
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView>
+          </View>
+          </TouchableOpacity>
+          <Text style={styles.title}>{item.title}</Text>
+        </View>
+      )}
+    />
     </View>
   );
 };
