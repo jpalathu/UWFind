@@ -116,6 +116,13 @@ export default function FilterForm(props: FilterFormProps) {
         categoryId {
           name
         }
+        lostUserId {
+          userId
+          firstName
+          lastName
+          email
+          imageUrl
+        }
       }
     }
   `;
@@ -149,6 +156,20 @@ export default function FilterForm(props: FilterFormProps) {
         otherDropOffLocation
         dropOffLocationId {
           name
+        }
+        foundUserId {
+          userId
+          firstName
+          lastName
+          email
+          imageUrl
+        }
+        claimedUserId {
+          userId
+          firstName
+          lastName
+          email
+          imageUrl
         }
       }
     }

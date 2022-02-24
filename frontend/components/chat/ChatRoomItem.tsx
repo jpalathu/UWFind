@@ -35,6 +35,7 @@ const ChatRoomItem = ({ chatRoom }) => {
         imageUrl={chatRoom.imageUrl}
         firstName={chatRoom.firstName}
         lastName={chatRoom.lastName}
+        textSize={18}
       />
       {/* {chatRoom.newMessages ? (
         <View style={styles.badgeContainer}>

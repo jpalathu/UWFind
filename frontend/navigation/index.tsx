@@ -149,6 +149,7 @@ function RootNavigator() {
         name="PublicProfile"
         component={PublicProfile}
         options={({ navigation }: RootTabScreenProps<"PublicProfile">) => ({
+          title: "User's Profile",
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (

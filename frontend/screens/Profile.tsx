@@ -1,81 +1,3 @@
-// import * as React from "react";
-// import { Text, View, StyleSheet } from "react-native";
-// import Colors from "../constants/Colors";
-// import {
-//   Avatar,
-//   VStack,
-//   Heading,
-//   Center,
-//   NativeBaseProvider,
-//   HStack
-// } from "native-base"
-
-// export default function Profile() {
-//   return (
-//     // <View style={styles.container}>
-//     //   <View>
-//     //     <Text>
-//     //       Fill in stuff here or create a new component and add it here
-//     //     </Text>
-//     //   </View>
-//     // </View>
-
-//     <VStack space={7} alignItems="center">
-//       <Heading textAlign="center" mb="10">
-//       <Avatar
-//         bg="yellow.400" //need the code for the yellow?
-//         size = "2xl"
-//         source={{
-//           uri: "https://pbs.twimg.com/profile_images/1188747996843761665/8CiUdKZW_400x400.jpg",
-//         }}
-//       >
-//         SA
-//       </Avatar>
-//       </Heading>
-
-//     </VStack>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: "center",
-//     justifyContent: "center",
-//     backgroundColor: Colors.gold,
-//   },
-// });
-
-// // export const Example = () => {
-// //   return (
-// //     <VStack space={4} alignItems="center">
-// //       <Heading textAlign="center" mb="10">
-// //       <Avatar
-// //         bg="green.500"
-// //         size = "2xl"
-// //         source={{
-// //           uri: "https://pbs.twimg.com/profile_images/1188747996843761665/8CiUdKZW_400x400.jpg",
-// //         }}
-// //       >
-// //         SA
-// //       </Avatar>
-// //       </Heading>
-
-// //     </VStack>
-
-// //   )
-// // }
-
-// // export default () => {
-// //   return (
-// //     <NativeBaseProvider>
-// //       <Center flex={1} px="3">
-// //         <Example />
-// //       </Center>
-// //     </NativeBaseProvider>
-// //   )
-// // }
-
 import React, { useEffect, useState } from "react";
 import Colors from "../constants/Colors";
 import { StyleSheet, View, Image } from "react-native";
@@ -89,20 +11,22 @@ import {
   Button,
   IconButton,
 } from "native-base";
+import { FlatList } from "react-native";
 import { Foundation } from "@expo/vector-icons";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
+import { useIsFocused } from "@react-navigation/native";
+import { Tab, TabView } from "react-native-elements";
 
-
-export default function Login() {
+export default function Profile() {
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [profile, setProfile] = useState({
     firstName: "",
     lastName: "",
     bio: "",
     email: "",
-    imageUrl: ""
+    imageUrl: "",
   });
   // creating another variable to hold the fields or else the values in the profile screen will
   // change as we type in the modal fields
@@ -128,10 +52,6 @@ export default function Login() {
       lastName: profile.lastName,
       bio: profile.bio,
     });
-  };
-
-  const validate = () => {
-    return true;
   };
 
   /* Updating the user */
@@ -160,23 +80,22 @@ export default function Login() {
   const [isMutationLoading, setIsMutationLoading] = useState(false);
   const updateProfile = async () => {
     setIsMutationLoading(true);
-    if (validate()) {
-      try {
-        const result = await executeMutation({
-          variables: {
-            id: userID,
-            firstName: modalFields.firstName,
-            lastName: modalFields.lastName,
-            bio: modalFields.bio,
-          },
-        });
-        console.log("GOOD", result);
-        const { bio, firstName, lastName, email, imageUrl } = result.data.updateUser.user;
-        setProfile({ firstName, lastName, bio, email, imageUrl });
-        closeModal();
-      } catch (error) {
-        console.error("ERROR", JSON.stringify(error, null, 2));
-      }
+    try {
+      const result = await executeMutation({
+        variables: {
+          id: userID,
+          firstName: modalFields.firstName,
+          lastName: modalFields.lastName,
+          bio: modalFields.bio,
+        },
+      });
+      console.log("GOOD", result);
+      const { bio, firstName, lastName, email, imageUrl } =
+        result.data.updateUser.user;
+      setProfile({ firstName, lastName, bio, email, imageUrl });
+      closeModal();
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
     }
     setIsMutationLoading(false);
   };
@@ -211,16 +130,17 @@ export default function Login() {
     loadProfile();
   }, []);
 
+  const [tabIndex, setTabIndex] = React.useState(0);
   return (
     <View>
       <View style={styles.header}>
-      <ProfileImage
-        style={styles.avatar}
-        imageUrl={profile.imageUrl}
-        firstName={profile.firstName}
-        lastName={profile.lastName}
-      />
-        
+        <ProfileImage
+          style={styles.avatar}
+          imageUrl={profile.imageUrl}
+          firstName={profile.firstName}
+          lastName={profile.lastName}
+          textSize={30}
+        />
       </View>
       {/* <Image
         style={styles.avatar}
@@ -286,36 +206,251 @@ export default function Login() {
       </Modal>
 
       <View style={styles.body}>
-        <View>
+        <View style={{ alignSelf: "flex-end" }}>
+          <IconButton
+            variant="solid"
+            _icon={{
+              as: Foundation,
+              name: "pencil",
+            }}
+            onPress={openModal}
+          />
+        </View>
+
+        <View style={{ marginTop: 10 }}>
           <Text style={styles.name}>
             {profile.firstName} {profile.lastName}
           </Text>
-          <Text style={styles.info}>{profile.bio}</Text>
-          <Container style={{ alignSelf: "flex-end" }}>
-            <Container style={{ alignSelf: "stretch" }}>
-              <IconButton
-                variant="solid"
-                _icon={{
-                  as: Foundation,
-                  name: "pencil",
-                }}
-                onPress={openModal}
-              />
-            </Container>
-          </Container>
-
-          <Divider my="2" />
-          <Text style={styles.name}>Email </Text>
-          <Text style={styles.info}>{profile.email}</Text>
-
-          {/* <Divider my="2" />
-          <Text style={styles.name}>Password</Text>
-          <Text style={styles.info}>{profile.password}</Text> */}
+          <Text
+            style={[
+              styles.info,
+              {
+                color: "white",
+              },
+            ]}
+          >
+            {profile.bio}
+          </Text>
+          <Text style={[
+              styles.info,
+              {
+                color: "#00BFFF",
+              },
+            ]}>{profile.email}</Text>
         </View>
+      </View>
+
+      <View>
+        <Divider mt="4" mb="1" />
+        <Tab
+          value={tabIndex}
+          onChange={setTabIndex}
+          indicatorStyle={{
+            backgroundColor: "white",
+            height: 3,
+          }}
+        >
+          <Tab.Item
+            title="Lost"
+            titleStyle={{ fontSize: 12, color: "white" }}
+            icon={{ name: "help-outline", type: "ionicon", color: "white" }}
+            buttonStyle={{
+              backgroundColor: tabIndex === 0 ? "#00BFFF" : "#00bfffb2",
+            }}
+          />
+          <Tab.Item
+            title="Found"
+            titleStyle={{ fontSize: 12, color: "white" }}
+            icon={{ name: "search-outline", type: "ionicon", color: "white" }}
+            buttonStyle={{
+              backgroundColor: tabIndex === 1 ? "#00BFFF" : "#00bfffb2",
+            }}
+          />
+        </Tab>
+
+        {/* Ignore any errors from the onMoveShouldSetResponder. It's needed to make things scrollable*/}
+        <TabView value={tabIndex} onChange={setTabIndex}>
+          <TabView.Item
+            onMoveShouldSetResponder={(e) => e.stopPropagation()}
+            style={{ width: "100%", height: 400 }}
+          >
+            <LostItemTabContent />
+          </TabView.Item>
+          <TabView.Item
+            onMoveShouldSetResponder={(e) => e.stopPropagation()}
+            style={{ width: "100%", height: 400 }}
+          >
+            <FoundItemTabContent />
+          </TabView.Item>
+        </TabView>
       </View>
     </View>
   );
 }
+
+const LostItemTabContent = () => {
+  const [items, setItems] = useState<any[]>([]);
+  const LOST_ITEM_POSTS = gql`
+    query {
+      lostItemPosts(filter: {}) {
+        postId
+        title
+        description
+        date
+        imageUrl
+        buildingId {
+          name
+        }
+        categoryId {
+          name
+        }
+        lostUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(LOST_ITEM_POSTS);
+  const getItems = async () => {
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      console.log(data);
+      setItems(data.lostItemPosts);
+    }
+  };
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      console.log("focused again");
+      getItems();
+    }
+  }, [isFocused]);
+
+  return (
+    <FlatList
+      data={items}
+      contentContainerStyle={{
+        paddingBottom: 30,
+      }}
+      renderItem={({ item }) => (
+        <View key={item.postId} style={styles.news_item}>
+          <View style={styles.text_container}>
+            <Text style={styles.title}>{item.title}</Text>
+            <View style={styles.text_container}>
+              <Text style={styles.news_text}>{item.categoryId.name}</Text>
+              <Text style={styles.news_text}>{item.buildingId.name}</Text>
+              <Text style={styles.news_text}>Found on {item.date}</Text>
+            </View>
+          </View>
+          <View style={styles.news_photo}>
+            <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+          </View>
+        </View>
+      )}
+      ItemSeparatorComponent={() => (
+        <View
+          style={{
+            height: 1,
+            width: "100%",
+            backgroundColor: "#607D8B",
+          }}
+        />
+      )}
+    />
+  );
+};
+
+const FoundItemTabContent = () => {
+  const [items, setItems] = useState<any[]>([]);
+  const FOUND_ITEM_POSTS = gql`
+    query {
+      foundItemPosts(filter: {}) {
+        postId
+        title
+        description
+        imageUrl
+        date
+        categoryId {
+          name
+        }
+        buildingId {
+          name
+        }
+        otherDropOffLocation
+        dropOffLocationId {
+          name
+        }
+        foundUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+        claimedUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(FOUND_ITEM_POSTS);
+  const getItems = async () => {
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      console.log(data);
+      setItems(data.foundItemPosts);
+    }
+  };
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      console.log("focused again");
+      getItems();
+    }
+  }, [isFocused]);
+
+  return (
+    <FlatList
+      data={items}
+      contentContainerStyle={{
+        paddingBottom: 30,
+      }}
+      renderItem={({ item }) => (
+        <View key={item.postId} style={styles.news_item}>
+          <View style={styles.text_container}>
+            <Text style={styles.title}>{item.title}</Text>
+            <View style={styles.text_container}>
+              <Text style={styles.news_text}>{item.categoryId.name}</Text>
+              <Text style={styles.news_text}>{item.buildingId.name}</Text>
+              <Text style={styles.news_text}>Found on {item.date}</Text>
+            </View>
+          </View>
+          <View style={styles.news_photo}>
+            <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+          </View>
+        </View>
+      )}
+      ItemSeparatorComponent={() => (
+        <View
+          style={{
+            height: 1,
+            width: "100%",
+            backgroundColor: "#607D8B",
+          }}
+        />
+      )}
+    />
+  );
+};
 
 const styles = StyleSheet.create({
   header: {
@@ -339,14 +474,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   body: {
-    marginTop: 70,
+    marginTop: 10,
     marginHorizontal: 10,
   },
   info: {
     fontSize: 16,
-    color: "#00BFFF",
     marginTop: 10,
-    marginBottom: 15,
   },
   description: {
     fontSize: 16,
@@ -369,6 +502,54 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 30,
-    marginRight: 10
-  }
+    marginRight: 10,
+  },
+  news_container: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  news_item: {
+    flexDirection: "row",
+    paddingRight: 40,
+    paddingLeft: 20,
+    paddingTop: 15,
+    paddingBottom: 10,
+  },
+  news_text: {
+    flex: 2,
+    flexDirection: "row",
+    padding: 10,
+    color: "#FFFFFF",
+  },
+  news_photo: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  text_container: {
+    flex: 3,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFD54F",
+    // fontFamily: 'georgia'
+  },
+  photo: {
+    width: 120,
+    height: 120,
+  },
+  itemContainer: {
+    backgroundColor: "#fff",
+    margin: "5%",
+    marginTop: 0,
+    borderRadius: 5,
+    width: "90%",
+  },
+  itemHeaderText: {
+    //  height:'auto',
+    color: "#333",
+    fontSize: 23,
+    fontWeight: "800",
+  },
 });

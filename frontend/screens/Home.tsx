@@ -18,12 +18,12 @@ import Colors from "../constants/Colors";
 import { RootTabScreenProps } from "../types";
 import { Searchbar } from 'react-native-paper';
 
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap } from "react-native-tab-view";
 import FoundForm from "../components/FoundForm";
 import LostForm from "../components/LostForm";
 import FilterForm from "../components/FilterForm";
-import { useNavigation } from '@react-navigation/native';
-import { FlatGrid } from 'react-native-super-grid';
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { FlatGrid } from "react-native-super-grid";
 
 const arrayOfItems = [
   { category: "Electronics", location: "E7", image: "", key: "1" },
@@ -95,6 +95,7 @@ const LostFeed = () => {
           firstName
           lastName
           email
+          imageUrl
         }
       }
     }
@@ -108,9 +109,14 @@ const LostFeed = () => {
       setItems(data.lostItemPosts);
     }
   };
+  // used to tell if we've switched to this screen
+  const isFocused = useIsFocused();
   useEffect(() => {
-    getItems();
-  }, []);
+    if (isFocused) {
+      getItems();
+    }
+  }, [isFocused]);
+
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const onChangeSearch = (query: any) => setSearchQuery(query);
@@ -144,36 +150,36 @@ const LostFeed = () => {
         </View>
       </View>
       <FlatGrid
-      itemDimension={130}
-      data={items}
-      style={styles.gridView}
-      // staticDimension={300}
-      // fixed
-      spacing={10}
-      renderItem={({ item }) => (
-        <View style={[styles.news_container, { backgroundColor: "#000" }]}>
-          <TouchableOpacity                  
-             onPress={() => {        
-                    navigation.navigate('LostDetailedItem', {
-                      itemPostId: item.postId,
-                      itemTitle: item.title,
-                      itemCategory: item.categoryId.name,
-                      itemLocation: item.buildingId.name,
-                      itemDate: item.date,
-                      itemDescription: item.description,
-                      itemImage: item.imageUrl, 
-                      itemLostUser: item.lostUserId
-                    });
-                  }}   >
-          <View style={styles.news_photo}>
+        itemDimension={130}
+        data={items}
+        style={styles.gridView}
+        // staticDimension={300}
+        // fixed
+        spacing={10}
+        renderItem={({ item }) => (
+          <View style={[styles.news_container, { backgroundColor: "#000" }]}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("LostDetailedItem", {
+                  itemPostId: item.postId,
+                  itemTitle: item.title,
+                  itemCategory: item.categoryId.name,
+                  itemLocation: item.buildingId.name,
+                  itemDate: item.date,
+                  itemDescription: item.description,
+                  itemImage: item.imageUrl,
+                  itemLostUser: item.lostUserId,
+                });
+              }}
+            >
+              <View style={styles.news_photo}>
                 <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.title}>{item.title}</Text>
           </View>
-          </TouchableOpacity>
-          <Text style={styles.title}>{item.title}</Text>
-        </View>
-      )}
-    />
-
+        )}
+      />
     </View>
   );
 };
@@ -210,12 +216,14 @@ const FoundFeed = () => {
           firstName
           lastName
           email
+          imageUrl
         }
         claimedUserId {
           userId
           firstName
           lastName
           email
+          imageUrl
         }
       }
     }
@@ -227,12 +235,16 @@ const FoundFeed = () => {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       setItems(data.foundItemPosts);
-      console.log("ITEMS", items);
     }
   };
+
+  // used to tell if we've switched to this screen
+  const isFocused = useIsFocused();
   useEffect(() => {
-    getItems();
-  }, []);
+    if (isFocused) {
+      getItems();
+    }
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>
@@ -258,38 +270,39 @@ const FoundFeed = () => {
         </View>
       </View>
       <FlatGrid
-      itemDimension={130}
-      data={items}
-      style={styles.gridView}
-      // staticDimension={300}
-      // fixed
-      spacing={10}
-      renderItem={({ item }) => (
-        <View style={[styles.news_container, { backgroundColor: "#000" }]}>
-          <TouchableOpacity                 
-           onPress={() => {
-                    /* 1. Navigate to the Details route with params */
-                    navigation.navigate("FoundDetailedItem", {
-                      itemPostId: item.postId,
-                      itemTitle: item.title,
-                      itemCategory: item.categoryId.name,
-                      itemLocation: item.buildingId.name,
-                      itemOtherLocation: item.otherDropOffLocation,
-                      itemDate: item.date,
-                      itemDescription: item.description,
-                      itemImage: item.imageUrl,
-                      itemFoundUser: item.foundUserId,
-                      itemClaimedUser: item.claimedUserId,
-                    });
-                  }} >
-          <View style={styles.news_photo}>
+        itemDimension={130}
+        data={items}
+        style={styles.gridView}
+        // staticDimension={300}
+        // fixed
+        spacing={10}
+        renderItem={({ item }) => (
+          <View style={[styles.news_container, { backgroundColor: "#000" }]}>
+            <TouchableOpacity
+              onPress={() => {
+                /* 1. Navigate to the Details route with params */
+                navigation.navigate("FoundDetailedItem", {
+                  itemPostId: item.postId,
+                  itemTitle: item.title,
+                  itemCategory: item.categoryId.name,
+                  itemLocation: item.buildingId.name,
+                  itemOtherLocation: item.otherDropOffLocation,
+                  itemDate: item.date,
+                  itemDescription: item.description,
+                  itemImage: item.imageUrl,
+                  itemFoundUser: item.foundUserId,
+                  itemClaimedUser: item.claimedUserId,
+                });
+              }}
+            >
+              <View style={styles.news_photo}>
                 <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.title}>{item.title}</Text>
           </View>
-          </TouchableOpacity>
-          <Text style={styles.title}>{item.title}</Text>
-        </View>
-      )}
-    />
+        )}
+      />
     </View>
   );
 };
@@ -362,7 +375,6 @@ const styles = StyleSheet.create({
   news_container: {
     flex: 1,
     flexDirection: "column",
- 
   },
   news_item: {
     flex: 1,

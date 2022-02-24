@@ -155,6 +155,7 @@ export default function PublicProfile() {
           imageUrl={profile.imageUrl}
           firstName={profile.firstName}
           lastName={profile.lastName}
+          textSize={30}
         />
       </View>
 

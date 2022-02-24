@@ -4,6 +4,7 @@ import ChatRoomItem from "../components/chat/ChatRoomItem";
 import { useStore } from "../store";
 
 import { gql, useLazyQuery } from "@apollo/client";
+import { useIsFocused } from "@react-navigation/native";
 
 const ChatHome = () => {
   const [chatRooms, setChatRooms] = useState<any[]>([]);
@@ -34,9 +35,14 @@ const ChatHome = () => {
     }
   };
 
+  // used to tell if we've switched to this screen
+  const isFocused = useIsFocused();
   useEffect(() => {
-    loadChatRooms();
-  }, []);
+    if (isFocused) {
+      console.log("focused again")
+      loadChatRooms();
+    }
+  }, [isFocused]);
   
   return (
     <View style={styles.container}>
