@@ -95,6 +95,7 @@ const LostFeed = () => {
           firstName
           lastName
           email
+          imageUrl
         }
       }
     }
@@ -205,12 +206,14 @@ const FoundFeed = () => {
           firstName
           lastName
           email
+          imageUrl
         }
         claimedUserId {
           userId
           firstName
           lastName
           email
+          imageUrl
         }
       }
     }
