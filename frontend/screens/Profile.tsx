@@ -1,81 +1,3 @@
-// import * as React from "react";
-// import { Text, View, StyleSheet } from "react-native";
-// import Colors from "../constants/Colors";
-// import {
-//   Avatar,
-//   VStack,
-//   Heading,
-//   Center,
-//   NativeBaseProvider,
-//   HStack
-// } from "native-base"
-
-// export default function Profile() {
-//   return (
-//     // <View style={styles.container}>
-//     //   <View>
-//     //     <Text>
-//     //       Fill in stuff here or create a new component and add it here
-//     //     </Text>
-//     //   </View>
-//     // </View>
-
-//     <VStack space={7} alignItems="center">
-//       <Heading textAlign="center" mb="10">
-//       <Avatar
-//         bg="yellow.400" //need the code for the yellow?
-//         size = "2xl"
-//         source={{
-//           uri: "https://pbs.twimg.com/profile_images/1188747996843761665/8CiUdKZW_400x400.jpg",
-//         }}
-//       >
-//         SA
-//       </Avatar>
-//       </Heading>
-
-//     </VStack>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: "center",
-//     justifyContent: "center",
-//     backgroundColor: Colors.gold,
-//   },
-// });
-
-// // export const Example = () => {
-// //   return (
-// //     <VStack space={4} alignItems="center">
-// //       <Heading textAlign="center" mb="10">
-// //       <Avatar
-// //         bg="green.500"
-// //         size = "2xl"
-// //         source={{
-// //           uri: "https://pbs.twimg.com/profile_images/1188747996843761665/8CiUdKZW_400x400.jpg",
-// //         }}
-// //       >
-// //         SA
-// //       </Avatar>
-// //       </Heading>
-
-// //     </VStack>
-
-// //   )
-// // }
-
-// // export default () => {
-// //   return (
-// //     <NativeBaseProvider>
-// //       <Center flex={1} px="3">
-// //         <Example />
-// //       </Center>
-// //     </NativeBaseProvider>
-// //   )
-// // }
-
 import React, { useEffect, useState } from "react";
 import Colors from "../constants/Colors";
 import { StyleSheet, View, Image } from "react-native";
@@ -89,26 +11,22 @@ import {
   Button,
   IconButton,
 } from "native-base";
-import {
-  TouchableOpacity,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { FlatList } from "react-native";
 import { Foundation } from "@expo/vector-icons";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
+import { useIsFocused } from "@react-navigation/native";
+import { Tab, TabView } from "react-native-elements";
 
-
-export default function Login() {
-  const [items, setItems] = useState<any[]>([]);
+export default function Profile() {
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [profile, setProfile] = useState({
     firstName: "",
     lastName: "",
     bio: "",
     email: "",
-    imageUrl: ""
+    imageUrl: "",
   });
   // creating another variable to hold the fields or else the values in the profile screen will
   // change as we type in the modal fields
@@ -136,48 +54,6 @@ export default function Login() {
     });
   };
 
-  const validate = () => {
-    return true;
-  };
-
-  const arrayOfItems = [
-  { category: "Electronics", location: "E7", image: "", key: "1" },
-  { category: "Jewellery", location: "RCH", image: "", key: "2" },
-  { category: "Clothing Item", location: "E2", image: "", key: "3" },
-];
-  
-  const FOUND_ITEM_POSTS = gql`
-  query {
-    foundItemPosts {
-      postId
-      title
-      description
-      imageUrl
-      date
-      categoryId {
-        name
-      }
-      buildingId {
-        name
-      }
-      otherDropOffLocation
-      dropOffLocationId {
-        name
-      }
-    }
-  }
-`;
-const [executeQuery1] = useLazyQuery(FOUND_ITEM_POSTS);
-const getItems = async () => {
-  const { data, error } = await executeQuery1();
-  if (error) {
-    console.error("ERROR", JSON.stringify(error, null, 2));
-  } else {
-    setItems(data.foundItemPosts);
-    console.log("ITEMS", items);
-  }
-};
-
   /* Updating the user */
   const UPDATE_USER_MUTATION = gql`
     mutation (
@@ -204,23 +80,22 @@ const getItems = async () => {
   const [isMutationLoading, setIsMutationLoading] = useState(false);
   const updateProfile = async () => {
     setIsMutationLoading(true);
-    if (validate()) {
-      try {
-        const result = await executeMutation({
-          variables: {
-            id: userID,
-            firstName: modalFields.firstName,
-            lastName: modalFields.lastName,
-            bio: modalFields.bio,
-          },
-        });
-        console.log("GOOD", result);
-        const { bio, firstName, lastName, email, imageUrl } = result.data.updateUser.user;
-        setProfile({ firstName, lastName, bio, email, imageUrl });
-        closeModal();
-      } catch (error) {
-        console.error("ERROR", JSON.stringify(error, null, 2));
-      }
+    try {
+      const result = await executeMutation({
+        variables: {
+          id: userID,
+          firstName: modalFields.firstName,
+          lastName: modalFields.lastName,
+          bio: modalFields.bio,
+        },
+      });
+      console.log("GOOD", result);
+      const { bio, firstName, lastName, email, imageUrl } =
+        result.data.updateUser.user;
+      setProfile({ firstName, lastName, bio, email, imageUrl });
+      closeModal();
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
     }
     setIsMutationLoading(false);
   };
@@ -255,16 +130,16 @@ const getItems = async () => {
     loadProfile();
   }, []);
 
+  const [tabIndex, setTabIndex] = React.useState(0);
   return (
     <View>
       <View style={styles.header}>
-      <ProfileImage
-        style={styles.avatar}
-        imageUrl={profile.imageUrl}
-        firstName={profile.firstName}
-        lastName={profile.lastName}
-      />
-        
+        <ProfileImage
+          style={styles.avatar}
+          imageUrl={profile.imageUrl}
+          firstName={profile.firstName}
+          lastName={profile.lastName}
+        />
       </View>
       {/* <Image
         style={styles.avatar}
@@ -351,64 +226,229 @@ const getItems = async () => {
           <Divider my="2" />
           <Text style={styles.name}>Email </Text>
           <Text style={styles.info}>{profile.email}</Text>
-
-          {/* <Divider my="2" />
-          <Text style={styles.name}>Password</Text>
-          <Text style={styles.info}>{profile.password}</Text> */}
         </View>
       </View>
-
-{/* THIS IS ME EXPERIMENTING  */}
-
-      <View style={styles.itemContainer}>
-  {/* <Text >Cut off Text????</Text>
-  <Text >is this cut off</Text> */}
-
-  <View style={styles.itemContainer}>
-              <View style={styles.itemContainer}>
-                <Text style={styles.title}>title</Text>
-                <View style={styles.itemContainer}>
-                  <Text style={styles.news_text}>check 1</Text>
-                  <Text style={styles.news_text}>check 2</Text>
-                  <Text style={styles.news_text}>Found on </Text>
-                </View>
-              </View>
-              <View style={styles.news_photo}>
-                <Image source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png"  }} style={styles.photo} />
-              </View>
-            </View>
-
-  
-</View>
-
-{/* THIS DOESNT SHOW UP IDK WHY  */}
-      <ScrollView style={styles.news_container}>
-        {items.map((item) => {
-          return (
-            <View key={item.postId} style={styles.news_item}>
-              <View style={styles.text_container}>
-                <Text style={styles.title}>{item.title}</Text>
-                <View style={styles.text_container}>
-                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
-                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
-                  <Text style={styles.news_text}>Found on {item.date}</Text>
-                </View>
-              </View>
-              <View style={styles.news_photo}>
-                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView>
-
       
+      <View style={{marginTop: 10}}>
+      <Tab
+        value={tabIndex}
+        onChange={setTabIndex}
+        indicatorStyle={{
+          backgroundColor: "white",
+          height: 3,
+        }}
+      >
+        <Tab.Item
+          title="Lost"
+          titleStyle={{ fontSize: 12, color: "white" }}
+          icon={{ name: "help-outline", type: "ionicon", color: "white" }}
+          buttonStyle={{
+            backgroundColor: tabIndex === 0 ? "#00BFFF" : "#00bfffb2",
+          }}
+        />
+        <Tab.Item
+          title="Found"
+          titleStyle={{ fontSize: 12, color: "white" }}
+          icon={{ name: "search-outline", type: "ionicon", color: "white" }}
+          buttonStyle={{
+            backgroundColor: tabIndex === 1 ? "#00BFFF" : "#00bfffb2",
+          }}
+        />
+      </Tab>
 
+      {/* Ignore any errors from the onMoveShouldSetResponder. It's needed to make things scrollable*/}
+      <TabView value={tabIndex} onChange={setTabIndex}>
+        <TabView.Item
+          onMoveShouldSetResponder={(e) => e.stopPropagation()}
+          style={{ width: "100%", height: 300 }}
+        >
+          <LostItemTabContent />
+        </TabView.Item>
+        <TabView.Item
+          onMoveShouldSetResponder={(e) => e.stopPropagation()}
+          style={{ width: "100%", height: 300 }}
+        >
+          <FoundItemTabContent />
+        </TabView.Item>
+      </TabView>
+      </View>
     </View>
-
-    
   );
 }
+
+const FoundItemTabContent = () => {
+  const [items, setItems] = useState<any[]>([]);
+  const FOUND_ITEM_POSTS = gql`
+    query {
+      foundItemPosts(filter: {}) {
+        postId
+        title
+        description
+        imageUrl
+        date
+        categoryId {
+          name
+        }
+        buildingId {
+          name
+        }
+        otherDropOffLocation
+        dropOffLocationId {
+          name
+        }
+        foundUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+        claimedUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(FOUND_ITEM_POSTS);
+  const getItems = async () => {
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      console.log(data);
+      setItems(data.foundItemPosts);
+    }
+  };
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      console.log("focused again");
+      getItems();
+    }
+  }, [isFocused]);
+
+  return (
+    <FlatList
+      data={items}
+      contentContainerStyle={{
+        paddingBottom: 30,
+      }}
+      renderItem={({ item }) => (
+        <View key={item.postId} style={styles.news_item}>
+          <View style={styles.text_container}>
+            <Text style={styles.title}>{item.title}</Text>
+            <View style={styles.text_container}>
+              <Text style={styles.news_text}>{item.categoryId.name}</Text>
+              <Text style={styles.news_text}>{item.buildingId.name}</Text>
+              <Text style={styles.news_text}>Found on {item.date}</Text>
+            </View>
+          </View>
+          <View style={styles.news_photo}>
+            <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+          </View>
+        </View>
+      )}
+      ItemSeparatorComponent={() => (
+        <View
+          style={{
+            height: 1,
+            width: "100%",
+            backgroundColor: "#607D8B",
+          }}
+        />
+      )}
+    />
+  );
+};
+
+const LostItemTabContent = () => {
+  const [items, setItems] = useState<any[]>([]);
+  const FOUND_ITEM_POSTS = gql`
+    query {
+      foundItemPosts(filter: {}) {
+        postId
+        title
+        description
+        imageUrl
+        date
+        categoryId {
+          name
+        }
+        buildingId {
+          name
+        }
+        otherDropOffLocation
+        dropOffLocationId {
+          name
+        }
+        foundUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+        claimedUserId {
+          userId
+          firstName
+          lastName
+          email
+        }
+      }
+    }
+  `;
+  const [executeQuery] = useLazyQuery(FOUND_ITEM_POSTS);
+  const getItems = async () => {
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      console.log(data);
+      setItems(data.foundItemPosts);
+    }
+  };
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      console.log("focused again");
+      getItems();
+    }
+  }, [isFocused]);
+
+  return (
+    <FlatList
+      data={items}
+      contentContainerStyle={{
+        paddingBottom: 30,
+      }}
+      renderItem={({ item }) => (
+        <View key={item.postId} style={styles.news_item}>
+          <View style={styles.text_container}>
+            <Text style={styles.title}>{item.title}</Text>
+            <View style={styles.text_container}>
+              <Text style={styles.news_text}>{item.categoryId.name}</Text>
+              <Text style={styles.news_text}>{item.buildingId.name}</Text>
+              <Text style={styles.news_text}>Found on {item.date}</Text>
+            </View>
+          </View>
+          <View style={styles.news_photo}>
+            <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+          </View>
+        </View>
+      )}
+      ItemSeparatorComponent={() => (
+        <View
+          style={{
+            height: 1,
+            width: "100%",
+            backgroundColor: "#607D8B",
+          }}
+        />
+      )}
+    />
+  );
+};
 
 const styles = StyleSheet.create({
   header: {
@@ -462,38 +502,35 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 30,
-    marginRight: 10
+    marginRight: 10,
   },
   news_container: {
     flex: 1,
     flexDirection: "column",
   },
   news_item: {
-    flex: 1,
     flexDirection: "row",
-    paddingRight: 20,
+    paddingRight: 40,
     paddingLeft: 20,
-    paddingTop: 30,
-    paddingBottom: 30,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E4E4E4",
+    paddingTop: 15,
+    paddingBottom: 10,
   },
   news_text: {
     flex: 2,
     flexDirection: "row",
     padding: 10,
     color: "#FFFFFF",
-  }, 
+  },
   news_photo: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  }, 
+  },
   text_container: {
     flex: 3,
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#FFD54F",
     // fontFamily: 'georgia'
@@ -501,18 +538,18 @@ const styles = StyleSheet.create({
   photo: {
     width: 120,
     height: 120,
-  }, 
+  },
   itemContainer: {
-    backgroundColor: '#fff',
-    margin: '5%',
+    backgroundColor: "#fff",
+    margin: "5%",
     marginTop: 0,
     borderRadius: 5,
-    width: '90%',
+    width: "90%",
   },
   itemHeaderText: {
     //  height:'auto',
-    color: '#333',
+    color: "#333",
     fontSize: 23,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 });
