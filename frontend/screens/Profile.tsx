@@ -229,7 +229,8 @@ export default function Profile() {
         </View>
       </View>
       
-      <View style={{marginTop: 10}}>
+      <View >
+      <Divider my="2" />
       <Tab
         value={tabIndex}
         onChange={setTabIndex}
