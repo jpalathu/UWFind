@@ -228,82 +228,72 @@ export default function Profile() {
           <Text style={styles.info}>{profile.email}</Text>
         </View>
       </View>
-      
-      <View >
-      <Divider my="2" />
-      <Tab
-        value={tabIndex}
-        onChange={setTabIndex}
-        indicatorStyle={{
-          backgroundColor: "white",
-          height: 3,
-        }}
-      >
-        <Tab.Item
-          title="Lost"
-          titleStyle={{ fontSize: 12, color: "white" }}
-          icon={{ name: "help-outline", type: "ionicon", color: "white" }}
-          buttonStyle={{
-            backgroundColor: tabIndex === 0 ? "#00BFFF" : "#00bfffb2",
-          }}
-        />
-        <Tab.Item
-          title="Found"
-          titleStyle={{ fontSize: 12, color: "white" }}
-          icon={{ name: "search-outline", type: "ionicon", color: "white" }}
-          buttonStyle={{
-            backgroundColor: tabIndex === 1 ? "#00BFFF" : "#00bfffb2",
-          }}
-        />
-      </Tab>
 
-      {/* Ignore any errors from the onMoveShouldSetResponder. It's needed to make things scrollable*/}
-      <TabView value={tabIndex} onChange={setTabIndex}>
-        <TabView.Item
-          onMoveShouldSetResponder={(e) => e.stopPropagation()}
-          style={{ width: "100%", height: 300 }}
+      <View>
+        <Divider my="2" />
+        <Tab
+          value={tabIndex}
+          onChange={setTabIndex}
+          indicatorStyle={{
+            backgroundColor: "white",
+            height: 3,
+          }}
         >
-          <LostItemTabContent />
-        </TabView.Item>
-        <TabView.Item
-          onMoveShouldSetResponder={(e) => e.stopPropagation()}
-          style={{ width: "100%", height: 300 }}
-        >
-          <FoundItemTabContent />
-        </TabView.Item>
-      </TabView>
+          <Tab.Item
+            title="Lost"
+            titleStyle={{ fontSize: 12, color: "white" }}
+            icon={{ name: "help-outline", type: "ionicon", color: "white" }}
+            buttonStyle={{
+              backgroundColor: tabIndex === 0 ? "#00BFFF" : "#00bfffb2",
+            }}
+          />
+          <Tab.Item
+            title="Found"
+            titleStyle={{ fontSize: 12, color: "white" }}
+            icon={{ name: "search-outline", type: "ionicon", color: "white" }}
+            buttonStyle={{
+              backgroundColor: tabIndex === 1 ? "#00BFFF" : "#00bfffb2",
+            }}
+          />
+        </Tab>
+
+        {/* Ignore any errors from the onMoveShouldSetResponder. It's needed to make things scrollable*/}
+        <TabView value={tabIndex} onChange={setTabIndex}>
+          <TabView.Item
+            onMoveShouldSetResponder={(e) => e.stopPropagation()}
+            style={{ width: "100%", height: 300 }}
+          >
+            <LostItemTabContent />
+          </TabView.Item>
+          <TabView.Item
+            onMoveShouldSetResponder={(e) => e.stopPropagation()}
+            style={{ width: "100%", height: 300 }}
+          >
+            <FoundItemTabContent />
+          </TabView.Item>
+        </TabView>
       </View>
     </View>
   );
 }
 
-const FoundItemTabContent = () => {
+const LostItemTabContent = () => {
   const [items, setItems] = useState<any[]>([]);
-  const FOUND_ITEM_POSTS = gql`
+  const LOST_ITEM_POSTS = gql`
     query {
-      foundItemPosts(filter: {}) {
+      lostItemPosts(filter: {}) {
         postId
         title
         description
-        imageUrl
         date
-        categoryId {
-          name
-        }
+        imageUrl
         buildingId {
           name
         }
-        otherDropOffLocation
-        dropOffLocationId {
+        categoryId {
           name
         }
-        foundUserId {
-          userId
-          firstName
-          lastName
-          email
-        }
-        claimedUserId {
+        lostUserId {
           userId
           firstName
           lastName
@@ -312,14 +302,14 @@ const FoundItemTabContent = () => {
       }
     }
   `;
-  const [executeQuery] = useLazyQuery(FOUND_ITEM_POSTS);
+  const [executeQuery] = useLazyQuery(LOST_ITEM_POSTS);
   const getItems = async () => {
     const { data, error } = await executeQuery();
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       console.log(data);
-      setItems(data.foundItemPosts);
+      setItems(data.lostItemPosts);
     }
   };
   const isFocused = useIsFocused();
@@ -364,7 +354,7 @@ const FoundItemTabContent = () => {
   );
 };
 
-const LostItemTabContent = () => {
+const FoundItemTabContent = () => {
   const [items, setItems] = useState<any[]>([]);
   const FOUND_ITEM_POSTS = gql`
     query {
