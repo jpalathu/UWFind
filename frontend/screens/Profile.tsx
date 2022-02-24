@@ -139,6 +139,7 @@ export default function Profile() {
           imageUrl={profile.imageUrl}
           firstName={profile.firstName}
           lastName={profile.lastName}
+          textSize={30}
         />
       </View>
       {/* <Image
@@ -205,32 +206,42 @@ export default function Profile() {
       </Modal>
 
       <View style={styles.body}>
-        <View>
+        <View style={{ alignSelf: "flex-end" }}>
+          <IconButton
+            variant="solid"
+            _icon={{
+              as: Foundation,
+              name: "pencil",
+            }}
+            onPress={openModal}
+          />
+        </View>
+
+        <View style={{ marginTop: 10 }}>
           <Text style={styles.name}>
             {profile.firstName} {profile.lastName}
           </Text>
-          <Text style={styles.info}>{profile.bio}</Text>
-          <Container style={{ alignSelf: "flex-end" }}>
-            <Container style={{ alignSelf: "stretch" }}>
-              <IconButton
-                variant="solid"
-                _icon={{
-                  as: Foundation,
-                  name: "pencil",
-                }}
-                onPress={openModal}
-              />
-            </Container>
-          </Container>
-
-          <Divider my="2" />
-          <Text style={styles.name}>Email </Text>
-          <Text style={styles.info}>{profile.email}</Text>
+          <Text
+            style={[
+              styles.info,
+              {
+                color: "white",
+              },
+            ]}
+          >
+            {profile.bio}
+          </Text>
+          <Text style={[
+              styles.info,
+              {
+                color: "#00BFFF",
+              },
+            ]}>{profile.email}</Text>
         </View>
       </View>
 
       <View>
-        <Divider my="2" />
+        <Divider mt="4" mb="1" />
         <Tab
           value={tabIndex}
           onChange={setTabIndex}
@@ -261,13 +272,13 @@ export default function Profile() {
         <TabView value={tabIndex} onChange={setTabIndex}>
           <TabView.Item
             onMoveShouldSetResponder={(e) => e.stopPropagation()}
-            style={{ width: "100%", height: 300 }}
+            style={{ width: "100%", height: 400 }}
           >
             <LostItemTabContent />
           </TabView.Item>
           <TabView.Item
             onMoveShouldSetResponder={(e) => e.stopPropagation()}
-            style={{ width: "100%", height: 300 }}
+            style={{ width: "100%", height: 400 }}
           >
             <FoundItemTabContent />
           </TabView.Item>
@@ -463,14 +474,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   body: {
-    marginTop: 70,
+    marginTop: 10,
     marginHorizontal: 10,
   },
   info: {
     fontSize: 16,
-    color: "#00BFFF",
     marginTop: 10,
-    marginBottom: 15,
   },
   description: {
     fontSize: 16,
