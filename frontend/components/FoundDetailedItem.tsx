@@ -350,6 +350,7 @@ export default function FoundDetailedItem({ route }) {
                   imageUrl={itemFoundUser.imageUrl}
                   firstName={itemFoundUser.firstName}
                   lastName={itemFoundUser.lastName}
+                  textSize={18}
                 />
                 <Text style={styles.news_text}>
                   {itemFoundUser.firstName} {itemFoundUser.lastName}

@@ -357,6 +357,7 @@ export default function LostDetailedItem({ route }) {
                   imageUrl={itemLostUser.imageUrl}
                   firstName={itemLostUser.firstName}
                   lastName={itemLostUser.lastName}
+                  textSize={18}
                 />
                 <Text style={styles.news_text}>
                   {itemLostUser.firstName} {itemLostUser.lastName}
