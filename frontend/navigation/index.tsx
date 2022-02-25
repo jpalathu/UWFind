@@ -28,7 +28,6 @@ import ChatHomeHeader from "../components/chat/ChatHomeHeader";
 import LostDetailedItem from "../components/LostDetailedItem";
 import FoundDetailedItem from "../components/FoundDetailedItem";
 
-
 export default function Navigation({
   colorScheme,
 }: {
@@ -70,7 +69,7 @@ function RootNavigator() {
         })}
       />
 
-     <Stack.Screen
+      <Stack.Screen
         name="LostDetailedItem"
         component={LostDetailedItem}
         options={({ navigation }: RootTabScreenProps<"LostDetailedItem">) => ({
@@ -86,7 +85,7 @@ function RootNavigator() {
           ),
         })}
       />
-        <Stack.Screen
+      <Stack.Screen
         name="FoundDetailedItem"
         component={FoundDetailedItem}
         options={({ navigation }: RootTabScreenProps<"FoundDetailedItem">) => ({
@@ -109,12 +108,20 @@ function RootNavigator() {
           title: "UWFind",
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("Login")}
+              icon="sign-out"
+              isLeft={false}
+              style={{ transform: [{ rotateY: "180deg" }] }}
+            />
+          ),
           headerRight: () => (
             <View style={{ flexDirection: "row" }}>
               <PressableIcon
                 onPress={() => navigation.navigate("Profile")}
                 icon="user"
-                isLeft={false}
+                isLeft={true}
               />
               {/* <PressableIcon
                 onPress={() => navigation.navigate("PublicProfile")}
@@ -124,7 +131,7 @@ function RootNavigator() {
               <PressableIcon
                 onPress={() => navigation.navigate("ChatHome")}
                 icon="comment"
-                isLeft={false}
+                isLeft={true}
               />
             </View>
           ),
@@ -162,9 +169,6 @@ function RootNavigator() {
         })}
       />
 
-    
-
-      
       {/* Adding this screen to test the form stuff */}
       <Stack.Screen
         name="Form"
@@ -221,6 +225,7 @@ type PressableIconProps = {
   icon: any;
   onPress: () => void;
   isLeft: boolean;
+  style?: any;
 };
 /**
  * Perform an action when pressing the icon (like navigate to a new screen).
@@ -236,7 +241,10 @@ const PressableIcon = (props: PressableIconProps) => (
       name={props.icon}
       size={30}
       color={Colors.white}
-      style={props.isLeft ? { marginLeft: 15 } : { marginRight: 15 }}
+      style={[
+        props.isLeft ? { marginLeft: 15 } : { marginRight: 15 },
+        props.style,
+      ]}
     />
   </Pressable>
 );
