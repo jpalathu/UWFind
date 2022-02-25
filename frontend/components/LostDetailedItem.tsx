@@ -22,9 +22,11 @@ import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
 import ProfileImage from "./shared/ProfileImage";
+import { useStore } from "../store";
 
 export default function LostDetailedItem({ route }) {
   const navigation = useNavigation();
+  const { userID } = useStore();
 
   const {
     itemPostId,
@@ -54,9 +56,9 @@ export default function LostDetailedItem({ route }) {
     image: "",
     category: "",
     location: "",
-    description: ""
+    description: "",
   });
- 
+
   const [modalFields, setModalFields] = useState({
     title: "",
     date: "",
@@ -65,7 +67,6 @@ export default function LostDetailedItem({ route }) {
     location: "",
     description: "",
   });
-
 
   const openModal = () => {
     setShowEditInfo(true);
@@ -95,30 +96,29 @@ export default function LostDetailedItem({ route }) {
     return true;
   };
 
-
-   /* Updating the user */
-//    const UPDATE_USER_MUTATION = gql`
-//    mutation (
-//      $title: String!
-//      $date: String!
-//      $category: String!
-//      $location: String!
-//      $description: String!
-//    ) {
-//      updatePost(
-//       postId: $postId
-//        input: { title: $title, date: $date, category: $category, location: $location, description: $description}
-//      ) {
-//        post {
-//          title
-//          date
-//          category
-//          location
-//          description
-//        }
-//      }
-//    }
-//  `;
+  /* Updating the user */
+  //    const UPDATE_USER_MUTATION = gql`
+  //    mutation (
+  //      $title: String!
+  //      $date: String!
+  //      $category: String!
+  //      $location: String!
+  //      $description: String!
+  //    ) {
+  //      updatePost(
+  //       postId: $postId
+  //        input: { title: $title, date: $date, category: $category, location: $location, description: $description}
+  //      ) {
+  //        post {
+  //          title
+  //          date
+  //          category
+  //          location
+  //          description
+  //        }
+  //      }
+  //    }
+  //  `;
 
   // const [executeMutation] = useMutation(UPDATE_USER_MUTATION);
   // const [isMutationLoading, setIsMutationLoading] = useState(false);
@@ -133,7 +133,7 @@ export default function LostDetailedItem({ route }) {
   //           image: modalFields.image,
   //           category: modalFields.category,
   //           location: modalFields.location,
-  //           description: modalFields.description,       
+  //           description: modalFields.description,
   //         },
   //       });
   //       console.log("GOOD", result);
@@ -148,17 +148,17 @@ export default function LostDetailedItem({ route }) {
   // };
 
   const FORM_DATA = gql`
-  query {
-    categories {
-      name
-      categoryId
+    query {
+      categories {
+        name
+        categoryId
+      }
+      buildings {
+        name
+        buildingId
+      }
     }
-    buildings {
-      name
-      buildingId
-    }
-  }
-`;
+  `;
 
   const [executeQuery] = useLazyQuery(FORM_DATA);
   const getFormData = async () => {
@@ -176,13 +176,8 @@ export default function LostDetailedItem({ route }) {
   }, []);
 
   return (
-
-
-
-<View style={styles.container}>
-
-
-<Modal isOpen={showEditInfo} onClose={closeModal}>
+    <View style={styles.container}>
+      <Modal isOpen={showEditInfo} onClose={closeModal}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
@@ -222,33 +217,32 @@ export default function LostDetailedItem({ route }) {
                   },
                 }}
                 onDateChange={(v) => {
-                  setModalFields({ ...modalFields, date: v })
+                  setModalFields({ ...modalFields, date: v });
                   setDate(v);
                 }}
               />
-
             </FormControl>
             <FormControl mt="3">
               <FormControl.Label>Location</FormControl.Label>
-              <Select 
-             selectedValue={locationValue}
-             minWidth={200}
-             accessibilityLabel="Select a Location"
-             placeholder="Select a Location"
-             onValueChange={(v) => {
-               setModalFields({ ...modalFields, location: v })
-               setLocationValue(v);
-             }}
-             _selectedItem={{ bg: "yellow.400" }}
-             mt={1}
-           >
-              {locations.map((location) => (
-                        <Select.Item
-                          key={location.buildingId}
-                          label={location.name}
-                          value={location.buildingId}
-                        />
-                      ))}
+              <Select
+                selectedValue={locationValue}
+                minWidth={200}
+                accessibilityLabel="Select a Location"
+                placeholder="Select a Location"
+                onValueChange={(v) => {
+                  setModalFields({ ...modalFields, location: v });
+                  setLocationValue(v);
+                }}
+                _selectedItem={{ bg: "yellow.400" }}
+                mt={1}
+              >
+                {locations.map((location) => (
+                  <Select.Item
+                    key={location.buildingId}
+                    label={location.name}
+                    value={location.buildingId}
+                  />
+                ))}
               </Select>
               {/* <Input
                 type="text"
@@ -265,7 +259,7 @@ export default function LostDetailedItem({ route }) {
                 accessibilityLabel="Select a Category"
                 placeholder="Select a Category"
                 onValueChange={(itemValue) => {
-                  setModalFields({ ...modalFields, location: itemValue })
+                  setModalFields({ ...modalFields, location: itemValue });
                   setCategoryValue(itemValue);
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
@@ -289,7 +283,9 @@ export default function LostDetailedItem({ route }) {
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"
-                onChangeText={(v) => setModalFields({ ...modalFields, description: v })}
+                onChangeText={(v) =>
+                  setModalFields({ ...modalFields, description: v })
+                }
                 defaultValue={modalFields.description}
               />
             </FormControl>
@@ -297,12 +293,12 @@ export default function LostDetailedItem({ route }) {
               <FormControl.Label>Image</FormControl.Label>
               <Input
                 type="text"
-                onChangeText={(v) => setModalFields({ ...modalFields, image: v })}
+                onChangeText={(v) =>
+                  setModalFields({ ...modalFields, image: v })
+                }
                 defaultValue={modalFields.image}
               />
             </FormControl>
-    
-           
           </Modal.Body>
           <Modal.Footer>
             <Button.Group space={2}>
@@ -323,32 +319,33 @@ export default function LostDetailedItem({ route }) {
 
       <View style={styles.header}>
         <View style={styles.header_text}>
-          
           <Text style={styles.header_text_label}>Details</Text>
         </View>
         <View style={styles.whitespace}></View>
       </View>
 
       <ScrollView style={styles.news_container}>
-      <View style={styles.news_item}>
-              <View style={styles.text_container}>
-              {/* <Text style={styles.title}>{itemPostId}</Text> */}
+        <View style={styles.news_item}>
+          <View style={styles.text_container}>
+            {/* <Text style={styles.title}>{itemPostId}</Text> */}
+            {userID == itemLostUser.userId && (
               <Container style={{ alignSelf: "flex-end" }}>
-            <Container style={{ alignSelf: "stretch" }}>
-              <IconButton
-                variant="solid"
-                _icon={{
-                  as: Foundation,
-                  name: "pencil",
-                }}
-                onPress={openModal}
-              />
-            </Container>
-          </Container>
-                <Text style={styles.title}>{itemTitle}</Text>
-                
-                <View style={styles.text_container}>
-                <TouchableOpacity
+                <Container style={{ alignSelf: "stretch" }}>
+                  <IconButton
+                    variant="solid"
+                    _icon={{
+                      as: Foundation,
+                      name: "pencil",
+                    }}
+                    onPress={openModal}
+                  />
+                </Container>
+              </Container>
+            )}
+            <Text style={styles.title}>{itemTitle}</Text>
+
+            <View style={styles.text_container}>
+              <TouchableOpacity
                 style={styles.found_user_profile}
                 onPress={goToPublicProfile}
               >
@@ -362,26 +359,21 @@ export default function LostDetailedItem({ route }) {
                 <Text style={styles.news_text}>
                   {itemLostUser.firstName} {itemLostUser.lastName}
                 </Text>
-              </TouchableOpacity> 
+              </TouchableOpacity>
 
-                  <Text style={styles.news_text}>{itemCategory}</Text>
-                  <Text style={styles.news_text}>{itemLocation}</Text>
-                  <Text style={styles.news_text}>Lost on {itemDate}</Text>
-                  <Text style={styles.news_text}>{itemDescription}</Text>
-
-                </View>
-
-              <View style={styles.news_photo}>
-                <Image source={{ uri: itemImage }} style={styles.photo} />
-              </View>
-
-              </View>
-             
+              <Text style={styles.news_text}>{itemCategory}</Text>
+              <Text style={styles.news_text}>{itemLocation}</Text>
+              <Text style={styles.news_text}>Lost on {itemDate}</Text>
+              <Text style={styles.news_text}>{itemDescription}</Text>
             </View>
+
+            <View style={styles.news_photo}>
+              <Image source={{ uri: itemImage }} style={styles.photo} />
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </View>
-
-    
   );
 }
 

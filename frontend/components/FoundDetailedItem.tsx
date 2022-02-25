@@ -37,9 +37,9 @@ export default function FoundDetailedItem({ route }) {
     itemDescription,
     itemOtherLocation,
     itemFoundUser,
-    itemClaimedUser
+    itemClaimedUser,
   } = route.params;
-  const [claimedUser, setClaimedUser] = useState(itemClaimedUser)
+  const [claimedUser, setClaimedUser] = useState(itemClaimedUser);
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [date, setDate] = useState(itemDate);
   const [locationValue, setLocationValue] = useState(itemLocation);
@@ -155,7 +155,9 @@ export default function FoundDetailedItem({ route }) {
       });
       console.log("GOOD", result);
       // update the claimed user
-      setClaimedUser(result.data.updateFoundItemPost.foundItemPost.claimedUserId)
+      setClaimedUser(
+        result.data.updateFoundItemPost.foundItemPost.claimedUserId
+      );
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     }
@@ -324,18 +326,20 @@ export default function FoundDetailedItem({ route }) {
       <ScrollView style={styles.news_container}>
         <View style={styles.news_item}>
           <View style={styles.text_container}>
-            <Container style={{ alignSelf: "flex-end" }}>
-              <Container style={{ alignSelf: "stretch" }}>
-                <IconButton
-                  variant="solid"
-                  _icon={{
-                    as: Foundation,
-                    name: "pencil",
-                  }}
-                  onPress={openModal}
-                />
+            {userID == itemFoundUser.userId && (
+              <Container style={{ alignSelf: "flex-end" }}>
+                <Container style={{ alignSelf: "stretch" }}>
+                  <IconButton
+                    variant="solid"
+                    _icon={{
+                      as: Foundation,
+                      name: "pencil",
+                    }}
+                    onPress={openModal}
+                  />
+                </Container>
               </Container>
-            </Container>
+            )}
             {/* <Text style={styles.title}>{itemPostId}</Text> */}
 
             <Text style={styles.title}>{itemTitle}</Text>
@@ -373,8 +377,8 @@ export default function FoundDetailedItem({ route }) {
               <View style={styles.claimed_user}>
                 <AntDesign name="checkcircle" size={24} color="#45fc03" />
                 <Text style={styles.claimed_user_text}>
-                  Claimed by {claimedUser.firstName}{" "}
-                  {claimedUser.lastName} ({claimedUser.email})
+                  Claimed by {claimedUser.firstName} {claimedUser.lastName} (
+                  {claimedUser.email})
                 </Text>
               </View>
             ) : (
