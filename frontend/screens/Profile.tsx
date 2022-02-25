@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Colors from "../constants/Colors";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
   Text,
   Container,
@@ -16,7 +16,7 @@ import { Foundation } from "@expo/vector-icons";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Tab, TabView } from "react-native-elements";
 
 export default function Profile() {
@@ -231,12 +231,16 @@ export default function Profile() {
           >
             {profile.bio}
           </Text>
-          <Text style={[
+          <Text
+            style={[
               styles.info,
               {
                 color: "#00BFFF",
               },
-            ]}>{profile.email}</Text>
+            ]}
+          >
+            {profile.email}
+          </Text>
         </View>
       </View>
 
@@ -289,10 +293,12 @@ export default function Profile() {
 }
 
 const LostItemTabContent = () => {
+  const navigation = useNavigation();
+  const { userID } = useStore();
   const [items, setItems] = useState<any[]>([]);
   const LOST_ITEM_POSTS = gql`
-    query {
-      lostItemPosts(filter: {}) {
+    query ($id: Int!) {
+      lostItemPostsByUserId(userId: $id) {
         postId
         title
         description
@@ -315,12 +321,16 @@ const LostItemTabContent = () => {
   `;
   const [executeQuery] = useLazyQuery(LOST_ITEM_POSTS);
   const getItems = async () => {
-    const { data, error } = await executeQuery();
+    const { data, error } = await executeQuery({
+      variables: {
+        id: userID,
+      },
+    });
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       console.log(data);
-      setItems(data.lostItemPosts);
+      setItems(data.lostItemPostsByUserId);
     }
   };
   const isFocused = useIsFocused();
@@ -338,19 +348,34 @@ const LostItemTabContent = () => {
         paddingBottom: 30,
       }}
       renderItem={({ item }) => (
-        <View key={item.postId} style={styles.news_item}>
-          <View style={styles.text_container}>
-            <Text style={styles.title}>{item.title}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("LostDetailedItem", {
+              itemPostId: item.postId,
+              itemTitle: item.title,
+              itemCategory: item.categoryId.name,
+              itemLocation: item.buildingId.name,
+              itemDate: item.date,
+              itemDescription: item.description,
+              itemImage: item.imageUrl,
+              itemLostUser: item.lostUserId,
+            });
+          }}
+        >
+          <View key={item.postId} style={styles.news_item}>
             <View style={styles.text_container}>
-              <Text style={styles.news_text}>{item.categoryId.name}</Text>
-              <Text style={styles.news_text}>{item.buildingId.name}</Text>
-              <Text style={styles.news_text}>Found on {item.date}</Text>
+              <Text style={styles.title}>{item.title}</Text>
+              <View style={styles.text_container}>
+                <Text style={styles.news_text}>{item.categoryId.name}</Text>
+                <Text style={styles.news_text}>{item.buildingId.name}</Text>
+                <Text style={styles.news_text}>Lost on {item.date}</Text>
+              </View>
+            </View>
+            <View style={styles.news_photo}>
+              <Image source={{ uri: item.imageUrl }} style={styles.photo} />
             </View>
           </View>
-          <View style={styles.news_photo}>
-            <Image source={{ uri: item.imageUrl }} style={styles.photo} />
-          </View>
-        </View>
+        </TouchableOpacity>
       )}
       ItemSeparatorComponent={() => (
         <View
@@ -366,10 +391,12 @@ const LostItemTabContent = () => {
 };
 
 const FoundItemTabContent = () => {
+  const navigation = useNavigation();
+  const { userID } = useStore();
   const [items, setItems] = useState<any[]>([]);
   const FOUND_ITEM_POSTS = gql`
-    query {
-      foundItemPosts(filter: {}) {
+    query ($id: Int!) {
+      foundItemPostsByUserId(userId: $id) {
         postId
         title
         description
@@ -402,12 +429,16 @@ const FoundItemTabContent = () => {
   `;
   const [executeQuery] = useLazyQuery(FOUND_ITEM_POSTS);
   const getItems = async () => {
-    const { data, error } = await executeQuery();
+    const { data, error } = await executeQuery({
+      variables: {
+        id: userID,
+      },
+    });
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       console.log(data);
-      setItems(data.foundItemPosts);
+      setItems(data.foundItemPostsByUserId);
     }
   };
   const isFocused = useIsFocused();
@@ -425,19 +456,37 @@ const FoundItemTabContent = () => {
         paddingBottom: 30,
       }}
       renderItem={({ item }) => (
-        <View key={item.postId} style={styles.news_item}>
-          <View style={styles.text_container}>
-            <Text style={styles.title}>{item.title}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            /* 1. Navigate to the Details route with params */
+            navigation.navigate("FoundDetailedItem", {
+              itemPostId: item.postId,
+              itemTitle: item.title,
+              itemCategory: item.categoryId.name,
+              itemLocation: item.buildingId.name,
+              itemOtherLocation: item.otherDropOffLocation,
+              itemDate: item.date,
+              itemDescription: item.description,
+              itemImage: item.imageUrl,
+              itemFoundUser: item.foundUserId,
+              itemClaimedUser: item.claimedUserId,
+            });
+          }}
+        >
+          <View key={item.postId} style={styles.news_item}>
             <View style={styles.text_container}>
-              <Text style={styles.news_text}>{item.categoryId.name}</Text>
-              <Text style={styles.news_text}>{item.buildingId.name}</Text>
-              <Text style={styles.news_text}>Found on {item.date}</Text>
+              <Text style={styles.title}>{item.title}</Text>
+              <View style={styles.text_container}>
+                <Text style={styles.news_text}>{item.categoryId.name}</Text>
+                <Text style={styles.news_text}>{item.buildingId.name}</Text>
+                <Text style={styles.news_text}>Found on {item.date}</Text>
+              </View>
+            </View>
+            <View style={styles.news_photo}>
+              <Image source={{ uri: item.imageUrl }} style={styles.photo} />
             </View>
           </View>
-          <View style={styles.news_photo}>
-            <Image source={{ uri: item.imageUrl }} style={styles.photo} />
-          </View>
-        </View>
+        </TouchableOpacity>
       )}
       ItemSeparatorComponent={() => (
         <View
