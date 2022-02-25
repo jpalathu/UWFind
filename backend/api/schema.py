@@ -492,10 +492,10 @@ class Query(graphene.ObjectType):
         return User.objects.exclude(user_id=current_user_id)
 
     def resolve_lost_item_posts_by_user_id(root, info, user_id):
-        return LostItemPost.objects.filter(lost_user_id=user_id)
+        return LostItemPost.objects.filter(lost_user_id=user_id, deleted_at=None).order_by("-date")
 
     def resolve_found_item_posts_by_user_id(root, info, user_id):
-        return FoundItemPost.objects.filter(found_user_id=user_id)
+        return FoundItemPost.objects.filter(found_user_id=user_id, deleted_at=None).order_by("-date")
         
 
 class Mutation(graphene.ObjectType):
