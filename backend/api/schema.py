@@ -394,6 +394,8 @@ class Query(graphene.ObjectType):
     messages = graphene.List(MessageType, chat_room_id=graphene.Int())
     chat_rooms = graphene.List(CustomChatRoom, user_id=graphene.Int())
     users = graphene.List(UserType, current_user_id=graphene.Int())
+    lost_item_posts_by_user_id = graphene.List(LostItemPostType, user_id=graphene.Int())
+    found_item_posts_by_user_id = graphene.List(FoundItemPostType, user_id=graphene.Int())
 
     def resolve_drop_off_locations(root, info):
         return DropOffLocation.objects.all()
@@ -488,6 +490,12 @@ class Query(graphene.ObjectType):
 
     def resolve_users(root, info, current_user_id):
         return User.objects.exclude(user_id=current_user_id)
+
+    def resolve_lost_item_posts_by_user_id(root, info, user_id):
+        return LostItemPost.objects.filter(lost_user_id=user_id)
+
+    def resolve_found_item_posts_by_user_id(root, info, user_id):
+        return FoundItemPost.objects.filter(found_user_id=user_id)
         
 
 class Mutation(graphene.ObjectType):
