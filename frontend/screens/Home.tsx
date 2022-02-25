@@ -16,7 +16,7 @@ import { Button } from "native-base";
 
 import Colors from "../constants/Colors";
 import { RootTabScreenProps } from "../types";
-import { SearchBar } from "react-native-elements";
+import { Searchbar } from 'react-native-paper';
 
 import { TabView, SceneMap } from "react-native-tab-view";
 import FoundForm from "../components/FoundForm";
@@ -116,6 +116,11 @@ const LostFeed = () => {
       getItems();
     }
   }, [isFocused]);
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const onChangeSearch = (query: any) => setSearchQuery(query);
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -127,6 +132,11 @@ const LostFeed = () => {
       <View style={styles.instruction}>
         <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
       </View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={onChangeSearch}
+        value={searchQuery}
+        />
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
           <LostForm refreshPosts={getItems} />
