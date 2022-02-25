@@ -80,7 +80,7 @@ function RootNavigator() {
             <PressableIcon
               onPress={() => navigation.navigate("Home")}
               icon="caret-left"
-              isLeft={true}
+              isLeft={false}
             />
           ),
         })}
@@ -96,7 +96,7 @@ function RootNavigator() {
             <PressableIcon
               onPress={() => navigation.navigate("Home")}
               icon="caret-left"
-              isLeft={true}
+              isLeft={false}
             />
           ),
         })}
@@ -147,7 +147,7 @@ function RootNavigator() {
             <PressableIcon
               onPress={() => navigation.navigate("Home")}
               icon="caret-left"
-              isLeft={true}
+              isLeft={false}
             />
           ),
         })}
@@ -163,7 +163,7 @@ function RootNavigator() {
             <PressableIcon
               onPress={() => navigation.navigate("Home")}
               icon="caret-left"
-              isLeft={true}
+              isLeft={false}
             />
           ),
         })}
@@ -180,7 +180,7 @@ function RootNavigator() {
             <PressableIcon
               onPress={() => navigation.navigate("Home")}
               icon="caret-left"
-              isLeft={true}
+              isLeft={false}
             />
           ),
         })}
@@ -196,7 +196,7 @@ function RootNavigator() {
             <PressableIcon
               onPress={() => navigation.navigate("Home")}
               icon="caret-left"
-              isLeft={true}
+              isLeft={false}
             />
           ),
         })}
@@ -212,7 +212,7 @@ function RootNavigator() {
             <PressableIcon
               onPress={() => navigation.navigate("ChatHome")}
               icon="caret-left"
-              isLeft={true}
+              isLeft={false}
             />
           ),
         })}
