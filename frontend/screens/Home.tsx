@@ -66,6 +66,36 @@ export default function Home() {
     />
   );
 }
+function memoize(func) {
+  // Create a new cache, just for this function
+  let cache = new Map();
+
+  const memoized = function (...args) {
+    // Use the first argument as the cache key.
+    // If your function takes multiple args, you may
+    // want to come up with a more complex scheme
+    let key = args[0];
+
+    // Return the cached value if one exists
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+
+    // Otherwise, compute the result and save it
+    // before returning it.
+    let result = func.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+
+  return memoized;
+}
+
+const getSearchItems = (items: any[], searchQuery: string) => {
+  return items.filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
+}
+
+const searchedItems = memoize(getSearchItems);
 
 const LostFeed = () => {
   const navigation = useNavigation();
@@ -119,7 +149,16 @@ const LostFeed = () => {
 
   const [searchQuery, setSearchQuery] = React.useState('');
 
-  const onChangeSearch = (query: any) => setSearchQuery(query);
+  const onChangeSearch = async (query: any) => {
+    setSearchQuery(query)
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      setItems(data.lostItemPosts);
+    }
+    setItems(searchedItems)
+  };
   
   return (
     <View style={styles.container}>
@@ -151,7 +190,7 @@ const LostFeed = () => {
       </View>
       <FlatGrid
         itemDimension={130}
-        data={items}
+        data={searchedItems(items, searchQuery)}
         style={styles.gridView}
         // staticDimension={300}
         // fixed
@@ -246,6 +285,19 @@ const FoundFeed = () => {
     }
   }, [isFocused]);
 
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const onChangeSearch = async (query: any) => {
+    setSearchQuery(query)
+    const { data, error } = await executeQuery();
+    if (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    } else {
+      setItems(data.foundItemPosts);
+    }
+    setItems(searchedItems)
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -257,6 +309,11 @@ const FoundFeed = () => {
       <View style={styles.instruction}>
         <Text style={styles.instruction_text}>SWIPE RIGHT FOR LOST ITEMS</Text>
       </View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={onChangeSearch}
+        value={searchQuery}
+        />
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
           <FoundForm refreshPosts={getItems} />
@@ -271,7 +328,7 @@ const FoundFeed = () => {
       </View>
       <FlatGrid
         itemDimension={130}
-        data={items}
+        data={searchedItems(items, searchQuery)}
         style={styles.gridView}
         // staticDimension={300}
         // fixed
