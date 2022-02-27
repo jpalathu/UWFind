@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, useColorScheme } from "react-native";
 import { Button, Text, Modal, FormControl, Select } from "native-base";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
@@ -174,6 +174,7 @@ export default function FilterForm(props: FilterFormProps) {
     }
   };
 
+  const colorScheme = useColorScheme();
   return (
     <Fragment>
       <Button
@@ -238,6 +239,9 @@ export default function FilterForm(props: FilterFormProps) {
                   dateInput: {
                     marginLeft: 36,
                   },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
+                  },
                 }}
                 onDateChange={(date) => {
                   setStartDate(date);
@@ -265,6 +269,9 @@ export default function FilterForm(props: FilterFormProps) {
                   },
                   dateInput: {
                     marginLeft: 36,
+                  },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
                   },
                 }}
                 onDateChange={(date) => {

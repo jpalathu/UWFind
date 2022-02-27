@@ -22,6 +22,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import ProfileImage from "./shared/ProfileImage";
 import { useNavigation } from "@react-navigation/native";
 import { useStore } from "../store";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function FoundDetailedItem({ route }) {
   const navigation = useNavigation();
@@ -163,6 +164,7 @@ export default function FoundDetailedItem({ route }) {
     setIsMutationLoading(false);
   };
 
+  const colorScheme = useColorScheme();
   return (
     <View style={styles.container}>
       <Modal isOpen={showEditInfo} onClose={closeModal}>
@@ -202,6 +204,9 @@ export default function FoundDetailedItem({ route }) {
                   },
                   dateInput: {
                     marginLeft: 36,
+                  },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
                   },
                 }}
                 onDateChange={(v) => {

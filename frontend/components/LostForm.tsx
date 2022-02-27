@@ -14,6 +14,7 @@ import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import { FontAwesome } from "@expo/vector-icons";
+import useColorScheme from "../hooks/useColorScheme";
 
 interface LostFormProps {
   refreshPosts: () => void;
@@ -140,6 +141,7 @@ export default function LostForm(props: LostFormProps) {
     getFormData();
   }, []);
 
+  const colorScheme = useColorScheme();
   return (
     <Fragment>
       <Button
@@ -171,20 +173,11 @@ export default function LostForm(props: LostFormProps) {
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header>Create a Post</Modal.Header>
-          {/* <Image
-            source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
-          /> */}
           <Modal.Body>
             <FormControl>
               <FormControl.Label>Title</FormControl.Label>
               <Input onChangeText={(value) => setTitle(value)} />
             </FormControl>
-
-            {/* <FormControl>
-<Image source={{ uri: 'https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/84C05669-2526-4BF7-A06B-D93710EFFA9C.png'}} />
-
-</FormControl> */}
-
             <FormControl mt="1">
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
@@ -206,6 +199,9 @@ export default function LostForm(props: LostFormProps) {
                   },
                   dateInput: {
                     marginLeft: 36,
+                  },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
                   },
                 }}
                 onDateChange={(date) => {

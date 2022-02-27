@@ -22,6 +22,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
 import ProfileImage from "./shared/ProfileImage";
 import { useStore } from "../store";
+import useColorScheme from "../hooks/useColorScheme";
 
 export default function LostDetailedItem({ route }) {
   const navigation = useNavigation();
@@ -174,6 +175,7 @@ export default function LostDetailedItem({ route }) {
     getFormData();
   }, []);
 
+  const colorScheme = useColorScheme();
   return (
     <View style={styles.container}>
       <Modal isOpen={showEditInfo} onClose={closeModal}>
@@ -213,6 +215,9 @@ export default function LostDetailedItem({ route }) {
                   },
                   dateInput: {
                     marginLeft: 36,
+                  },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
                   },
                 }}
                 onDateChange={(v) => {

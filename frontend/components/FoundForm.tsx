@@ -13,6 +13,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import { pickImage } from "../utils/imagePicker";
 import { FontAwesome } from "@expo/vector-icons";
+import useColorScheme from "../hooks/useColorScheme";
 
 interface FoundFormProps {
   refreshPosts: () => void;
@@ -155,6 +156,7 @@ export default function FoundForm(props: FoundFormProps) {
     getFormData();
   }, []);
 
+  const colorScheme = useColorScheme();
   return (
     <Fragment>
       <Button
@@ -212,6 +214,9 @@ export default function FoundForm(props: FoundFormProps) {
                   },
                   dateInput: {
                     marginLeft: 36,
+                  },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
                   },
                 }}
                 onDateChange={(date) => {
