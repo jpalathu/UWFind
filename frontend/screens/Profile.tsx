@@ -3,7 +3,6 @@ import Colors from "../constants/Colors";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
   Text,
-  Container,
   Divider,
   Modal,
   FormControl,

@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { View, Image } from "react-native";
 import { pickImage } from "../utils/imagePicker";
 
 import {
@@ -88,7 +88,6 @@ export default function LostForm(props: LostFormProps) {
   `;
   const [executeMutation] = useMutation(CREATE_POST);
   const { userID } = useStore();
-  // const {imageURL} = pickImage();
   const [isMutationLoading, setIsMutationLoading] = useState(false);
   const createPost = async () => {
     setIsMutationLoading(true);

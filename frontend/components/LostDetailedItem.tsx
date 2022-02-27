@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import {
   Container,
-  Divider,
   Modal,
   FormControl,
   Input,

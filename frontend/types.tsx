@@ -19,7 +19,6 @@ export type RootStackParamList = {
   Home: any;
   Profile: any;
   PublicProfile: any;
-  Form: any;
   ChatHome: any;
   ChatRoom: any;
   LostDetailedItem: any;
@@ -35,7 +34,6 @@ export type RootTabParamList = {
   Home: any;
   Profile: any;
   PublicProfile: any;
-  Form: any;
   ChatHome: any;
   ChatRoom: any;
   LostDetailedItem: any;
