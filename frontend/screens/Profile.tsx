@@ -18,8 +18,10 @@ import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Tab, TabView } from "react-native-elements";
+import { useChatContext } from "stream-chat-expo";
 
 export default function Profile() {
+  const { client } = useChatContext();
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [profile, setProfile] = useState({
     firstName: "",
@@ -93,6 +95,11 @@ export default function Profile() {
       const { bio, firstName, lastName, email, imageUrl } =
         result.data.updateUser.user;
       setProfile({ firstName, lastName, bio, email, imageUrl });
+      await client.upsertUser({
+        id: userID,
+        name: firstName + " " + lastName,
+        image: imageUrl,
+      });
       closeModal();
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
@@ -122,7 +129,6 @@ export default function Profile() {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       setProfile(data.userById);
-      console.log("GOOD", data);
     }
   };
 
@@ -329,7 +335,6 @@ const LostItemTabContent = () => {
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      console.log(data);
       setItems(data.lostItemPostsByUserId);
     }
   };
@@ -437,7 +442,6 @@ const FoundItemTabContent = () => {
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      console.log(data);
       setItems(data.foundItemPostsByUserId);
     }
   };
