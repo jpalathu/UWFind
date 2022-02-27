@@ -1,65 +1,57 @@
-import { gql, useLazyQuery } from "@apollo/client";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { FlatList, StyleSheet, SafeAreaView } from "react-native";
-import Message from "../components/chat/Message";
-import MessageInput from "../components/chat/MessageInput";
+import { ActivityIndicator } from "react-native";
+
+import {
+  Channel,
+  MessageList,
+  MessageInput,
+  useChatContext,
+  Thread,
+} from "stream-chat-expo";
 
 const ChatRoom = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({ title: route.params?.name });
-  }, []);
+  const { client } = useChatContext();
 
-  const [messages, setMessages] = useState<any[]>([]);
-  const MESSAGES = gql`
-    query ($chatRoomId: Int!) {
-      messages(chatRoomId: $chatRoomId) {
-        messageId
-        content
-        createdAt
-        senderId {
-          userId
-        }
+  const [channel, setChannel] = useState<any>(null);
+  const [thread, setThread] = useState<any>(null);
+
+  const { channelID } = route.params || {};
+
+  useEffect(() => {
+    const getChannel = async () => {
+      setChannel(null);
+      const channels = await client.queryChannels({ id: { $eq: channelID } });
+      if (channels.length > 0) {
+        setChannel(channels[0]);
+      } else {
+        console.log("No channels found");
       }
-    }
-  `;
-  const [executeQuery] = useLazyQuery(MESSAGES);
-  const loadMessages = async () => {
-    const { data, error } = await executeQuery({
-      variables: { chatRoomId: route.params?.chatRoomID },
-    });
-    if (error) {
-      console.error("ERROR", JSON.stringify(error, null, 2));
-    } else {
-      setMessages(data.messages);
-      console.log("GOOD", data);
-    }
-  };
+      navigation.setOptions({ title: "PLACEHOLDER" });
+    };
 
-  useEffect(() => {
-    loadMessages();
-  }, []);
+    getChannel();
+  }, [channelID]);
+
+  if (!channel) {
+    return <ActivityIndicator size="large" />;
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={messages}
-        renderItem={({ item }) => <Message message={item} />}
-        inverted
-      />
-      <MessageInput chatRoomID={route.params?.chatRoomID} reloadMessages={loadMessages}/>
-    </SafeAreaView>
+    <Channel channel={channel} keyboardVerticalOffset={0} thread={thread}>
+      {thread ? (
+        <Thread />
+      ) : (
+        <>
+          <MessageList onThreadSelect={setThread} />
+          <MessageInput />
+        </>
+      )}
+    </Channel>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 90,
-    flex: 1,
-  },
-});
 
 export default ChatRoom;

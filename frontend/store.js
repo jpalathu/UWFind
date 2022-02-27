@@ -3,6 +3,7 @@ import React from "react";
 
 class Store {
   @observable userID = "";
+  @observable currentUser = {};
   @observable authToken = {};
 
   @action updateUserID = (userID) => {
@@ -12,6 +13,10 @@ class Store {
   @action updateAuthToken = (authToken) => {
     this.authToken = authToken;
   };
+
+  @action updateUser = (user) => {
+    this.currentUser = user;
+  }
 }
 
 const store = new Store();

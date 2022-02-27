@@ -3,10 +3,11 @@ import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Button, FormControl, Input, Modal, Select } from "native-base";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useStore } from "../../store";
+import { useChatContext } from "stream-chat-expo";
 
-const ChatHomeHeader = () => {
+const CreateChatRoom = () => {
   const navigation = useNavigation();
   const { userID } = useStore();
 
@@ -47,43 +48,24 @@ const ChatHomeHeader = () => {
   }, []);
 
   const [selectedUser, setSelectedUser] = useState("");
-  const CREATE_CHAT_ROOM = gql`
-    mutation ($currentUserId: Int!, $otherUserId: Int!) {
-      createChatRoom(currentUserId: $currentUserId, otherUserId: $otherUserId) {
-        alreadyExists
-        chatRoom {
-          chatRoomId
-        }
-        user {
-          firstName
-          lastName
-        }
-      }
-    }
-  `;
-  const [executeMutation] = useMutation(CREATE_CHAT_ROOM);
-  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const [isChannelLoading, setIsChannelLoading] = useState(false);
+
+  const { client } = useChatContext();
   const createChatRoom = async () => {
-    setIsMutationLoading(true);
+    setIsChannelLoading(true);
     try {
-      console.log(selectedUser);
-      const result = await executeMutation({
-        variables: {
-          currentUserId: userID,
-          otherUserId: Number(selectedUser),
-        },
+      const channel = client.channel("messaging", {
+        members: [String(userID), selectedUser],
       });
-      console.log("GOOD", result);
-      const { user, chatRoom } = result.data.createChatRoom;
+      await channel.watch();
       navigation.navigate("ChatRoom", {
-        chatRoomID: chatRoom.chatRoomId,
-        name: user.firstName + " " + user.lastName,
+        channelID: channel.id,
       });
       closeModal();
     } catch (error) {
-      console.error("ERROR", JSON.stringify(error, null, 2));
+      console.log("ERROR", error);
     }
-    setIsMutationLoading(false);
+    setIsChannelLoading(false);
   };
 
   return (
@@ -123,7 +105,7 @@ const ChatHomeHeader = () => {
               >
                 Cancel
               </Button>
-              <Button isLoading={isMutationLoading} onPress={createChatRoom}>
+              <Button isLoading={isChannelLoading} onPress={createChatRoom}>
                 Chat
               </Button>
             </Button.Group>
@@ -132,7 +114,6 @@ const ChatHomeHeader = () => {
       </Modal>
 
       <View style={styles.container}>
-        <Text style={styles.title}>Chat</Text>
         <TouchableOpacity onPress={() => openModal()}>
           <AntDesign name="plus" size={24} color="white" />
         </TouchableOpacity>
@@ -146,7 +127,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
   },
   title: {
     color: "white",
@@ -155,4 +135,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatHomeHeader;
+export default CreateChatRoom;

@@ -5,6 +5,7 @@ import { Button, Box, Text, Actionsheet, Heading } from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
 import { useStore } from "../store";
+import { useChatContext } from "stream-chat-expo";
 
 type ValidationState = {
   value: string;
@@ -19,6 +20,20 @@ const initialState = {
 };
 
 export default function Login({ navigation }: RootTabScreenProps<"Login">) {
+  const { client } = useChatContext();
+  const connectUser = async (id: string, name: string, image: string) => {
+    client.disconnectUser()
+    await client.connectUser(
+      {
+        id,
+        name,
+        image,
+      },
+      client.devToken(id)
+    );
+    console.log("user connected");
+  };
+
   const [email, setEmail] = useState<ValidationState>(initialState);
   const [password, setPassword] = useState<ValidationState>(initialState);
   const goToSignUp = () => {
@@ -58,6 +73,9 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
       login(email: $email, password: $password) {
         user {
           userId
+          firstName
+          lastName
+          imageUrl
         }
         token
       }
@@ -65,7 +83,7 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
   `;
   const [executeQuery] = useLazyQuery(LOGIN_QUERY);
   const [isQueryLoading, setIsQueryLoading] = useState(false);
-  const { updateUserID, updateAuthToken } = useStore();
+  const { updateUserID, updateUser, updateAuthToken } = useStore();
   const login = async () => {
     setIsQueryLoading(true);
     try {
@@ -78,9 +96,16 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
           console.error("ERROR", JSON.stringify(error, null, 2));
         } else {
           console.log("GOOD", data);
+          const { userId, firstName, lastName, imageUrl } = data.login.user;
           // store the user ID and auth token
-          updateUserID(data.login.user.userId);
+          updateUserID(userId);
+          updateUser(data.login.user)
           updateAuthToken(data.login.token);
+          connectUser(
+            userId,
+            `${firstName} ${lastName}`,
+            imageUrl ? imageUrl : ""
+          );
           resetFields();
           navigation.navigate("Home");
         }

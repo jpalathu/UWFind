@@ -8,6 +8,10 @@ import Navigation from "./navigation";
 import { LogBox, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
+import { StreamChat } from "stream-chat";
+import { OverlayProvider, Chat } from "stream-chat-expo";
+
+const chatClient = StreamChat.getInstance("yjnpxas6ctem");
 
 // Initialize Apollo Client
 const client = new ApolloClient({
@@ -30,6 +34,7 @@ LogBox.ignoreLogs([
   "NativeBase:",
   "VirtualizedList:",
   "When server rendering,",
+  "Each child in a list"
 ]);
 
 export default function App() {
@@ -54,15 +59,23 @@ export default function App() {
     })();
   }, []);
 
+  useEffect(() => {
+    return () => chatClient.disconnectUser();
+  }, []);
+
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <ApolloProvider client={client}>
-        <NativeBaseProvider>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </NativeBaseProvider>
+        <OverlayProvider>
+          <Chat client={chatClient}>
+            <NativeBaseProvider>
+              <Navigation colorScheme={colorScheme} />
+            </NativeBaseProvider>
+          </Chat>
+        </OverlayProvider>
+        <StatusBar />
       </ApolloProvider>
     );
   }

@@ -14,6 +14,7 @@ import {
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
 import { gql, useMutation } from "@apollo/client";
+import { useChatContext } from "stream-chat-expo";
 
 type ValidationState = {
   value: string;
@@ -28,6 +29,19 @@ const initialState = {
 };
 
 export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
+  const { client } = useChatContext();
+  const connectUser = async (id: string, name: string, image: string) => {
+    client.disconnectUser()
+    await client.connectUser(
+      {
+        id,
+        name,
+        image,
+      },
+      client.devToken(id)
+    );
+  };
+
   const [firstName, setFirstName] = useState<ValidationState>(initialState);
   const [lastName, setLastName] = useState<ValidationState>(initialState);
   const [bio, setBio] = useState<ValidationState>(initialState);
@@ -98,14 +112,14 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
       isError = true;
     }
     /* Check if UW email */
-    if (email.value && !email.value.endsWith("@uwaterloo.ca")) {
-      setEmail({
-        ...email,
-        isInvalid: true,
-        errorMessage: "Use a UW email ending with @uwaterloo.ca",
-      });
-      isError = true;
-    }
+    // if (email.value && !email.value.endsWith("@uwaterloo.ca")) {
+    //   setEmail({
+    //     ...email,
+    //     isInvalid: true,
+    //     errorMessage: "Use a UW email ending with @uwaterloo.ca",
+    //   });
+    //   isError = true;
+    // }
 
     return !isError;
   };
@@ -130,6 +144,8 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         user {
           userId
           firstName
+          lastName
+          imageUrl
         }
       }
     }
@@ -152,6 +168,13 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
         });
 
         console.log("GOOD", result);
+        connectUser(
+          result.data.signUp.user.userId,
+          `${result.data.signUp.user.firstName} ${result.data.signUp.user.lastName}`,
+          result.data.signUp.user.imageUrl
+            ? result.data.signUp.user.imageUrl
+            : ""
+        );
         resetFields();
         navigation.navigate("Login");
       } catch (error) {
