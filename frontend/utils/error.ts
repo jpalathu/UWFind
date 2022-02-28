@@ -14,6 +14,6 @@ export const formatValidState = (value: any) => {
   return { value, isInvalid: false, errorMessage: "" };
 };
 
-export const formatInvalidState = (value: any, errorMessage: string) => {
-  return { value, isInvalid: true, errorMessage };
+export const formatInvalidState = (errorMessage: string) => {
+  return { value: "", isInvalid: true, errorMessage };
 };

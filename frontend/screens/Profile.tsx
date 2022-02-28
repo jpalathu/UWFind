@@ -66,7 +66,7 @@ export default function Profile() {
     if (!modalFields.firstName.value) {
       setModalFields({
         ...modalFields,
-        firstName: formatInvalidState("", "First Name is required"),
+        firstName: formatInvalidState("First Name is required"),
       });
 
       hasError = true;
@@ -75,7 +75,7 @@ export default function Profile() {
     if (!modalFields.lastName.value) {
       setModalFields({
         ...modalFields,
-        lastName: formatInvalidState("", "Last Name is required"),
+        lastName: formatInvalidState("Last Name is required"),
       });
 
       hasError = true;
@@ -84,7 +84,7 @@ export default function Profile() {
     if (!modalFields.bio.value) {
       setModalFields({
         ...modalFields,
-        bio: formatInvalidState("", "Bio is required"),
+        bio: formatInvalidState("Bio is required"),
       });
 
       hasError = true;
