@@ -171,6 +171,7 @@ class UpdateLostItemPost(graphene.Mutation):
             if "image_url" in input: post_instance.image_url = input.image_url
             if "date" in input: post_instance.date = input.date
             post_instance.save()
+            post_instance.refresh_from_db()
             return UpdateLostItemPost(lost_item_post=post_instance)
         except:
             raise BadRequest("Unable to update lost item post")
@@ -259,6 +260,7 @@ class UpdateFoundItemPost(graphene.Mutation):
             if "image_url" in input: post_instance.image_url = input.image_url
             if "date" in input: post_instance.date = input.date
             post_instance.save()
+            post_instance.refresh_from_db()
             return UpdateFoundItemPost(found_item_post=post_instance)
         except:
             raise BadRequest("Unable to update found item post")
