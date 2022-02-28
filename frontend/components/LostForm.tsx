@@ -350,7 +350,7 @@ export default function LostForm(props: LostFormProps) {
                   <Spinner size="sm" />
                 ) : (
                   <Fragment>
-                    {imageUrl ? (
+                    {imageUrl.value ? (
                       <Image
                         style={{
                           borderRadius: 15,

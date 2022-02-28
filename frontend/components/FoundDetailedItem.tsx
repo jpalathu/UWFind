@@ -54,8 +54,8 @@ export default function FoundDetailedItem({ route }) {
     categoryName: itemCategory.name,
     buildingID: itemLocation.buildingId,
     buildingName: itemLocation.name,
-    dropOffLocationID: itemDropOffLocation.locationId,
-    dropOffLocationName: itemDropOffLocation.name,
+    dropOffLocationID: itemDropOffLocation ? itemDropOffLocation.locationId : "",
+    dropOffLocationName: itemDropOffLocation ? itemDropOffLocation.name : "",
     otherDropOffLocation: itemOtherDropOffLocation, //this will be shown if the drop off location is Other
     foundUser: itemFoundUser,
     claimedUser: itemClaimedUser,
