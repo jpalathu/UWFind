@@ -276,7 +276,7 @@ export default function LostDetailedItem({ route }) {
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
           <Modal.Body>
-            <FormControl isInvalid={modalFields.title.isInvalid}>
+            <FormControl isRequired isInvalid={modalFields.title.isInvalid}>
               <FormControl.Label>Title</FormControl.Label>
               <Input
                 type="text"
@@ -292,7 +292,7 @@ export default function LostDetailedItem({ route }) {
                 {modalFields.title.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={modalFields.date.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.date.isInvalid}>
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
                 style={{ width: 200 }}
@@ -329,7 +329,7 @@ export default function LostDetailedItem({ route }) {
                 {modalFields.date.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={modalFields.buildingID.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.buildingID.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
                 selectedValue={modalFields.buildingID.value}
@@ -360,7 +360,7 @@ export default function LostDetailedItem({ route }) {
                 {modalFields.buildingID.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={modalFields.categoryID.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.categoryID.isInvalid}>
               <FormControl.Label>Category</FormControl.Label>
 
               <Select
@@ -392,7 +392,7 @@ export default function LostDetailedItem({ route }) {
                 {modalFields.categoryID.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={modalFields.description.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.description.isInvalid}>
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"

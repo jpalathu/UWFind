@@ -375,7 +375,7 @@ export default function FoundDetailedItem({ route }) {
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
           <Modal.Body>
-            <FormControl isInvalid={modalFields.title.isInvalid}>
+            <FormControl isRequired isInvalid={modalFields.title.isInvalid}>
               <FormControl.Label>Title</FormControl.Label>
               <Input
                 type="text"
@@ -391,7 +391,7 @@ export default function FoundDetailedItem({ route }) {
                 {modalFields.title.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={modalFields.date.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.date.isInvalid}>
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
                 style={{ width: 200 }}
@@ -428,7 +428,7 @@ export default function FoundDetailedItem({ route }) {
                 {modalFields.date.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={modalFields.buildingID.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.buildingID.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
                 selectedValue={modalFields.buildingID.value}
@@ -459,7 +459,7 @@ export default function FoundDetailedItem({ route }) {
                 {modalFields.buildingID.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={modalFields.categoryID.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.categoryID.isInvalid}>
               <FormControl.Label>Category</FormControl.Label>
 
               <Select
@@ -533,7 +533,7 @@ export default function FoundDetailedItem({ route }) {
                 mt="1"
                 isInvalid={modalFields.otherDropOffLocation.isInvalid}
               >
-                <FormControl.Label>Other Drop-Off Location</FormControl.Label>
+                <FormControl.Label isRequired>Other Drop-Off Location</FormControl.Label>
                 <Input
                   onChangeText={(v) =>
                     setModalFields({
@@ -551,7 +551,7 @@ export default function FoundDetailedItem({ route }) {
                 </FormControl.ErrorMessage>
               </FormControl>
             )}
-            <FormControl mt="1" isInvalid={modalFields.description.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={modalFields.description.isInvalid}>
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"

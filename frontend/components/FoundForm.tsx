@@ -237,7 +237,7 @@ export default function FoundForm(props: FoundFormProps) {
           <Modal.CloseButton />
           <Modal.Header>Create a Post</Modal.Header>
           <Modal.Body>
-            <FormControl isInvalid={title.isInvalid}>
+            <FormControl isRequired isInvalid={title.isInvalid}>
               <FormControl.Label>Title</FormControl.Label>
               <Input
                 onChangeText={(value) => setTitle(formatValidState(value))}
@@ -249,7 +249,7 @@ export default function FoundForm(props: FoundFormProps) {
                 {title.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={date.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={date.isInvalid}>
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
                 style={{ width: 200 }}
@@ -286,7 +286,7 @@ export default function FoundForm(props: FoundFormProps) {
                 {date.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={locationValue.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={locationValue.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
                 selectedValue={locationValue.value}
@@ -314,7 +314,7 @@ export default function FoundForm(props: FoundFormProps) {
                 {locationValue.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isInvalid={categoryValue.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={categoryValue.isInvalid}>
               <FormControl.Label>Category</FormControl.Label>
               <Select
                 selectedValue={categoryValue.value}
@@ -374,7 +374,7 @@ export default function FoundForm(props: FoundFormProps) {
             </FormControl>
             {/* ONLY SHOW THE OTHER DROP OFF LOCATION INPUT IF OTHER IS SELECTED */}
             {Number(dropOffLocationValue.value) == 17 && (
-              <FormControl isInvalid={otherDropOffLocation.isInvalid}>
+              <FormControl isRequired isInvalid={otherDropOffLocation.isInvalid}>
                 <FormControl.Label>Other Drop-Off Location</FormControl.Label>
                 <Input
                   onChangeText={(value) =>
@@ -389,7 +389,7 @@ export default function FoundForm(props: FoundFormProps) {
                 </FormControl.ErrorMessage>
               </FormControl>
             )}
-            <FormControl mt="1" isInvalid={description.isInvalid}>
+            <FormControl mt="1" isRequired isInvalid={description.isInvalid}>
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"
