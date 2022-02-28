@@ -252,6 +252,12 @@ export default function FoundDetailedItem({ route }) {
       hasError = true;
     }
 
+    // Other drop off location is required if the drop off location is Other
+    if(Number(dropOffLocationID.value) == 17 && !otherDropOffLocation.value) {
+      setModalFields({...modalFields, otherDropOffLocation: formatInvalidState("Drop-Off Location is required")})
+      hasError = true;
+    }
+
     return !hasError;
   };
 
@@ -527,7 +533,7 @@ export default function FoundDetailedItem({ route }) {
                 mt="1"
                 isInvalid={modalFields.otherDropOffLocation.isInvalid}
               >
-                <FormControl.Label>Other Drop Off Location</FormControl.Label>
+                <FormControl.Label>Other Drop-Off Location</FormControl.Label>
                 <Input
                   onChangeText={(v) =>
                     setModalFields({

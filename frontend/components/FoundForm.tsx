@@ -100,6 +100,12 @@ export default function FoundForm(props: FoundFormProps) {
       hasError = true;
     }
 
+    // Other drop off location is required if the drop off location is Other
+    if(Number(dropOffLocationValue.value) == 17 && !otherDropOffLocation.value) {
+      setOtherDropOffLocation(formatInvalidState("Drop-Off Location is required"))
+      hasError = true;
+    }
+
     return !hasError;
   };
 
@@ -369,7 +375,7 @@ export default function FoundForm(props: FoundFormProps) {
             {/* ONLY SHOW THE OTHER DROP OFF LOCATION INPUT IF OTHER IS SELECTED */}
             {Number(dropOffLocationValue.value) == 17 && (
               <FormControl isInvalid={otherDropOffLocation.isInvalid}>
-                <FormControl.Label>Other Drop Off Location</FormControl.Label>
+                <FormControl.Label>Other Drop-Off Location</FormControl.Label>
                 <Input
                   onChangeText={(value) =>
                     setOtherDropOffLocation(formatValidState(value))
