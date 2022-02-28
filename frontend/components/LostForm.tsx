@@ -87,7 +87,7 @@ export default function LostForm(props: LostFormProps) {
       hasError = true;
     }
 
-    if (!description.value) {
+    if (!description.value.trim()) {
       setDescription(formatInvalidState("Description is required"));
       hasError = true;
     }
@@ -141,7 +141,7 @@ export default function LostForm(props: LostFormProps) {
             date: date.value,
           },
         });
-        console.log("GOOD", result);
+        
         props.refreshPosts();
         closeModal();
       }

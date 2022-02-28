@@ -16,6 +16,7 @@ import {
   IconButton,
   Select,
   Spinner,
+  WarningOutlineIcon,
 } from "native-base";
 import { Foundation, AntDesign, FontAwesome } from "@expo/vector-icons";
 import DatePicker from "react-native-datepicker";
@@ -25,6 +26,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useStore } from "../store";
 import useColorScheme from "../hooks/useColorScheme";
 import { pickImage } from "../utils/imagePicker";
+import {
+  formatInvalidState,
+  formatValidState,
+  INITIAL_VALIDATION_STATE,
+} from "../utils/error";
 
 export default function FoundDetailedItem({ route }) {
   const navigation = useNavigation();
@@ -54,7 +60,9 @@ export default function FoundDetailedItem({ route }) {
     categoryName: itemCategory.name,
     buildingID: itemLocation.buildingId,
     buildingName: itemLocation.name,
-    dropOffLocationID: itemDropOffLocation ? itemDropOffLocation.locationId : "",
+    dropOffLocationID: itemDropOffLocation
+      ? itemDropOffLocation.locationId
+      : "",
     dropOffLocationName: itemDropOffLocation ? itemDropOffLocation.name : "",
     otherDropOffLocation: itemOtherDropOffLocation, //this will be shown if the drop off location is Other
     foundUser: itemFoundUser,
@@ -74,49 +82,44 @@ export default function FoundDetailedItem({ route }) {
   };
 
   const [modalFields, setModalFields] = useState({
-    title: "",
-    date: "",
-    imageUrl: "",
-    categoryID: "",
-    buildingID: "",
-    dropOffLocationID: "",
-    otherDropOffLocation: "",
-    description: "",
+    title: INITIAL_VALIDATION_STATE,
+    date: INITIAL_VALIDATION_STATE,
+    imageUrl: INITIAL_VALIDATION_STATE,
+    categoryID: INITIAL_VALIDATION_STATE,
+    buildingID: INITIAL_VALIDATION_STATE,
+    dropOffLocationID: INITIAL_VALIDATION_STATE,
+    otherDropOffLocation: INITIAL_VALIDATION_STATE,
+    description: INITIAL_VALIDATION_STATE,
   });
+
+  const resetFields = () => {
+    setModalFields({
+      title: formatValidState(post.title),
+      date: formatValidState(post.date),
+      imageUrl: formatValidState(post.imageUrl),
+      categoryID: formatValidState(post.categoryID),
+      buildingID: formatValidState(post.buildingID),
+      dropOffLocationID: formatValidState(post.dropOffLocationID),
+      otherDropOffLocation: formatValidState(post.otherDropOffLocation),
+      description: formatValidState(post.description),
+    });
+  };
 
   const openModal = () => {
     setShowEditInfo(true);
-    setModalFields({
-      title: post.title,
-      date: post.date,
-      imageUrl: post.imageUrl,
-      categoryID: post.categoryID,
-      buildingID: post.buildingID,
-      dropOffLocationID: post.dropOffLocationID,
-      otherDropOffLocation: post.otherDropOffLocation,
-      description: post.description,
-    });
+    resetFields();
   };
 
   const closeModal = () => {
     setShowEditInfo(false);
-    setModalFields({
-      title: post.title,
-      date: post.date,
-      imageUrl: post.imageUrl,
-      categoryID: post.categoryID,
-      buildingID: post.buildingID,
-      dropOffLocationID: post.dropOffLocationID,
-      otherDropOffLocation: post.otherDropOffLocation,
-      description: post.description,
-    });
+    resetFields();
   };
 
   const [isImageLoading, setIsImageLoading] = useState(false);
   const handlePickedImage = async () => {
     setIsImageLoading(true);
     const image = await pickImage();
-    setModalFields({ ...modalFields, imageUrl: image });
+    setModalFields({ ...modalFields, imageUrl: formatValidState(image) });
     setIsImageLoading(false);
   };
 
@@ -184,7 +187,6 @@ export default function FoundDetailedItem({ route }) {
           claimedUserId: userID,
         },
       });
-      console.log("GOOD", result);
       // update the claimed user
       setPost({
         ...post,
@@ -195,6 +197,62 @@ export default function FoundDetailedItem({ route }) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     }
     setIsClaimItemLoading(false);
+  };
+
+  const validate = () => {
+    let hasError = false;
+    const {
+      title,
+      date,
+      categoryID,
+      buildingID,
+      dropOffLocationID,
+      otherDropOffLocation,
+      description,
+      imageUrl,
+    } = modalFields;
+
+    if (!title.value) {
+      setModalFields({
+        ...modalFields,
+        title: formatInvalidState("Title is required"),
+      });
+      hasError = true;
+    }
+
+    if (!date.value) {
+      setModalFields({
+        ...modalFields,
+        date: formatInvalidState("Date is required"),
+      });
+      hasError = true;
+    }
+
+    if (!categoryID.value) {
+      setModalFields({
+        ...modalFields,
+        categoryID: formatInvalidState("Category is required"),
+      });
+      hasError = true;
+    }
+
+    if (!buildingID.value) {
+      setModalFields({
+        ...modalFields,
+        buildingID: formatInvalidState("Location is required"),
+      });
+      hasError = true;
+    }
+
+    if (!description.value.trim()) {
+      setModalFields({
+        ...modalFields,
+        description: formatInvalidState("Description is required"),
+      });
+      hasError = true;
+    }
+
+    return !hasError;
   };
 
   /* Updating the post */
@@ -252,48 +310,51 @@ export default function FoundDetailedItem({ route }) {
   const updatePost = async () => {
     setIsUpdatePostLoading(true);
     try {
-      console.log("MODAL", modalFields);
-      const result = await executeUpdatePost({
-        variables: {
-          postId: post.postID,
-          title: modalFields.title,
-          description: modalFields.description,
-          date: modalFields.date,
-          imageUrl: modalFields.imageUrl,
-          categoryId: Number(modalFields.categoryID),
-          buildingId: Number(modalFields.buildingID),
-          dropOffLocationId: Number(modalFields.dropOffLocationID),
-          otherDropOffLocation: modalFields.otherDropOffLocation,
-        },
-      });
+      if (validate()) {
+        const result = await executeUpdatePost({
+          variables: {
+            postId: post.postID,
+            title: modalFields.title.value,
+            description: modalFields.description.value,
+            date: modalFields.date.value,
+            imageUrl: modalFields.imageUrl.value,
+            categoryId: Number(modalFields.categoryID.value),
+            buildingId: Number(modalFields.buildingID.value),
+            dropOffLocationId: modalFields.dropOffLocationID.value
+              ? Number(modalFields.dropOffLocationID.value)
+              : null,
+            otherDropOffLocation: modalFields.otherDropOffLocation.value,
+          },
+        });
 
-      const {
-        title,
-        description,
-        date,
-        imageUrl,
-        categoryId,
-        buildingId,
-        dropOffLocationId,
-        otherDropOffLocation,
-      } = result.data.updateFoundItemPost.foundItemPost;
-      console.log("GOOD", result);
-      // Update the edited details for the detailed design page
-      setPost({
-        ...post,
-        title,
-        description,
-        date,
-        imageUrl,
-        categoryID: categoryId.categoryId,
-        categoryName: categoryId.name,
-        buildingID: buildingId.buildingId,
-        buildingName: buildingId.name,
-        dropOffLocationID: dropOffLocationId.locationId,
-        dropOffLocationName: dropOffLocationId.name,
-        otherDropOffLocation,
-      });
-      closeModal();
+        const {
+          title,
+          description,
+          date,
+          imageUrl,
+          categoryId,
+          buildingId,
+          dropOffLocationId,
+          otherDropOffLocation,
+        } = result.data.updateFoundItemPost.foundItemPost;
+        
+        // Update the edited details for the detailed design page
+        setPost({
+          ...post,
+          title,
+          description,
+          date,
+          imageUrl,
+          categoryID: categoryId.categoryId,
+          categoryName: categoryId.name,
+          buildingID: buildingId.buildingId,
+          buildingName: buildingId.name,
+          dropOffLocationID: dropOffLocationId.locationId,
+          dropOffLocationName: dropOffLocationId.name,
+          otherDropOffLocation,
+        });
+        closeModal();
+      }
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     }
@@ -308,22 +369,27 @@ export default function FoundDetailedItem({ route }) {
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
           <Modal.Body>
-            <FormControl>
+            <FormControl isInvalid={modalFields.title.isInvalid}>
               <FormControl.Label>Title</FormControl.Label>
               <Input
                 type="text"
                 onChangeText={(v) =>
-                  setModalFields({ ...modalFields, title: v })
+                  setModalFields({ ...modalFields, title: formatValidState(v) })
                 }
-                defaultValue={modalFields.title}
+                defaultValue={modalFields.title.value}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.title.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isInvalid={modalFields.date.isInvalid}>
               <FormControl.Label>Date</FormControl.Label>
-
               <DatePicker
                 style={{ width: 200 }}
-                date={modalFields.date}
+                date={modalFields.date.value}
                 mode="date"
                 placeholder="select date"
                 format="YYYY-MM-DD"
@@ -346,21 +412,27 @@ export default function FoundDetailedItem({ route }) {
                   },
                 }}
                 onDateChange={(v) => {
-                  setModalFields({ ...modalFields, date: v });
+                  setModalFields({ ...modalFields, date: formatValidState(v) });
                 }}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.date.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isInvalid={modalFields.buildingID.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
-                selectedValue={modalFields.buildingID}
+                selectedValue={modalFields.buildingID.value}
                 minWidth={200}
                 accessibilityLabel="Select a Location"
                 placeholder="Select a Location"
                 onValueChange={(v) => {
                   setModalFields({
                     ...modalFields,
-                    buildingID: v,
+                    buildingID: formatValidState(v),
                   });
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
@@ -374,19 +446,25 @@ export default function FoundDetailedItem({ route }) {
                   />
                 ))}
               </Select>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.buildingID.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isInvalid={modalFields.categoryID.isInvalid}>
               <FormControl.Label>Category</FormControl.Label>
 
               <Select
-                selectedValue={modalFields.categoryID}
+                selectedValue={modalFields.categoryID.value}
                 minWidth={200}
                 accessibilityLabel="Select a Category"
                 placeholder="Select a Category"
                 onValueChange={(v) => {
                   setModalFields({
                     ...modalFields,
-                    categoryID: v,
+                    categoryID: formatValidState(v),
                   });
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
@@ -400,20 +478,29 @@ export default function FoundDetailedItem({ route }) {
                   />
                 ))}
               </Select>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.categoryID.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl
+              mt="1"
+              isInvalid={modalFields.dropOffLocationID.isInvalid}
+            >
               <FormControl.Label>Drop-Off Location</FormControl.Label>
               <Select
-                selectedValue={modalFields.dropOffLocationID}
+                selectedValue={modalFields.dropOffLocationID.value}
                 minWidth={200}
                 accessibilityLabel="Select a Drop-Off Location"
                 placeholder="Select a Drop-Off Location"
                 onValueChange={(v) => {
                   setModalFields({
                     ...modalFields,
-                    dropOffLocationID: v,
+                    dropOffLocationID: formatValidState(v),
                     // reset the other drop off location value when a value is selected
-                    otherDropOffLocation: "",
+                    otherDropOffLocation: formatValidState(""),
                   });
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
@@ -427,33 +514,57 @@ export default function FoundDetailedItem({ route }) {
                   />
                 ))}
               </Select>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.dropOffLocationID.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
             {/* ONLY SHOW THE OTHER DROP OFF LOCATION INPUT IF OTHER IS SELECTED */}
             {Number(modalFields.dropOffLocationID) == 17 && (
-              <FormControl>
+              <FormControl
+                isInvalid={modalFields.otherDropOffLocation.isInvalid}
+              >
                 <FormControl.Label>Other Drop Off Location</FormControl.Label>
                 <Input
                   onChangeText={(v) =>
                     setModalFields({
                       ...modalFields,
-                      otherDropOffLocation: v,
+                      otherDropOffLocation: formatValidState(v),
                     })
                   }
+                  defaultValue={modalFields.otherDropOffLocation.value}
                 />
+                <FormControl.ErrorMessage
+                  fontSize="xl"
+                  leftIcon={<WarningOutlineIcon size="xs" />}
+                >
+                  {modalFields.otherDropOffLocation.errorMessage}
+                </FormControl.ErrorMessage>
               </FormControl>
             )}
-            <FormControl mt="1">
+            <FormControl mt="1" isInvalid={modalFields.description.isInvalid}>
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"
                 multiline={true}
                 onChangeText={(v) =>
-                  setModalFields({ ...modalFields, description: v })
+                  setModalFields({
+                    ...modalFields,
+                    description: formatValidState(v),
+                  })
                 }
-                defaultValue={modalFields.description}
+                defaultValue={modalFields.description.value}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.description.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isInvalid={modalFields.imageUrl.isInvalid}>
               <FormControl.Label>Image</FormControl.Label>
               <View
                 style={{
@@ -470,14 +581,14 @@ export default function FoundDetailedItem({ route }) {
                   <Spinner size="sm" />
                 ) : (
                   <Fragment>
-                    {modalFields.imageUrl ? (
+                    {modalFields.imageUrl.value ? (
                       <Image
                         style={{
                           borderRadius: 15,
                           width: "100%",
                           height: "100%",
                         }}
-                        source={{ uri: modalFields.imageUrl }}
+                        source={{ uri: modalFields.imageUrl.value }}
                         resizeMode="stretch"
                       />
                     ) : (
@@ -486,6 +597,12 @@ export default function FoundDetailedItem({ route }) {
                   </Fragment>
                 )}
               </View>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.imageUrl.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
             <FormControl mt="2">
               <Button onPress={handlePickedImage}>Upload a photo</Button>

@@ -95,7 +95,7 @@ export default function FoundForm(props: FoundFormProps) {
       hasError = true;
     }
 
-    if (!description.value) {
+    if (!description.value.trim()) {
       setDescription(formatInvalidState("Description is required"));
       hasError = true;
     }
@@ -155,7 +155,7 @@ export default function FoundForm(props: FoundFormProps) {
             date: date.value,
           },
         });
-        console.log("GOOD", result);
+        
         props.refreshPosts();
         closeModal();
       }

@@ -63,30 +63,28 @@ export default function Profile() {
 
   const validate = () => {
     let hasError = false;
-    if (!modalFields.firstName.value) {
+    const { firstName, lastName, bio } = modalFields;
+    if (!firstName.value) {
       setModalFields({
         ...modalFields,
         firstName: formatInvalidState("First Name is required"),
       });
-
       hasError = true;
     }
 
-    if (!modalFields.lastName.value) {
+    if (!lastName.value) {
       setModalFields({
         ...modalFields,
         lastName: formatInvalidState("Last Name is required"),
       });
-
       hasError = true;
     }
 
-    if (!modalFields.bio.value) {
+    if (!bio.value) {
       setModalFields({
         ...modalFields,
         bio: formatInvalidState("Bio is required"),
       });
-
       hasError = true;
     }
 
@@ -398,7 +396,6 @@ const LostItemTabContent = () => {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
-      console.log("focused again");
       getItems();
     }
   }, [isFocused]);
@@ -508,7 +505,6 @@ const FoundItemTabContent = () => {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
-      console.log("focused again");
       getItems();
     }
   }, [isFocused]);
