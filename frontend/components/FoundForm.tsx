@@ -367,7 +367,7 @@ export default function FoundForm(props: FoundFormProps) {
               </FormControl.ErrorMessage>
             </FormControl>
             {/* ONLY SHOW THE OTHER DROP OFF LOCATION INPUT IF OTHER IS SELECTED */}
-            {Number(dropOffLocationValue) == 17 && (
+            {Number(dropOffLocationValue.value) == 17 && (
               <FormControl isInvalid={otherDropOffLocation.isInvalid}>
                 <FormControl.Label>Other Drop Off Location</FormControl.Label>
                 <Input

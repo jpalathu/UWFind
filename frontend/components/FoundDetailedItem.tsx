@@ -337,7 +337,7 @@ export default function FoundDetailedItem({ route }) {
           dropOffLocationId,
           otherDropOffLocation,
         } = result.data.updateFoundItemPost.foundItemPost;
-        
+
         // Update the edited details for the detailed design page
         setPost({
           ...post,
@@ -522,8 +522,9 @@ export default function FoundDetailedItem({ route }) {
               </FormControl.ErrorMessage>
             </FormControl>
             {/* ONLY SHOW THE OTHER DROP OFF LOCATION INPUT IF OTHER IS SELECTED */}
-            {Number(modalFields.dropOffLocationID) == 17 && (
+            {Number(modalFields.dropOffLocationID.value) == 17 && (
               <FormControl
+                mt="1"
                 isInvalid={modalFields.otherDropOffLocation.isInvalid}
               >
                 <FormControl.Label>Other Drop Off Location</FormControl.Label>
