@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -15,14 +15,16 @@ import {
   Button,
   IconButton,
   Select,
+  Spinner,
 } from "native-base";
-import { Foundation } from "@expo/vector-icons";
+import { FontAwesome, Foundation } from "@expo/vector-icons";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
 import ProfileImage from "./shared/ProfileImage";
 import { useStore } from "../store";
 import useColorScheme from "../hooks/useColorScheme";
+import { pickImage } from "../utils/imagePicker";
 
 export default function LostDetailedItem({ route }) {
   const navigation = useNavigation();
@@ -38,114 +40,153 @@ export default function LostDetailedItem({ route }) {
     itemDescription,
     itemLostUser,
   } = route.params;
-  const [showEditInfo, setShowEditInfo] = useState(false);
-  const [date, setDate] = useState(itemDate);
-  const [locationValue, setLocationValue] = useState(itemLocation);
-  const [categoryValue, setCategoryValue] = useState("");
 
+  // Used to hold the data shown in the detailed item page
+  const [post, setPost] = useState({
+    postID: itemPostId,
+    title: itemTitle,
+    description: itemDescription,
+    date: itemDate,
+    imageUrl: itemImage,
+    categoryID: itemCategory.categoryId,
+    categoryName: itemCategory.name,
+    buildingID: itemLocation.buildingId,
+    buildingName: itemLocation.name,
+    lostUser: itemLostUser,
+  });
+
+  // Used to show/hide the edit modal
+  const [showEditInfo, setShowEditInfo] = useState(false);
+
+  // Used to hold the data for the selection lists
   const [locations, setLocations] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
 
   const goToPublicProfile = () => {
-    navigation.navigate("PublicProfile", { userID: itemLostUser.userId });
+    navigation.navigate("PublicProfile", { userID: post.lostUser.userId });
   };
-
-  const [post, setpost] = useState({
-    title: "",
-    date: "",
-    image: "",
-    category: "",
-    location: "",
-    description: "",
-  });
 
   const [modalFields, setModalFields] = useState({
     title: "",
     date: "",
-    image: "",
-    category: "",
-    location: "",
+    imageUrl: "",
+    categoryID: "",
+    buildingID: "",
     description: "",
   });
 
   const openModal = () => {
     setShowEditInfo(true);
     setModalFields({
-      title: itemTitle,
-      date: itemDate,
-      image: itemImage,
-      category: itemCategory,
-      location: itemLocation,
-      description: itemDescription,
+      title: post.title,
+      date: post.date,
+      imageUrl: post.imageUrl,
+      categoryID: post.categoryID,
+      buildingID: post.buildingID,
+      description: post.description,
     });
   };
 
   const closeModal = () => {
     setShowEditInfo(false);
     setModalFields({
-      title: itemTitle,
-      date: itemDate,
-      image: itemImage,
-      category: itemCategory,
-      location: itemLocation,
-      description: itemDescription,
+      title: post.title,
+      date: post.date,
+      imageUrl: post.imageUrl,
+      categoryID: post.categoryID,
+      buildingID: post.buildingID,
+      description: post.description,
     });
   };
 
-  const validate = () => {
-    return true;
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const handlePickedImage = async () => {
+    setIsImageLoading(true);
+    const image = await pickImage();
+    setModalFields({ ...modalFields, imageUrl: image });
+    setIsImageLoading(false);
   };
 
-  /* Updating the user */
-  //    const UPDATE_USER_MUTATION = gql`
-  //    mutation (
-  //      $title: String!
-  //      $date: String!
-  //      $category: String!
-  //      $location: String!
-  //      $description: String!
-  //    ) {
-  //      updatePost(
-  //       postId: $postId
-  //        input: { title: $title, date: $date, category: $category, location: $location, description: $description}
-  //      ) {
-  //        post {
-  //          title
-  //          date
-  //          category
-  //          location
-  //          description
-  //        }
-  //      }
-  //    }
-  //  `;
+  /* Updating the post */
+  const UPDATE_POST = gql`
+    mutation (
+      $postId: Int!
+      $title: String!
+      $description: String!
+      $buildingId: Int!
+      $categoryId: Int!
+      $imageUrl: String!
+      $date: String!
+    ) {
+      updateLostItemPost(
+        id: $postId
+        input: {
+          title: $title
+          description: $description
+          buildingId: $buildingId
+          categoryId: $categoryId
+          imageUrl: $imageUrl
+          date: $date
+        }
+      ) {
+        lostItemPost {
+          postId
+          title
+          description
+          imageUrl
+          date
+          categoryId {
+            categoryId
+            name
+          }
+          buildingId {
+            buildingId
+            name
+          }
+        }
+      }
+    }
+  `;
 
-  // const [executeMutation] = useMutation(UPDATE_USER_MUTATION);
-  // const [isMutationLoading, setIsMutationLoading] = useState(false);
-  // const updateProfile = async () => {
-  //   setIsMutationLoading(true);
-  //   if (validate()) {
-  //     try {
-  //       const result = await executeMutation({
-  //         variables: {
-  //           title: modalFields.title,
-  //           date: modalFields.date,
-  //           image: modalFields.image,
-  //           category: modalFields.category,
-  //           location: modalFields.location,
-  //           description: modalFields.description,
-  //         },
-  //       });
-  //       console.log("GOOD", result);
-  //       const { title, date, image, category, location, description } = result.data.updatePost.post;
-  //       setPost({ title, date, image, category, location, description });
-  //       closeModal();
-  //     } catch (error) {
-  //       console.error("ERROR", JSON.stringify(error, null, 2));
-  //     }
-  //   }
-  //   setIsMutationLoading(false);
-  // };
+  const [executeUpdatePost] = useMutation(UPDATE_POST);
+  const [isUpdatePostLoading, setIsUpdatePostLoading] = useState(false);
+  const updatePost = async () => {
+    setIsUpdatePostLoading(true);
+    try {
+      console.log("MODAL", modalFields);
+      const result = await executeUpdatePost({
+        variables: {
+          postId: post.postID,
+          title: modalFields.title,
+          description: modalFields.description,
+          date: modalFields.date,
+          imageUrl: modalFields.imageUrl,
+          categoryId: Number(modalFields.categoryID),
+          buildingId: Number(modalFields.buildingID),
+        },
+      });
+
+      const { title, description, date, imageUrl, categoryId, buildingId } =
+        result.data.updateLostItemPost.lostItemPost;
+      console.log("GOOD", result);
+      // Update the edited details for the detailed design page
+      setPost({
+        ...post,
+        title,
+        description,
+        date,
+        imageUrl,
+        categoryID: categoryId.categoryId,
+        categoryName: categoryId.name,
+        buildingID: buildingId.buildingId,
+        buildingName: buildingId.name,
+      });
+      closeModal();
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    }
+    setIsUpdatePostLoading(false);
+  };
 
   const FORM_DATA = gql`
     query {
@@ -193,12 +234,12 @@ export default function LostDetailedItem({ route }) {
                 defaultValue={modalFields.title}
               />
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1">
               <FormControl.Label>Date</FormControl.Label>
 
               <DatePicker
                 style={{ width: 200 }}
-                date={date}
+                date={modalFields.date}
                 mode="date"
                 placeholder="select date"
                 format="YYYY-MM-DD"
@@ -222,20 +263,21 @@ export default function LostDetailedItem({ route }) {
                 }}
                 onDateChange={(v) => {
                   setModalFields({ ...modalFields, date: v });
-                  setDate(v);
                 }}
               />
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1">
               <FormControl.Label>Location</FormControl.Label>
               <Select
-                selectedValue={locationValue}
+                selectedValue={modalFields.buildingID}
                 minWidth={200}
                 accessibilityLabel="Select a Location"
                 placeholder="Select a Location"
                 onValueChange={(v) => {
-                  setModalFields({ ...modalFields, location: v });
-                  setLocationValue(v);
+                  setModalFields({
+                    ...modalFields,
+                    buildingID: v,
+                  });
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
                 mt={1}
@@ -248,23 +290,20 @@ export default function LostDetailedItem({ route }) {
                   />
                 ))}
               </Select>
-              {/* <Input
-                type="text"
-                onChangeText={(v) => setModalFields({ ...modalFields, location: v })}
-                defaultValue={modalFields.location}
-              /> */}
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1">
               <FormControl.Label>Category</FormControl.Label>
 
               <Select
-                selectedValue={categoryValue}
+                selectedValue={modalFields.categoryID}
                 minWidth={200}
                 accessibilityLabel="Select a Category"
                 placeholder="Select a Category"
-                onValueChange={(itemValue) => {
-                  setModalFields({ ...modalFields, location: itemValue });
-                  setCategoryValue(itemValue);
+                onValueChange={(v) => {
+                  setModalFields({
+                    ...modalFields,
+                    categoryID: v,
+                  });
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
                 mt={1}
@@ -277,31 +316,54 @@ export default function LostDetailedItem({ route }) {
                   />
                 ))}
               </Select>
-              {/* <Input
-                type="text"
-                onChangeText={(v) => setModalFields({ ...modalFields, category: v })}
-                defaultValue={modalFields.category}
-              /> */}
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1">
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"
+                multiline={true}
                 onChangeText={(v) =>
                   setModalFields({ ...modalFields, description: v })
                 }
                 defaultValue={modalFields.description}
               />
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1">
               <FormControl.Label>Image</FormControl.Label>
-              <Input
-                type="text"
-                onChangeText={(v) =>
-                  setModalFields({ ...modalFields, image: v })
-                }
-                defaultValue={modalFields.image}
-              />
+              <View
+                style={{
+                  width: "100%",
+                  height: 100,
+                  borderStyle: "dashed",
+                  borderRadius: 15,
+                  borderWidth: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {isImageLoading ? (
+                  <Spinner size="sm" />
+                ) : (
+                  <Fragment>
+                    {modalFields.imageUrl ? (
+                      <Image
+                        style={{
+                          borderRadius: 15,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        source={{ uri: modalFields.imageUrl }}
+                        resizeMode="stretch"
+                      />
+                    ) : (
+                      <FontAwesome name="image" size={40} color="black" />
+                    )}
+                  </Fragment>
+                )}
+              </View>
+            </FormControl>
+            <FormControl mt="2">
+              <Button onPress={handlePickedImage}>Upload a photo</Button>
             </FormControl>
           </Modal.Body>
           <Modal.Footer>
@@ -313,9 +375,9 @@ export default function LostDetailedItem({ route }) {
               >
                 Cancel
               </Button>
-              {/* <Button isLoading={isMutationLoading} onPress={updateProfile}>
+              <Button isLoading={isUpdatePostLoading} onPress={updatePost}>
                 Update
-              </Button> */}
+              </Button>
             </Button.Group>
           </Modal.Footer>
         </Modal.Content>
@@ -332,7 +394,7 @@ export default function LostDetailedItem({ route }) {
         <View style={styles.news_item}>
           <View style={styles.text_container}>
             {/* <Text style={styles.title}>{itemPostId}</Text> */}
-            {userID == itemLostUser.userId && (
+            {userID == post.lostUser.userId && (
               <Container style={{ alignSelf: "flex-end" }}>
                 <Container style={{ alignSelf: "stretch" }}>
                   <IconButton
@@ -346,7 +408,7 @@ export default function LostDetailedItem({ route }) {
                 </Container>
               </Container>
             )}
-            <Text style={styles.title}>{itemTitle}</Text>
+            <Text style={styles.title}>{post.title}</Text>
 
             <View style={styles.text_container}>
               <TouchableOpacity
@@ -355,24 +417,24 @@ export default function LostDetailedItem({ route }) {
               >
                 <ProfileImage
                   style={styles.profile_pic}
-                  imageUrl={itemLostUser.imageUrl}
-                  firstName={itemLostUser.firstName}
-                  lastName={itemLostUser.lastName}
+                  imageUrl={post.lostUser.imageUrl}
+                  firstName={post.lostUser.firstName}
+                  lastName={post.lostUser.lastName}
                   textSize={18}
                 />
                 <Text style={styles.news_text}>
-                  {itemLostUser.firstName} {itemLostUser.lastName}
+                  {post.lostUser.firstName} {post.lostUser.lastName}
                 </Text>
               </TouchableOpacity>
 
-              <Text style={styles.news_text}>{itemCategory}</Text>
-              <Text style={styles.news_text}>{itemLocation}</Text>
-              <Text style={styles.news_text}>Lost on {itemDate}</Text>
-              <Text style={styles.news_text}>{itemDescription}</Text>
+              <Text style={styles.news_text}>{post.categoryName}</Text>
+              <Text style={styles.news_text}>{post.buildingName}</Text>
+              <Text style={styles.news_text}>Lost on {post.date}</Text>
+              <Text style={styles.news_text}>{post.description}</Text>
             </View>
 
             <View style={styles.news_photo}>
-              <Image source={{ uri: itemImage }} style={styles.photo} />
+              <Image source={{ uri: post.imageUrl }} style={styles.photo} />
             </View>
           </View>
         </View>

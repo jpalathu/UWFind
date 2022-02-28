@@ -310,9 +310,11 @@ const LostItemTabContent = () => {
         date
         imageUrl
         buildingId {
+          buildingId
           name
         }
         categoryId {
+          categoryId
           name
         }
         lostUserId {
@@ -357,8 +359,8 @@ const LostItemTabContent = () => {
             navigation.navigate("LostDetailedItem", {
               itemPostId: item.postId,
               itemTitle: item.title,
-              itemCategory: item.categoryId.name,
-              itemLocation: item.buildingId.name,
+              itemCategory: item.categoryId,
+              itemLocation: item.buildingId,
               itemDate: item.date,
               itemDescription: item.description,
               itemImage: item.imageUrl,
@@ -407,13 +409,16 @@ const FoundItemTabContent = () => {
         imageUrl
         date
         categoryId {
+          categoryId
           name
         }
         buildingId {
+          buildingId
           name
         }
         otherDropOffLocation
         dropOffLocationId {
+          locationId
           name
         }
         foundUserId {
@@ -465,9 +470,10 @@ const FoundItemTabContent = () => {
             navigation.navigate("FoundDetailedItem", {
               itemPostId: item.postId,
               itemTitle: item.title,
-              itemCategory: item.categoryId.name,
-              itemLocation: item.buildingId.name,
-              itemOtherLocation: item.otherDropOffLocation,
+              itemCategory: item.categoryId,
+              itemLocation: item.buildingId,
+              itemDropOffLocation: item.dropOffLocationId,
+              itemOtherDropOffLocation: item.otherDropOffLocation,
               itemDate: item.date,
               itemDescription: item.description,
               itemImage: item.imageUrl,

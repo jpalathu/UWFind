@@ -304,6 +304,7 @@ export default function FoundForm(props: FoundFormProps) {
             <FormControl mt="1">
               <FormControl.Label>Description</FormControl.Label>
               <Input
+                type="text"
                 multiline={true}
                 onChangeText={(value) => setDescription(value)}
               />

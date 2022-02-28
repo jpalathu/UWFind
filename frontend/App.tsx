@@ -12,6 +12,7 @@ import { StreamChat } from "stream-chat";
 import { OverlayProvider, Chat } from "stream-chat-expo";
 import IGNORE_LOGS from "./ignoreLogs";
 
+// Intitialize Chat Client
 const chatClient = StreamChat.getInstance("yjnpxas6ctem");
 
 // Initialize Apollo Client

@@ -255,7 +255,11 @@ export default function LostForm(props: LostFormProps) {
             </FormControl>
             <FormControl mt="1">
               <FormControl.Label>Description</FormControl.Label>
-              <Input onChangeText={(value) => setDescription(value)} />
+              <Input
+                type="text"
+                multiline={true}
+                onChangeText={(value) => setDescription(value)}
+              />
             </FormControl>
             <FormControl mt="1">
               <FormControl.Label>Image</FormControl.Label>
