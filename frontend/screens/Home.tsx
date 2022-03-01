@@ -1,4 +1,4 @@
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, selectHttpOptionsAndBodyInternal, useLazyQuery } from "@apollo/client";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
@@ -166,7 +166,6 @@ const LostFeed = () => {
         <View style={styles.header_text}>
           <Text style={styles.header_text_label}>Lost Items</Text>
         </View>
-        <View style={styles.whitespace}></View>
       </View>
       <View style={styles.instruction}>
         <Text style={styles.instruction_text}>SWIPE LEFT FOR FOUND ITEMS</Text>
@@ -212,7 +211,10 @@ const LostFeed = () => {
               }}
             >
               <View style={styles.news_photo}>
-                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+                {item.imageUrl ?  
+                  <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+                : <Image source={require("../photos/selina.png")} style={styles.photo} />
+                }
               </View>
             </TouchableOpacity>
             <Text style={styles.title}>{item.title}</Text>
@@ -304,7 +306,6 @@ const FoundFeed = () => {
         <View style={styles.header_text}>
           <Text style={styles.header_text_label}>Found Items</Text>
         </View>
-        <View style={styles.whitespace}></View>
       </View>
       <View style={styles.instruction}>
         <Text style={styles.instruction_text}>SWIPE RIGHT FOR LOST ITEMS</Text>
