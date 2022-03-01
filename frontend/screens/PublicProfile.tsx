@@ -1,46 +1,11 @@
 import React, { Component, useState, useEffect } from "react";
 import Colors from "../constants/Colors";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
-import {
-  Heading,
-  Text,
-  VStack,
-  Center,
-  NativeBaseProvider,
-  Container,
-  Divider,
-  Modal,
-  FormControl,
-  Input,
-  Button,
-  IconButton,
-  Box,
-  Icon,
-  HStack,
-} from "native-base";
-import { Foundation } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-
-import TextInput from "../components/shared/TextInput";
-import * as yup from "yup";
-import { RootTabScreenProps } from "../types";
+import { StyleSheet, View } from "react-native";
+import { Text, Center, Divider, Button } from "native-base";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
-// export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
-//     const schema = yup.object().shape({
-//       // disable required for now
-//       initialMessage: yup.string().required(),
-
-//     });
 
 export default function PublicProfile() {
   const navigation = useNavigation();
@@ -122,31 +87,6 @@ export default function PublicProfile() {
     setIsMutationLoading(false);
   };
 
-  // handleEmail = (text: any) => {
-  //     this.setState({ email: text })
-  //  }
-
-  // export default class PublicProfile extends Component {
-
-  // const initialState = {
-  //     value: "",
-  //     isInvalid: false,
-  //     errorMessage: "",
-  //   };
-
-  // state = {
-  //     email: '',
-  //     password: ''
-  //  }
-  //  handleEmail = (text: any) => {
-  //     this.setState({ email: text })
-  //  }
-  //  handlePassword = (text: any) => {
-  //     this.setState({ password: text })
-  //  }
-
-  // render() {
-
   return (
     <View>
       <View style={styles.header}>
@@ -158,11 +98,6 @@ export default function PublicProfile() {
           textSize={30}
         />
       </View>
-
-      {/* <Image
-            style={styles.avatar}
-            source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
-          /> */}
 
       <View style={styles.body}>
         <View>
@@ -177,17 +112,6 @@ export default function PublicProfile() {
         </View>
       </View>
 
-      <Center>
-        {/* <TextInput title= " Send James a Message"
-               onChangeText = {this.handleEmail}
-               value={""}
-               isInvalid={true}
-               errorMessage={""}
-               my="3"
-               icon="mail"
-               
-/> */}
-      </Center>
       <Center>
         <Button
           onPress={createChatRoom}
@@ -212,7 +136,6 @@ export default function PublicProfile() {
       </Center>
     </View>
   );
-  // }
 }
 
 const styles = StyleSheet.create({

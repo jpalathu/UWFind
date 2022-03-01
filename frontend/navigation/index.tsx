@@ -19,7 +19,6 @@ import Profile from "../screens/Profile";
 import PublicProfile from "../screens/PublicProfile";
 import Login from "../screens/Login";
 import SignUp from "../screens/SignUp";
-import Form from "../screens/Form";
 import { RootStackParamList, RootTabScreenProps } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 import ChatHome from "../screens/ChatHome";
@@ -157,23 +156,6 @@ function RootNavigator() {
         component={PublicProfile}
         options={({ navigation }: RootTabScreenProps<"PublicProfile">) => ({
           title: "User's Profile",
-          headerStyle: { backgroundColor: Colors.black },
-          headerTitleStyle: { color: Colors.white },
-          headerLeft: () => (
-            <PressableIcon
-              onPress={() => navigation.navigate("Home")}
-              icon="caret-left"
-              isLeft={false}
-            />
-          ),
-        })}
-      />
-
-      {/* Adding this screen to test the form stuff */}
-      <Stack.Screen
-        name="Form"
-        component={Form}
-        options={({ navigation }: RootTabScreenProps<"Form">) => ({
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (

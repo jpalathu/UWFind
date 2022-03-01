@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { ChannelList } from "stream-chat-expo";
 
 const ChatHome = () => {

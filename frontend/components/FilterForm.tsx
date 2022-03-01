@@ -1,30 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Switch,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
-import { Picker } from "react-native-woodpicker";
-// import Button from "./shared/Button";
-import {
-  Button,
-  Text,
-  Modal,
-  FormControl,
-  Input,
-  Box,
-  Actionsheet,
-  Heading,
-  Select,
-} from "native-base";
-import DummyCategories from "../dummy/category.json";
-import DummyDropOffLocations from "../dummy/drop_off_location.json";
+import { TouchableOpacity, useColorScheme } from "react-native";
+import { Button, Text, Modal, FormControl, Select } from "native-base";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { useStore } from "../store";
 import { MaterialIcons } from "@expo/vector-icons";
 
 interface FilterFormProps {
@@ -39,8 +17,6 @@ export default function FilterForm(props: FilterFormProps) {
   const [endDate, setEndDate] = useState("");
   const [locationValue, setLocationValue] = useState("");
   const [categoryValue, setCategoryValue] = useState("");
-
-  // TODO: change default when image pop up is connected
 
   // Use this to store the buildings (locations) and categories for the drop down selections
   const [locations, setLocations] = useState<any[]>([]);
@@ -190,7 +166,7 @@ export default function FilterForm(props: FilterFormProps) {
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      console.log(data.foundItemPosts)
+      console.log(data.foundItemPosts);
       props.setFilteredItems(
         props.isLost ? data.lostItemPosts : data.foundItemPosts
       );
@@ -198,6 +174,7 @@ export default function FilterForm(props: FilterFormProps) {
     }
   };
 
+  const colorScheme = useColorScheme();
   return (
     <Fragment>
       <Button
@@ -262,6 +239,9 @@ export default function FilterForm(props: FilterFormProps) {
                   dateInput: {
                     marginLeft: 36,
                   },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
+                  },
                 }}
                 onDateChange={(date) => {
                   setStartDate(date);
@@ -289,6 +269,9 @@ export default function FilterForm(props: FilterFormProps) {
                   },
                   dateInput: {
                     marginLeft: 36,
+                  },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
                   },
                 }}
                 onDateChange={(date) => {
@@ -366,61 +349,3 @@ export default function FilterForm(props: FilterFormProps) {
     </Fragment>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modal: {
-    backgroundColor: "#00000099",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalContainer: {
-    backgroundColor: "#f9fafb",
-    width: "85%",
-    borderRadius: 15,
-  },
-  divider: {
-    width: "100%",
-    height: 1,
-    backgroundColor: "lightgray",
-  },
-  modalHeader: {},
-  title: {
-    fontWeight: "bold",
-    fontSize: 20,
-    padding: 15,
-    color: "#000",
-  },
-  header: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingRight: 15,
-  },
-  modalBody: {
-    backgroundColor: "#fff",
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-  },
-  modalFooter: {},
-  actions: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 5,
-  },
-  input: {
-    margin: 10,
-    height: 40,
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 10,
-  },
-});

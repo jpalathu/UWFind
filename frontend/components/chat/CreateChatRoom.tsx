@@ -1,7 +1,7 @@
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { gql, useLazyQuery } from "@apollo/client";
+import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { Button, FormControl, Input, Modal, Select } from "native-base";
+import { Button, FormControl, Modal, Select } from "native-base";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useStore } from "../../store";

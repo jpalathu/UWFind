@@ -6,17 +6,13 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Image,
   Pressable,
-  FlatList,
   useWindowDimensions,
 } from "react-native";
-import { Button } from "native-base";
 
 import Colors from "../constants/Colors";
-import { RootTabScreenProps } from "../types";
-import { Searchbar } from 'react-native-paper';
+import { Searchbar } from "react-native-paper";
 
 import { TabView, SceneMap } from "react-native-tab-view";
 import FoundForm from "../components/FoundForm";
@@ -25,11 +21,6 @@ import FilterForm from "../components/FilterForm";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { FlatGrid } from "react-native-super-grid";
 
-const arrayOfItems = [
-  { category: "Electronics", location: "E7", image: "", key: "1" },
-  { category: "Jewellery", location: "RCH", image: "", key: "2" },
-  { category: "Clothing Item", location: "E2", image: "", key: "3" },
-];
 const FirstRoute = () => (
   <View style={styles.container}>
     <View style={styles.header}></View>
@@ -92,8 +83,10 @@ function memoize(func) {
 }
 
 const getSearchItems = (items: any[], searchQuery: string) => {
-  return items.filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
-}
+  return items.filter((item) =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+};
 
 const searchedItems = memoize(getSearchItems);
 
@@ -115,9 +108,11 @@ const LostFeed = () => {
         date
         imageUrl
         buildingId {
+          buildingId
           name
         }
         categoryId {
+          categoryId
           name
         }
         lostUserId {
@@ -147,19 +142,19 @@ const LostFeed = () => {
     }
   }, [isFocused]);
 
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const onChangeSearch = async (query: any) => {
-    setSearchQuery(query)
+    setSearchQuery(query);
     const { data, error } = await executeQuery();
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       setItems(data.lostItemPosts);
     }
-    setItems(searchedItems)
+    setItems(searchedItems);
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -174,7 +169,7 @@ const LostFeed = () => {
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
-        />
+      />
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
           <LostForm refreshPosts={getItems} />
@@ -201,8 +196,8 @@ const LostFeed = () => {
                 navigation.navigate("LostDetailedItem", {
                   itemPostId: item.postId,
                   itemTitle: item.title,
-                  itemCategory: item.categoryId.name,
-                  itemLocation: item.buildingId.name,
+                  itemCategory: item.categoryId,
+                  itemLocation: item.buildingId,
                   itemDate: item.date,
                   itemDescription: item.description,
                   itemImage: item.imageUrl,
@@ -243,13 +238,16 @@ const FoundFeed = () => {
         imageUrl
         date
         categoryId {
+          categoryId
           name
         }
         buildingId {
+          buildingId
           name
         }
         otherDropOffLocation
         dropOffLocationId {
+          locationId
           name
         }
         foundUserId {
@@ -287,17 +285,17 @@ const FoundFeed = () => {
     }
   }, [isFocused]);
 
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const onChangeSearch = async (query: any) => {
-    setSearchQuery(query)
+    setSearchQuery(query);
     const { data, error } = await executeQuery();
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       setItems(data.foundItemPosts);
     }
-    setItems(searchedItems)
+    setItems(searchedItems);
   };
 
   return (
@@ -314,7 +312,7 @@ const FoundFeed = () => {
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
-        />
+      />
       <View style={{ flexDirection: "row" }}>
         <View style={styles.header_button}>
           <FoundForm refreshPosts={getItems} />
@@ -342,9 +340,10 @@ const FoundFeed = () => {
                 navigation.navigate("FoundDetailedItem", {
                   itemPostId: item.postId,
                   itemTitle: item.title,
-                  itemCategory: item.categoryId.name,
-                  itemLocation: item.buildingId.name,
-                  itemOtherLocation: item.otherDropOffLocation,
+                  itemCategory: item.categoryId,
+                  itemLocation: item.buildingId,
+                  itemDropOffLocation: item.dropOffLocationId,
+                  itemOtherDropOffLocation: item.otherDropOffLocation,
                   itemDate: item.date,
                   itemDescription: item.description,
                   itemImage: item.imageUrl,

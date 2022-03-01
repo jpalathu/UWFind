@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -9,20 +9,28 @@ import {
 } from "react-native";
 import {
   Container,
-  Divider,
   Modal,
   FormControl,
   Input,
   Button,
   IconButton,
   Select,
+  Spinner,
+  WarningOutlineIcon,
 } from "native-base";
-import { Foundation } from "@expo/vector-icons";
+import { FontAwesome, Foundation } from "@expo/vector-icons";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
 import ProfileImage from "./shared/ProfileImage";
 import { useStore } from "../store";
+import useColorScheme from "../hooks/useColorScheme";
+import { pickImage } from "../utils/imagePicker";
+import {
+  formatInvalidState,
+  formatValidState,
+  INITIAL_VALIDATION_STATE,
+} from "../utils/error";
 
 export default function LostDetailedItem({ route }) {
   const navigation = useNavigation();
@@ -38,114 +46,199 @@ export default function LostDetailedItem({ route }) {
     itemDescription,
     itemLostUser,
   } = route.params;
-  const [showEditInfo, setShowEditInfo] = useState(false);
-  const [date, setDate] = useState(itemDate);
-  const [locationValue, setLocationValue] = useState(itemLocation);
-  const [categoryValue, setCategoryValue] = useState("");
 
+  // Used to hold the data shown in the detailed item page
+  const [post, setPost] = useState({
+    postID: itemPostId,
+    title: itemTitle,
+    description: itemDescription,
+    date: itemDate,
+    imageUrl: itemImage,
+    categoryID: itemCategory.categoryId,
+    categoryName: itemCategory.name,
+    buildingID: itemLocation.buildingId,
+    buildingName: itemLocation.name,
+    lostUser: itemLostUser,
+  });
+
+  // Used to show/hide the edit modal
+  const [showEditInfo, setShowEditInfo] = useState(false);
+
+  // Used to hold the data for the selection lists
   const [locations, setLocations] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
 
   const goToPublicProfile = () => {
-    navigation.navigate("PublicProfile", { userID: itemLostUser.userId });
+    navigation.navigate("PublicProfile", { userID: post.lostUser.userId });
   };
 
-  const [post, setpost] = useState({
-    title: "",
-    date: "",
-    image: "",
-    category: "",
-    location: "",
-    description: "",
+  const [modalFields, setModalFields] = useState({
+    title: INITIAL_VALIDATION_STATE,
+    date: INITIAL_VALIDATION_STATE,
+    imageUrl: INITIAL_VALIDATION_STATE,
+    categoryID: INITIAL_VALIDATION_STATE,
+    buildingID: INITIAL_VALIDATION_STATE,
+    description: INITIAL_VALIDATION_STATE,
   });
 
-  const [modalFields, setModalFields] = useState({
-    title: "",
-    date: "",
-    image: "",
-    category: "",
-    location: "",
-    description: "",
-  });
+  const resetFields = () => {
+    setModalFields({
+      title: formatValidState(post.title),
+      date: formatValidState(post.date),
+      imageUrl: formatValidState(post.imageUrl),
+      categoryID: formatValidState(post.categoryID),
+      buildingID: formatValidState(post.buildingID),
+      description: formatValidState(post.description),
+    });
+  };
 
   const openModal = () => {
     setShowEditInfo(true);
-    setModalFields({
-      title: itemTitle,
-      date: itemDate,
-      image: itemImage,
-      category: itemCategory,
-      location: itemLocation,
-      description: itemDescription,
-    });
+    resetFields();
   };
 
   const closeModal = () => {
     setShowEditInfo(false);
-    setModalFields({
-      title: itemTitle,
-      date: itemDate,
-      image: itemImage,
-      category: itemCategory,
-      location: itemLocation,
-      description: itemDescription,
-    });
+    resetFields();
+  };
+
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const handlePickedImage = async () => {
+    setIsImageLoading(true);
+    const image = await pickImage();
+    setModalFields({ ...modalFields, imageUrl: formatValidState(image) });
+    setIsImageLoading(false);
   };
 
   const validate = () => {
-    return true;
+    let hasError = false;
+    const { title, date, categoryID, buildingID, description, imageUrl } =
+      modalFields;
+
+    if (!title.value) {
+      setModalFields({
+        ...modalFields,
+        title: formatInvalidState("Title is required"),
+      });
+      hasError = true;
+    }
+
+    if (!date.value) {
+      setModalFields({
+        ...modalFields,
+        date: formatInvalidState("Date is required"),
+      });
+      hasError = true;
+    }
+
+    if (!categoryID.value) {
+      setModalFields({
+        ...modalFields,
+        categoryID: formatInvalidState("Category is required"),
+      });
+      hasError = true;
+    }
+
+    if (!buildingID.value) {
+      setModalFields({
+        ...modalFields,
+        buildingID: formatInvalidState("Location is required"),
+      });
+      hasError = true;
+    }
+
+    if (!description.value.trim()) {
+      setModalFields({
+        ...modalFields,
+        description: formatInvalidState("Description is required"),
+      });
+      hasError = true;
+    }
+
+    return !hasError;
   };
 
-  /* Updating the user */
-  //    const UPDATE_USER_MUTATION = gql`
-  //    mutation (
-  //      $title: String!
-  //      $date: String!
-  //      $category: String!
-  //      $location: String!
-  //      $description: String!
-  //    ) {
-  //      updatePost(
-  //       postId: $postId
-  //        input: { title: $title, date: $date, category: $category, location: $location, description: $description}
-  //      ) {
-  //        post {
-  //          title
-  //          date
-  //          category
-  //          location
-  //          description
-  //        }
-  //      }
-  //    }
-  //  `;
+  /* Updating the post */
+  const UPDATE_POST = gql`
+    mutation (
+      $postId: Int!
+      $title: String!
+      $description: String!
+      $buildingId: Int!
+      $categoryId: Int!
+      $imageUrl: String!
+      $date: String!
+    ) {
+      updateLostItemPost(
+        id: $postId
+        input: {
+          title: $title
+          description: $description
+          buildingId: $buildingId
+          categoryId: $categoryId
+          imageUrl: $imageUrl
+          date: $date
+        }
+      ) {
+        lostItemPost {
+          postId
+          title
+          description
+          imageUrl
+          date
+          categoryId {
+            categoryId
+            name
+          }
+          buildingId {
+            buildingId
+            name
+          }
+        }
+      }
+    }
+  `;
 
-  // const [executeMutation] = useMutation(UPDATE_USER_MUTATION);
-  // const [isMutationLoading, setIsMutationLoading] = useState(false);
-  // const updateProfile = async () => {
-  //   setIsMutationLoading(true);
-  //   if (validate()) {
-  //     try {
-  //       const result = await executeMutation({
-  //         variables: {
-  //           title: modalFields.title,
-  //           date: modalFields.date,
-  //           image: modalFields.image,
-  //           category: modalFields.category,
-  //           location: modalFields.location,
-  //           description: modalFields.description,
-  //         },
-  //       });
-  //       console.log("GOOD", result);
-  //       const { title, date, image, category, location, description } = result.data.updatePost.post;
-  //       setPost({ title, date, image, category, location, description });
-  //       closeModal();
-  //     } catch (error) {
-  //       console.error("ERROR", JSON.stringify(error, null, 2));
-  //     }
-  //   }
-  //   setIsMutationLoading(false);
-  // };
+  const [executeUpdatePost] = useMutation(UPDATE_POST);
+  const [isUpdatePostLoading, setIsUpdatePostLoading] = useState(false);
+  const updatePost = async () => {
+    setIsUpdatePostLoading(true);
+    try {
+      if (validate()) {
+        const result = await executeUpdatePost({
+          variables: {
+            postId: post.postID,
+            title: modalFields.title.value,
+            description: modalFields.description.value,
+            date: modalFields.date.value,
+            imageUrl: modalFields.imageUrl.value,
+            categoryId: Number(modalFields.categoryID.value),
+            buildingId: Number(modalFields.buildingID.value),
+          },
+        });
+
+        const { title, description, date, imageUrl, categoryId, buildingId } =
+          result.data.updateLostItemPost.lostItemPost;
+
+        // Update the edited details for the detailed design page
+        setPost({
+          ...post,
+          title,
+          description,
+          date,
+          imageUrl,
+          categoryID: categoryId.categoryId,
+          categoryName: categoryId.name,
+          buildingID: buildingId.buildingId,
+          buildingName: buildingId.name,
+        });
+        closeModal();
+      }
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    }
+    setIsUpdatePostLoading(false);
+  };
 
   const FORM_DATA = gql`
     query {
@@ -175,6 +268,7 @@ export default function LostDetailedItem({ route }) {
     getFormData();
   }, []);
 
+  const colorScheme = useColorScheme();
   return (
     <View style={styles.container}>
       <Modal isOpen={showEditInfo} onClose={closeModal}>
@@ -182,22 +276,27 @@ export default function LostDetailedItem({ route }) {
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
           <Modal.Body>
-            <FormControl>
+            <FormControl isRequired isInvalid={modalFields.title.isInvalid}>
               <FormControl.Label>Title</FormControl.Label>
               <Input
                 type="text"
                 onChangeText={(v) =>
-                  setModalFields({ ...modalFields, title: v })
+                  setModalFields({ ...modalFields, title: formatValidState(v) })
                 }
-                defaultValue={modalFields.title}
+                defaultValue={modalFields.title.value}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.title.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1" isRequired isInvalid={modalFields.date.isInvalid}>
               <FormControl.Label>Date</FormControl.Label>
-
               <DatePicker
                 style={{ width: 200 }}
-                date={date}
+                date={modalFields.date.value}
                 mode="date"
                 placeholder="select date"
                 format="YYYY-MM-DD"
@@ -215,23 +314,33 @@ export default function LostDetailedItem({ route }) {
                   dateInput: {
                     marginLeft: 36,
                   },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
+                  },
                 }}
                 onDateChange={(v) => {
-                  setModalFields({ ...modalFields, date: v });
-                  setDate(v);
+                  setModalFields({ ...modalFields, date: formatValidState(v) });
                 }}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.date.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1" isRequired isInvalid={modalFields.buildingID.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
-                selectedValue={locationValue}
+                selectedValue={modalFields.buildingID.value}
                 minWidth={200}
                 accessibilityLabel="Select a Location"
                 placeholder="Select a Location"
                 onValueChange={(v) => {
-                  setModalFields({ ...modalFields, location: v });
-                  setLocationValue(v);
+                  setModalFields({
+                    ...modalFields,
+                    buildingID: formatValidState(v),
+                  });
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
                 mt={1}
@@ -244,23 +353,26 @@ export default function LostDetailedItem({ route }) {
                   />
                 ))}
               </Select>
-              {/* <Input
-                type="text"
-                onChangeText={(v) => setModalFields({ ...modalFields, location: v })}
-                defaultValue={modalFields.location}
-              /> */}
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.buildingID.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1" isRequired isInvalid={modalFields.categoryID.isInvalid}>
               <FormControl.Label>Category</FormControl.Label>
 
               <Select
-                selectedValue={categoryValue}
+                selectedValue={modalFields.categoryID.value}
                 minWidth={200}
                 accessibilityLabel="Select a Category"
                 placeholder="Select a Category"
-                onValueChange={(itemValue) => {
-                  setModalFields({ ...modalFields, location: itemValue });
-                  setCategoryValue(itemValue);
+                onValueChange={(v) => {
+                  setModalFields({
+                    ...modalFields,
+                    categoryID: formatValidState(v),
+                  });
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
                 mt={1}
@@ -273,31 +385,75 @@ export default function LostDetailedItem({ route }) {
                   />
                 ))}
               </Select>
-              {/* <Input
-                type="text"
-                onChangeText={(v) => setModalFields({ ...modalFields, category: v })}
-                defaultValue={modalFields.category}
-              /> */}
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.categoryID.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1" isRequired isInvalid={modalFields.description.isInvalid}>
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"
+                multiline={true}
                 onChangeText={(v) =>
-                  setModalFields({ ...modalFields, description: v })
+                  setModalFields({
+                    ...modalFields,
+                    description: formatValidState(v),
+                  })
                 }
-                defaultValue={modalFields.description}
+                defaultValue={modalFields.description.value}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.description.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="1" isInvalid={modalFields.imageUrl.isInvalid}>
               <FormControl.Label>Image</FormControl.Label>
-              <Input
-                type="text"
-                onChangeText={(v) =>
-                  setModalFields({ ...modalFields, image: v })
-                }
-                defaultValue={modalFields.image}
-              />
+              <View
+                style={{
+                  width: "100%",
+                  height: 100,
+                  borderStyle: "dashed",
+                  borderRadius: 15,
+                  borderWidth: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {isImageLoading ? (
+                  <Spinner size="sm" />
+                ) : (
+                  <Fragment>
+                    {modalFields.imageUrl.value ? (
+                      <Image
+                        style={{
+                          borderRadius: 15,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        source={{ uri: modalFields.imageUrl.value }}
+                        resizeMode="stretch"
+                      />
+                    ) : (
+                      <FontAwesome name="image" size={40} color="black" />
+                    )}
+                  </Fragment>
+                )}
+              </View>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.imageUrl.errorMessage}
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl mt="2">
+              <Button onPress={handlePickedImage}>Upload a photo</Button>
             </FormControl>
           </Modal.Body>
           <Modal.Footer>
@@ -309,9 +465,9 @@ export default function LostDetailedItem({ route }) {
               >
                 Cancel
               </Button>
-              {/* <Button isLoading={isMutationLoading} onPress={updateProfile}>
+              <Button isLoading={isUpdatePostLoading} onPress={updatePost}>
                 Update
-              </Button> */}
+              </Button>
             </Button.Group>
           </Modal.Footer>
         </Modal.Content>
@@ -328,7 +484,7 @@ export default function LostDetailedItem({ route }) {
         <View style={styles.news_item}>
           <View style={styles.text_container}>
             {/* <Text style={styles.title}>{itemPostId}</Text> */}
-            {userID == itemLostUser.userId && (
+            {userID == post.lostUser.userId && (
               <Container style={{ alignSelf: "flex-end" }}>
                 <Container style={{ alignSelf: "stretch" }}>
                   <IconButton
@@ -342,7 +498,7 @@ export default function LostDetailedItem({ route }) {
                 </Container>
               </Container>
             )}
-            <Text style={styles.title}>{itemTitle}</Text>
+            <Text style={styles.title}>{post.title}</Text>
 
             <View style={styles.text_container}>
               <TouchableOpacity
@@ -351,24 +507,24 @@ export default function LostDetailedItem({ route }) {
               >
                 <ProfileImage
                   style={styles.profile_pic}
-                  imageUrl={itemLostUser.imageUrl}
-                  firstName={itemLostUser.firstName}
-                  lastName={itemLostUser.lastName}
+                  imageUrl={post.lostUser.imageUrl}
+                  firstName={post.lostUser.firstName}
+                  lastName={post.lostUser.lastName}
                   textSize={18}
                 />
                 <Text style={styles.news_text}>
-                  {itemLostUser.firstName} {itemLostUser.lastName}
+                  {post.lostUser.firstName} {post.lostUser.lastName}
                 </Text>
               </TouchableOpacity>
 
-              <Text style={styles.news_text}>{itemCategory}</Text>
-              <Text style={styles.news_text}>{itemLocation}</Text>
-              <Text style={styles.news_text}>Lost on {itemDate}</Text>
-              <Text style={styles.news_text}>{itemDescription}</Text>
+              <Text style={styles.news_text}>{post.categoryName}</Text>
+              <Text style={styles.news_text}>{post.buildingName}</Text>
+              <Text style={styles.news_text}>Lost on {post.date}</Text>
+              <Text style={styles.news_text}>{post.description}</Text>
             </View>
 
             <View style={styles.news_photo}>
-              <Image source={{ uri: itemImage }} style={styles.photo} />
+              <Image source={{ uri: post.imageUrl }} style={styles.photo} />
             </View>
           </View>
         </View>

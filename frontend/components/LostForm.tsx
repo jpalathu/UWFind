@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { View, Image } from "react-native";
 import { pickImage } from "../utils/imagePicker";
 
 import {
@@ -9,11 +9,18 @@ import {
   Input,
   Select,
   Spinner,
+  WarningOutlineIcon,
 } from "native-base";
 import DatePicker from "react-native-datepicker";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import { FontAwesome } from "@expo/vector-icons";
+import useColorScheme from "../hooks/useColorScheme";
+import {
+  formatInvalidState,
+  formatValidState,
+  INITIAL_VALIDATION_STATE,
+} from "../utils/error";
 
 interface LostFormProps {
   refreshPosts: () => void;
@@ -21,24 +28,24 @@ interface LostFormProps {
 
 export default function LostForm(props: LostFormProps) {
   const [showModal, setShowModal] = useState(false);
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
-  const [locationValue, setLocationValue] = useState("");
-  const [categoryValue, setCategoryValue] = useState("");
-  const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [title, setTitle] = useState(INITIAL_VALIDATION_STATE);
+  const [date, setDate] = useState(INITIAL_VALIDATION_STATE);
+  const [locationValue, setLocationValue] = useState(INITIAL_VALIDATION_STATE);
+  const [categoryValue, setCategoryValue] = useState(INITIAL_VALIDATION_STATE);
+  const [description, setDescription] = useState(INITIAL_VALIDATION_STATE);
+  const [imageUrl, setImageUrl] = useState(INITIAL_VALIDATION_STATE);
 
   // Use this to store the buildings (locations) and categories for the drop down selections
   const [locations, setLocations] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
 
   const resetFields = () => {
-    setTitle("");
-    setDate("");
-    setLocationValue("");
-    setCategoryValue("");
-    setDescription("");
-    setImageUrl("");
+    setTitle(INITIAL_VALIDATION_STATE);
+    setDate(INITIAL_VALIDATION_STATE);
+    setLocationValue(INITIAL_VALIDATION_STATE);
+    setCategoryValue(INITIAL_VALIDATION_STATE);
+    setDescription(INITIAL_VALIDATION_STATE);
+    setImageUrl(INITIAL_VALIDATION_STATE);
   };
 
   const closeModal = () => {
@@ -54,8 +61,38 @@ export default function LostForm(props: LostFormProps) {
   const handlePickedImage = async () => {
     setIsImageLoading(true);
     const image = await pickImage();
-    setImageUrl(image);
+    setImageUrl(formatValidState(image));
     setIsImageLoading(false);
+  };
+
+  const validate = () => {
+    let hasError = false;
+    if (!title.value) {
+      setTitle(formatInvalidState("Title is required"));
+      hasError = true;
+    }
+
+    if (!date.value) {
+      setDate(formatInvalidState("Date is required"));
+      hasError = true;
+    }
+
+    if (!locationValue.value) {
+      setLocationValue(formatInvalidState("Location is required"));
+      hasError = true;
+    }
+
+    if (!categoryValue.value) {
+      setCategoryValue(formatInvalidState("Category is required"));
+      hasError = true;
+    }
+
+    if (!description.value.trim()) {
+      setDescription(formatInvalidState("Description is required"));
+      hasError = true;
+    }
+
+    return !hasError;
   };
 
   /* Creating the post */
@@ -88,25 +125,26 @@ export default function LostForm(props: LostFormProps) {
   `;
   const [executeMutation] = useMutation(CREATE_POST);
   const { userID } = useStore();
-  // const {imageURL} = pickImage();
   const [isMutationLoading, setIsMutationLoading] = useState(false);
   const createPost = async () => {
     setIsMutationLoading(true);
     try {
-      const result = await executeMutation({
-        variables: {
-          title,
-          lostUserId: Number(userID),
-          description,
-          buildingId: Number(locationValue),
-          categoryId: Number(categoryValue),
-          imageUrl,
-          date,
-        },
-      });
-      console.log("GOOD", result);
-      props.refreshPosts();
-      closeModal();
+      if (validate()) {
+        const result = await executeMutation({
+          variables: {
+            title: title.value,
+            lostUserId: Number(userID),
+            description: description.value,
+            buildingId: Number(locationValue.value),
+            categoryId: Number(categoryValue.value),
+            imageUrl: imageUrl.value,
+            date: date.value,
+          },
+        });
+        
+        props.refreshPosts();
+        closeModal();
+      }
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     }
@@ -141,6 +179,7 @@ export default function LostForm(props: LostFormProps) {
     getFormData();
   }, []);
 
+  const colorScheme = useColorScheme();
   return (
     <Fragment>
       <Button
@@ -172,25 +211,24 @@ export default function LostForm(props: LostFormProps) {
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header>Create a Post</Modal.Header>
-          {/* <Image
-            source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
-          /> */}
           <Modal.Body>
-            <FormControl>
+            <FormControl isRequired isInvalid={title.isInvalid}>
               <FormControl.Label>Title</FormControl.Label>
-              <Input onChangeText={(value) => setTitle(value)} />
+              <Input
+                onChangeText={(value) => setTitle(formatValidState(value))}
+              />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {title.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-
-            {/* <FormControl>
-<Image source={{ uri: 'https://uwfind53028-staging.s3.us-east-2.amazonaws.com/public/84C05669-2526-4BF7-A06B-D93710EFFA9C.png'}} />
-
-</FormControl> */}
-
-            <FormControl mt="1">
+            <FormControl mt="1" isRequired isInvalid={date.isInvalid}>
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
                 style={{ width: 200 }}
-                date={date}
+                date={date.value}
                 mode="date"
                 placeholder="select date"
                 format="YYYY-MM-DD"
@@ -208,21 +246,30 @@ export default function LostForm(props: LostFormProps) {
                   dateInput: {
                     marginLeft: 36,
                   },
+                  datePicker: {
+                    backgroundColor: colorScheme === "dark" ? "#222" : "white",
+                  },
                 }}
                 onDateChange={(date) => {
-                  setDate(date);
+                  setDate(formatValidState(date));
                 }}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {date.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isRequired isInvalid={locationValue.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
-                selectedValue={locationValue}
+                selectedValue={locationValue.value}
                 minWidth={200}
                 accessibilityLabel="Select a Location"
                 placeholder="Select a Location"
                 onValueChange={(itemValue) => {
-                  setLocationValue(itemValue);
+                  setLocationValue(formatValidState(itemValue));
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
                 mt={1}
@@ -235,16 +282,22 @@ export default function LostForm(props: LostFormProps) {
                   />
                 ))}
               </Select>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {locationValue.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isRequired isInvalid={categoryValue.isInvalid}>
               <FormControl.Label>Category</FormControl.Label>
               <Select
-                selectedValue={categoryValue}
+                selectedValue={categoryValue.value}
                 minWidth={200}
                 accessibilityLabel="Select a Category"
                 placeholder="Select a Category"
                 onValueChange={(itemValue) => {
-                  setCategoryValue(itemValue);
+                  setCategoryValue(formatValidState(itemValue));
                 }}
                 _selectedItem={{ bg: "yellow.400" }}
                 mt={1}
@@ -257,12 +310,30 @@ export default function LostForm(props: LostFormProps) {
                   />
                 ))}
               </Select>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {categoryValue.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isRequired isInvalid={description.isInvalid}>
               <FormControl.Label>Description</FormControl.Label>
-              <Input onChangeText={(value) => setDescription(value)} />
+              <Input
+                type="text"
+                multiline={true}
+                onChangeText={(value) =>
+                  setDescription(formatValidState(value))
+                }
+              />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {description.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1">
+            <FormControl mt="1" isInvalid={imageUrl.isInvalid}>
               <FormControl.Label>Image</FormControl.Label>
               <View
                 style={{
@@ -279,14 +350,14 @@ export default function LostForm(props: LostFormProps) {
                   <Spinner size="sm" />
                 ) : (
                   <Fragment>
-                    {imageUrl ? (
+                    {imageUrl.value ? (
                       <Image
                         style={{
                           borderRadius: 15,
                           width: "100%",
                           height: "100%",
                         }}
-                        source={{ uri: imageUrl }}
+                        source={{ uri: imageUrl.value }}
                         resizeMode="stretch"
                       />
                     ) : (
@@ -295,6 +366,12 @@ export default function LostForm(props: LostFormProps) {
                   </Fragment>
                 )}
               </View>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {imageUrl.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
             <FormControl mt="2">
               <Button onPress={handlePickedImage}>Upload a photo</Button>

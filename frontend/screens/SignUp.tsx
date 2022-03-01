@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
-import {
-  Button,
-  Box,
-  Text,
-  Select,
-  CheckIcon,
-  FormControl,
-  WarningOutlineIcon,
-  Heading,
-} from "native-base";
+import { Button, Box, Text, Heading } from "native-base";
 import { RootTabScreenProps } from "../types";
 import TextInput from "../components/shared/TextInput";
 import { gql, useMutation } from "@apollo/client";
@@ -31,7 +22,7 @@ const initialState = {
 export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   const { client } = useChatContext();
   const connectUser = async (id: string, name: string, image: string) => {
-    client.disconnectUser()
+    client.disconnectUser();
     await client.connectUser(
       {
         id,

@@ -3,13 +3,13 @@ import Colors from "../constants/Colors";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
   Text,
-  Container,
   Divider,
   Modal,
   FormControl,
   Input,
   Button,
   IconButton,
+  WarningOutlineIcon,
 } from "native-base";
 import { FlatList } from "react-native";
 import { Foundation } from "@expo/vector-icons";
@@ -18,8 +18,15 @@ import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Tab, TabView } from "react-native-elements";
+import { useChatContext } from "stream-chat-expo";
+import {
+  INITIAL_VALIDATION_STATE,
+  formatValidState,
+  formatInvalidState,
+} from "../utils/error";
 
 export default function Profile() {
+  const { client } = useChatContext();
   const [showEditInfo, setShowEditInfo] = useState(false);
   const [profile, setProfile] = useState({
     firstName: "",
@@ -31,27 +38,57 @@ export default function Profile() {
   // creating another variable to hold the fields or else the values in the profile screen will
   // change as we type in the modal fields
   const [modalFields, setModalFields] = useState({
-    firstName: "",
-    lastName: "",
-    bio: "",
+    firstName: INITIAL_VALIDATION_STATE,
+    lastName: INITIAL_VALIDATION_STATE,
+    bio: INITIAL_VALIDATION_STATE,
   });
+
+  const resetFields = () => {
+    setModalFields({
+      firstName: formatValidState(profile.firstName),
+      lastName: formatValidState(profile.lastName),
+      bio: formatValidState(profile.bio),
+    });
+  };
 
   const openModal = () => {
     setShowEditInfo(true);
-    setModalFields({
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      bio: profile.bio,
-    });
+    resetFields();
   };
 
   const closeModal = () => {
     setShowEditInfo(false);
-    setModalFields({
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      bio: profile.bio,
-    });
+    resetFields();
+  };
+
+  const validate = () => {
+    let hasError = false;
+    const { firstName, lastName, bio } = modalFields;
+    if (!firstName.value) {
+      setModalFields({
+        ...modalFields,
+        firstName: formatInvalidState("First Name is required"),
+      });
+      hasError = true;
+    }
+
+    if (!lastName.value) {
+      setModalFields({
+        ...modalFields,
+        lastName: formatInvalidState("Last Name is required"),
+      });
+      hasError = true;
+    }
+
+    if (!bio.value) {
+      setModalFields({
+        ...modalFields,
+        bio: formatInvalidState("Bio is required"),
+      });
+      hasError = true;
+    }
+
+    return !hasError;
   };
 
   /* Updating the user */
@@ -81,19 +118,25 @@ export default function Profile() {
   const updateProfile = async () => {
     setIsMutationLoading(true);
     try {
-      const result = await executeMutation({
-        variables: {
+      if (validate()) {
+        const result = await executeMutation({
+          variables: {
+            id: userID,
+            firstName: modalFields.firstName.value,
+            lastName: modalFields.lastName.value,
+            bio: modalFields.bio.value,
+          },
+        });
+        const { bio, firstName, lastName, email, imageUrl } =
+          result.data.updateUser.user;
+        setProfile({ firstName, lastName, bio, email, imageUrl });
+        await client.upsertUser({
           id: userID,
-          firstName: modalFields.firstName,
-          lastName: modalFields.lastName,
-          bio: modalFields.bio,
-        },
-      });
-      console.log("GOOD", result);
-      const { bio, firstName, lastName, email, imageUrl } =
-        result.data.updateUser.user;
-      setProfile({ firstName, lastName, bio, email, imageUrl });
-      closeModal();
+          name: firstName + " " + lastName,
+          image: imageUrl,
+        });
+        closeModal();
+      }
     } catch (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     }
@@ -122,7 +165,6 @@ export default function Profile() {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       setProfile(data.userById);
-      console.log("GOOD", data);
     }
   };
 
@@ -142,51 +184,68 @@ export default function Profile() {
           textSize={30}
         />
       </View>
-      {/* <Image
-        style={styles.avatar}
-        source={{ uri: "https://bootdey.com/img/Content/avatar/avatar6.png" }}
-      /> */}
       <Modal isOpen={showEditInfo} onClose={closeModal}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
           <Modal.Body>
-            <FormControl>
+            <FormControl isInvalid={modalFields.firstName.isInvalid}>
               <FormControl.Label>First Name</FormControl.Label>
               <Input
                 type="text"
                 onChangeText={(v) =>
-                  setModalFields({ ...modalFields, firstName: v })
+                  setModalFields({
+                    ...modalFields,
+                    firstName: formatValidState(v),
+                  })
                 }
-                defaultValue={modalFields.firstName}
+                defaultValue={modalFields.firstName.value}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.firstName.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="3" isInvalid={modalFields.lastName.isInvalid}>
               <FormControl.Label>Last Name</FormControl.Label>
               <Input
                 type="text"
                 onChangeText={(v) =>
-                  setModalFields({ ...modalFields, lastName: v })
+                  setModalFields({
+                    ...modalFields,
+                    lastName: formatValidState(v),
+                  })
                 }
-                defaultValue={modalFields.lastName}
+                defaultValue={modalFields.lastName.value}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.lastName.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="3" isInvalid={modalFields.bio.isInvalid}>
               <FormControl.Label>Bio</FormControl.Label>
               <Input
                 type="text"
-                onChangeText={(v) => setModalFields({ ...modalFields, bio: v })}
-                defaultValue={modalFields.bio}
+                onChangeText={(v) =>
+                  setModalFields({
+                    ...modalFields,
+                    bio: formatValidState(v),
+                  })
+                }
+                defaultValue={modalFields.bio.value}
               />
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.bio.errorMessage}
+              </FormControl.ErrorMessage>
             </FormControl>
-            {/* <FormControl mt="3">
-              <FormControl.Label>Password</FormControl.Label>
-              <Input
-                type="text"
-                onChangeText={(v) => setProfile({ ...profile, password: v })}
-                defaultValue={profile.password}
-              />
-            </FormControl> */}
           </Modal.Body>
           <Modal.Footer>
             <Button.Group space={2}>
@@ -305,9 +364,11 @@ const LostItemTabContent = () => {
         date
         imageUrl
         buildingId {
+          buildingId
           name
         }
         categoryId {
+          categoryId
           name
         }
         lostUserId {
@@ -329,14 +390,12 @@ const LostItemTabContent = () => {
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      console.log(data);
       setItems(data.lostItemPostsByUserId);
     }
   };
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
-      console.log("focused again");
       getItems();
     }
   }, [isFocused]);
@@ -353,8 +412,8 @@ const LostItemTabContent = () => {
             navigation.navigate("LostDetailedItem", {
               itemPostId: item.postId,
               itemTitle: item.title,
-              itemCategory: item.categoryId.name,
-              itemLocation: item.buildingId.name,
+              itemCategory: item.categoryId,
+              itemLocation: item.buildingId,
               itemDate: item.date,
               itemDescription: item.description,
               itemImage: item.imageUrl,
@@ -403,13 +462,16 @@ const FoundItemTabContent = () => {
         imageUrl
         date
         categoryId {
+          categoryId
           name
         }
         buildingId {
+          buildingId
           name
         }
         otherDropOffLocation
         dropOffLocationId {
+          locationId
           name
         }
         foundUserId {
@@ -437,14 +499,12 @@ const FoundItemTabContent = () => {
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      console.log(data);
       setItems(data.foundItemPostsByUserId);
     }
   };
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
-      console.log("focused again");
       getItems();
     }
   }, [isFocused]);
@@ -462,9 +522,10 @@ const FoundItemTabContent = () => {
             navigation.navigate("FoundDetailedItem", {
               itemPostId: item.postId,
               itemTitle: item.title,
-              itemCategory: item.categoryId.name,
-              itemLocation: item.buildingId.name,
-              itemOtherLocation: item.otherDropOffLocation,
+              itemCategory: item.categoryId,
+              itemLocation: item.buildingId,
+              itemDropOffLocation: item.dropOffLocationId,
+              itemOtherDropOffLocation: item.otherDropOffLocation,
               itemDate: item.date,
               itemDescription: item.description,
               itemImage: item.imageUrl,

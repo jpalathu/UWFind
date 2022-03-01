@@ -10,7 +10,9 @@ import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { StreamChat } from "stream-chat";
 import { OverlayProvider, Chat } from "stream-chat-expo";
+import IGNORE_LOGS from "./ignoreLogs";
 
+// Intitialize Chat Client
 const chatClient = StreamChat.getInstance("yjnpxas6ctem");
 
 // Initialize Apollo Client
@@ -30,12 +32,7 @@ const client = new ApolloClient({
 });
 
 // Ignoring these annoying logs
-LogBox.ignoreLogs([
-  "NativeBase:",
-  "VirtualizedList:",
-  "When server rendering,",
-  "Each child in a list"
-]);
+LogBox.ignoreLogs(IGNORE_LOGS);
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
