@@ -155,6 +155,8 @@ const LostFeed = () => {
     setItems(searchedItems);
   };
 
+  const defaultImage = require('../photos/glass.png');
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -208,7 +210,7 @@ const LostFeed = () => {
               <View style={styles.news_photo}>
                 {item.imageUrl ?  
                   <Image source={{ uri: item.imageUrl }} style={styles.photo} />
-                : <Image source={require("../photos/selina.png")} style={styles.photo} />
+                : <Image source={defaultImage} style={styles.photo} />
                 }
               </View>
             </TouchableOpacity>
@@ -298,6 +300,8 @@ const FoundFeed = () => {
     setItems(searchedItems);
   };
 
+  const defaultImage = require('../photos/glass.png');
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -353,7 +357,10 @@ const FoundFeed = () => {
               }}
             >
               <View style={styles.news_photo}>
-                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+                {item.imageUrl ?  
+                  <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+                : <Image source={defaultImage} style={styles.photo} />
+                }
               </View>
             </TouchableOpacity>
             <Text style={styles.title}>{item.title}</Text>
