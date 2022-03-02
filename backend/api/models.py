@@ -58,7 +58,7 @@ class LostItemPost(models.Model):
     date = models.DateField()
     lost_user_id = models.ForeignKey(User, db_column="lost_user_id", on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=500)
-    building_id = models.ForeignKey(Building, db_column="building_id", on_delete=models.DO_NOTHING)
+    building_id = models.ForeignKey(Building, db_column="building_id", null=True, on_delete=models.DO_NOTHING)
     category_id = models.ForeignKey(Category, db_column="category_id", on_delete=models.DO_NOTHING)
     image_url = models.CharField(max_length=500, null=True)
     deleted_at = models.DateTimeField(null=True)

@@ -144,7 +144,7 @@ class CreateLostItemPost(graphene.Mutation):
                 title = input.title,
                 lost_user_id = User.objects.get(user_id=input.lost_user_id),
                 description = input.description,
-                building_id = Building.objects.get(building_id=input.building_id),
+                building_id = None if input.building_id is None else Building.objects.get(building_id=input.building_id),
                 category_id = Category.objects.get(category_id=input.category_id),
                 image_url = None if input.image_url is None else input.image_url,
                 date = input.date
@@ -166,7 +166,8 @@ class UpdateLostItemPost(graphene.Mutation):
             post_instance = LostItemPost.objects.get(post_id=id)
             if "title" in input: post_instance.title = input.title
             if "description" in input: post_instance.description = input.description
-            if "building_id" in input: post_instance.building_id = Building.objects.get(building_id=input.building_id)
+            if "building_id" in input and input.building_id is not None:
+                    post_instance.building_id = Building.objects.get(building_id=input.building_id)
             if "category_id" in input: post_instance.category_id = Category.objects.get(category_id=input.category_id)
             if "image_url" in input: post_instance.image_url = input.image_url
             if "date" in input: post_instance.date = input.date
@@ -253,7 +254,8 @@ class UpdateFoundItemPost(graphene.Mutation):
             if "title" in input: post_instance.title = input.title
             if "claimed_user_id" in input: post_instance.claimed_user_id = User.objects.get(user_id=input.claimed_user_id)
             if "description" in input: post_instance.description = input.description
-            if "drop_off_location_id" in input: post_instance.drop_off_location_id = DropOffLocation.objects.get(location_id=input.drop_off_location_id)
+            if "drop_off_location_id" in input and input.drop_off_location_id is not None: 
+                post_instance.drop_off_location_id = DropOffLocation.objects.get(location_id=input.drop_off_location_id)
             if "other_drop_off_location" in input: post_instance.other_drop_off_location = input.other_drop_off_location
             if "building_id" in input: post_instance.building_id = Building.objects.get(building_id=input.building_id)
             if "category_id" in input: post_instance.category_id = Category.objects.get(category_id=input.category_id)
