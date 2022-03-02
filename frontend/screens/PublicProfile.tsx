@@ -113,7 +113,7 @@ export default function PublicProfile() {
           borderRadius="20"
           _text={{ color: "#000" }}
         >
-          Send
+          Message
         </Button>
       </Center>
     </View>
