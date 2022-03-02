@@ -6,6 +6,7 @@ import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useChatContext } from "stream-chat-expo";
 
 export default function PublicProfile() {
   const navigation = useNavigation();
@@ -49,42 +50,23 @@ export default function PublicProfile() {
   }, []);
 
   /********** Create a chat room between yourself and the other user to send messages ********** */
-  const CREATE_CHAT_ROOM = gql`
-    mutation ($currentUserId: Int!, $otherUserId: Int!) {
-      createChatRoom(currentUserId: $currentUserId, otherUserId: $otherUserId) {
-        alreadyExists
-        chatRoom {
-          chatRoomId
-        }
-        user {
-          firstName
-          lastName
-        }
-      }
-    }
-  `;
-  const [executeMutation] = useMutation(CREATE_CHAT_ROOM);
-  const [isMutationLoading, setIsMutationLoading] = useState(false);
+  const [isChannelLoading, setIsChannelLoading] = useState(false);
   const { userID } = useStore();
+  const { client } = useChatContext();
   const createChatRoom = async () => {
-    setIsMutationLoading(true);
+    setIsChannelLoading(true);
     try {
-      const result = await executeMutation({
-        variables: {
-          currentUserId: userID,
-          otherUserId: route.params?.userID,
-        },
+      const channel = client.channel("messaging", {
+        members: [`${userID}`, `${route.params?.userID}`],
       });
-      console.log("GOOD", result);
-      const { user, chatRoom } = result.data.createChatRoom;
+      await channel.watch();
       navigation.navigate("ChatRoom", {
-        chatRoomID: chatRoom.chatRoomId,
-        name: user.firstName + " " + user.lastName,
+        channelID: channel.id,
       });
     } catch (error) {
-      console.error("ERROR", JSON.stringify(error, null, 2));
+      console.log("ERROR", error);
     }
-    setIsMutationLoading(false);
+    setIsChannelLoading(false);
   };
 
   return (
@@ -115,7 +97,7 @@ export default function PublicProfile() {
       <Center>
         <Button
           onPress={createChatRoom}
-          isLoading={isMutationLoading}
+          isLoading={isChannelLoading}
           size="lg"
           my="6"
           style={{
