@@ -360,8 +360,10 @@ export default function FoundDetailedItem({ route }) {
           categoryName: categoryId.name,
           buildingID: buildingId.buildingId,
           buildingName: buildingId.name,
-          dropOffLocationID: dropOffLocationId.locationId,
-          dropOffLocationName: dropOffLocationId.name,
+          dropOffLocationID: dropOffLocationId
+            ? dropOffLocationId.locationId
+            : "",
+          dropOffLocationName: dropOffLocationId ? dropOffLocationId.name : "",
           otherDropOffLocation,
         });
         closeModal();
@@ -545,7 +547,7 @@ export default function FoundDetailedItem({ route }) {
               </FormControl.ErrorMessage>
             </FormControl>
             {/* ONLY SHOW THE OTHER DROP OFF LOCATION INPUT IF OTHER IS SELECTED */}
-            {Number(modalFields.dropOffLocationID.value) == 17 && (
+            {Number(modalFields.dropOffLocationID.value) == 17 ? (
               <FormControl
                 mt="1"
                 isInvalid={modalFields.otherDropOffLocation.isInvalid}
@@ -569,7 +571,7 @@ export default function FoundDetailedItem({ route }) {
                   {modalFields.otherDropOffLocation.errorMessage}
                 </FormControl.ErrorMessage>
               </FormControl>
-            )}
+            ) : null}
             <FormControl
               mt="1"
               isRequired
@@ -664,7 +666,7 @@ export default function FoundDetailedItem({ route }) {
       <ScrollView style={styles.news_container}>
         <View style={styles.news_item}>
           <View style={styles.text_container}>
-            {userID == post.foundUser.userId && (
+            {userID == post.foundUser.userId ? (
               <View style={{ flexDirection: "row", alignSelf: "flex-end" }}>
                 <IconButton
                   mr="3"
@@ -678,7 +680,7 @@ export default function FoundDetailedItem({ route }) {
                 />
                 <DeletePost postID={post.postID} navigation={navigation} />
               </View>
-            )}
+            ) : null}
             <Text style={styles.title}>{post.title}</Text>
 
             <View style={styles.text_container}>
@@ -715,11 +717,11 @@ export default function FoundDetailedItem({ route }) {
             </View>
 
             {/* Only show the image if the url exists */}
-            {post.imageUrl && (
+            {post.imageUrl ? (
               <View style={styles.news_photo}>
                 <Image source={{ uri: post.imageUrl }} style={styles.photo} />
               </View>
-            )}
+            ) : null}
 
             {post.claimedUser ? (
               <View style={styles.claimed_user}>

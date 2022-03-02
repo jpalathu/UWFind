@@ -56,8 +56,8 @@ export default function LostDetailedItem({ route }) {
     imageUrl: itemImage,
     categoryID: itemCategory.categoryId,
     categoryName: itemCategory.name,
-    buildingID: itemLocation.buildingId,
-    buildingName: itemLocation.name,
+    buildingID: itemLocation ? itemLocation.buildingId : "",
+    buildingName: itemLocation ? itemLocation.name : "",
     lostUser: itemLostUser,
   });
 
@@ -139,14 +139,6 @@ export default function LostDetailedItem({ route }) {
       hasError = true;
     }
 
-    if (!buildingID.value) {
-      setModalFields({
-        ...modalFields,
-        buildingID: formatInvalidState("Location is required"),
-      });
-      hasError = true;
-    }
-
     if (!description.value.trim()) {
       setModalFields({
         ...modalFields,
@@ -164,7 +156,7 @@ export default function LostDetailedItem({ route }) {
       $postId: Int!
       $title: String!
       $description: String!
-      $buildingId: Int!
+      $buildingId: Int
       $categoryId: Int!
       $imageUrl: String!
       $date: String!
@@ -213,7 +205,9 @@ export default function LostDetailedItem({ route }) {
             date: modalFields.date.value,
             imageUrl: modalFields.imageUrl.value,
             categoryId: Number(modalFields.categoryID.value),
-            buildingId: Number(modalFields.buildingID.value),
+            buildingId: modalFields.buildingID.value
+              ? Number(modalFields.buildingID.value)
+              : null,
           },
         });
 
@@ -229,8 +223,8 @@ export default function LostDetailedItem({ route }) {
           imageUrl,
           categoryID: categoryId.categoryId,
           categoryName: categoryId.name,
-          buildingID: buildingId.buildingId,
-          buildingName: buildingId.name,
+          buildingID: buildingId ? buildingId.buildingId : "",
+          buildingName: buildingId ? buildingId.name : "",
         });
         closeModal();
       }
@@ -333,11 +327,7 @@ export default function LostDetailedItem({ route }) {
                 {modalFields.date.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl
-              mt="1"
-              isRequired
-              isInvalid={modalFields.buildingID.isInvalid}
-            >
+            <FormControl mt="1" isInvalid={modalFields.buildingID.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
                 selectedValue={modalFields.buildingID.value}
@@ -499,7 +489,7 @@ export default function LostDetailedItem({ route }) {
       <ScrollView style={styles.news_container}>
         <View style={styles.news_item}>
           <View style={styles.text_container}>
-            {userID == post.lostUser.userId && (
+            {userID == post.lostUser.userId ? (
               <View style={{ flexDirection: "row", alignSelf: "flex-end" }}>
                 <IconButton
                   mr="3"
@@ -513,7 +503,7 @@ export default function LostDetailedItem({ route }) {
                 />
                 <DeletePost postID={post.postID} navigation={navigation} />
               </View>
-            )}
+            ) : null}
             <Text style={styles.title}>{post.title}</Text>
 
             <View style={styles.text_container}>
@@ -534,16 +524,18 @@ export default function LostDetailedItem({ route }) {
               </TouchableOpacity>
 
               <Text style={styles.news_text}>{post.categoryName}</Text>
-              <Text style={styles.news_text}>{post.buildingName}</Text>
+              {post.buildingID ? (
+                <Text style={styles.news_text}>{post.buildingName}</Text>
+              ) : null}
               <Text style={styles.news_text}>Lost on {post.date}</Text>
               <Text style={styles.news_text}>{post.description}</Text>
             </View>
             {/* Only show the image if the url exists */}
-            {post.imageUrl && (
+            {post.imageUrl ? (
               <View style={styles.news_photo}>
                 <Image source={{ uri: post.imageUrl }} style={styles.photo} />
               </View>
-            )}
+            ) : null}
           </View>
         </View>
       </ScrollView>

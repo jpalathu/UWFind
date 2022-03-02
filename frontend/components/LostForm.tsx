@@ -77,11 +77,6 @@ export default function LostForm(props: LostFormProps) {
       hasError = true;
     }
 
-    if (!locationValue.value) {
-      setLocationValue(formatInvalidState("Location is required"));
-      hasError = true;
-    }
-
     if (!categoryValue.value) {
       setCategoryValue(formatInvalidState("Category is required"));
       hasError = true;
@@ -101,7 +96,7 @@ export default function LostForm(props: LostFormProps) {
       $title: String!
       $lostUserId: Int!
       $description: String!
-      $buildingId: Int!
+      $buildingId: Int
       $categoryId: Int!
       $imageUrl: String!
       $date: String!
@@ -135,13 +130,15 @@ export default function LostForm(props: LostFormProps) {
             title: title.value,
             lostUserId: Number(userID),
             description: description.value,
-            buildingId: Number(locationValue.value),
+            buildingId: locationValue.value
+              ? Number(locationValue.value)
+              : null,
             categoryId: Number(categoryValue.value),
             imageUrl: imageUrl.value,
             date: date.value,
           },
         });
-        
+
         props.refreshPosts();
         closeModal();
       }
@@ -261,7 +258,7 @@ export default function LostForm(props: LostFormProps) {
                 {date.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isRequired isInvalid={locationValue.isInvalid}>
+            <FormControl mt="1" isInvalid={locationValue.isInvalid}>
               <FormControl.Label>Location</FormControl.Label>
               <Select
                 selectedValue={locationValue.value}
