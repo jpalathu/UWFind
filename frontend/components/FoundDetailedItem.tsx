@@ -641,19 +641,20 @@ export default function FoundDetailedItem({ route }) {
       <ScrollView style={styles.news_container}>
         <View style={styles.news_item}>
           <View style={styles.text_container}>
-            {userID == itemFoundUser.userId && (
-              <Container style={{ alignSelf: "flex-end" }}>
-                <Container style={{ alignSelf: "stretch" }}>
-                  <IconButton
-                    variant="solid"
-                    _icon={{
-                      as: Foundation,
-                      name: "pencil",
-                    }}
-                    onPress={openModal}
-                  />
-                </Container>
-              </Container>
+            {userID == post.foundUser.userId && (
+              <View style={{ flexDirection: "row", alignSelf: "flex-end" }}>
+                <IconButton
+                  mr="3"
+                  px="2"
+                  variant="solid"
+                  _icon={{
+                    as: Foundation,
+                    name: "pencil",
+                  }}
+                  onPress={openModal}
+                />
+                <DeletePost postID={post.postID} navigation={navigation} />
+              </View>
             )}
             <Text style={styles.title}>{post.title}</Text>
 
@@ -729,6 +730,93 @@ export default function FoundDetailedItem({ route }) {
     </View>
   );
 }
+
+interface DeletePostProps {
+  postID: Number;
+  navigation: any;
+}
+
+const DeletePost = (props: DeletePostProps) => {
+  const [showModal, setShowModal] = useState(false);
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const DELETE_POST = gql`
+    mutation ($id: Int!) {
+      deleteFoundItemPost(id: $id) {
+        foundItemPost {
+          postId
+        }
+      }
+    }
+  `;
+  const [executeDeletePost] = useMutation(DELETE_POST);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const deletePost = async () => {
+    setIsDeleting(true);
+    try {
+      const result = await executeDeletePost({
+        variables: {
+          id: Number(props.postID),
+        },
+      });
+      props.navigation.navigate("Home");
+    } catch (error) {
+      console.error("ERROR", JSON.stringify(error, null, 2));
+    }
+    setIsDeleting(false);
+  };
+
+  return (
+    <View>
+      <Modal isOpen={showModal} onClose={closeModal}>
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header>Delete</Modal.Header>
+          <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="ghost"
+                colorScheme="blueGray"
+                onPress={closeModal}
+              >
+                No
+              </Button>
+              <Button
+                isLoading={isDeleting}
+                onPress={deletePost}
+                bgColor="red.400"
+              >
+                Yes
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+      <IconButton
+        pl="3"
+        variant="solid"
+        _icon={{
+          as: FontAwesome,
+          name: "trash",
+          alignItems: "flex-end",
+        }}
+        bg="red.400"
+        _pressed={{
+          bg: "red.400",
+        }}
+        onPress={openModal}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
