@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Colors from "../constants/Colors";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
@@ -10,9 +10,10 @@ import {
   Button,
   IconButton,
   WarningOutlineIcon,
+  Spinner,
 } from "native-base";
 import { FlatList } from "react-native";
-import { Foundation } from "@expo/vector-icons";
+import { FontAwesome, Foundation } from "@expo/vector-icons";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useStore } from "../store";
 import ProfileImage from "../components/shared/ProfileImage";
@@ -24,6 +25,7 @@ import {
   formatValidState,
   formatInvalidState,
 } from "../utils/error";
+import { pickImage } from "../utils/imagePicker";
 
 export default function Profile() {
   const { client } = useChatContext();
@@ -41,6 +43,7 @@ export default function Profile() {
     firstName: INITIAL_VALIDATION_STATE,
     lastName: INITIAL_VALIDATION_STATE,
     bio: INITIAL_VALIDATION_STATE,
+    imageUrl: INITIAL_VALIDATION_STATE,
   });
 
   const resetFields = () => {
@@ -48,6 +51,7 @@ export default function Profile() {
       firstName: formatValidState(profile.firstName),
       lastName: formatValidState(profile.lastName),
       bio: formatValidState(profile.bio),
+      imageUrl: formatValidState(profile.imageUrl),
     });
   };
 
@@ -59,6 +63,14 @@ export default function Profile() {
   const closeModal = () => {
     setShowEditInfo(false);
     resetFields();
+  };
+
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const handlePickedImage = async () => {
+    setIsImageLoading(true);
+    const image = await pickImage();
+    setModalFields({ ...modalFields, imageUrl: formatValidState(image) });
+    setIsImageLoading(false);
   };
 
   const validate = () => {
@@ -98,10 +110,16 @@ export default function Profile() {
       $firstName: String!
       $lastName: String!
       $bio: String!
+      $imageUrl: String!
     ) {
       updateUser(
         id: $id
-        input: { firstName: $firstName, lastName: $lastName, bio: $bio }
+        input: {
+          firstName: $firstName
+          lastName: $lastName
+          bio: $bio
+          imageUrl: $imageUrl
+        }
       ) {
         user {
           userId
@@ -109,6 +127,7 @@ export default function Profile() {
           lastName
           bio
           email
+          imageUrl
         }
       }
     }
@@ -125,6 +144,7 @@ export default function Profile() {
             firstName: modalFields.firstName.value,
             lastName: modalFields.lastName.value,
             bio: modalFields.bio.value,
+            imageUrl: modalFields.imageUrl.value,
           },
         });
         const { bio, firstName, lastName, email, imageUrl } =
@@ -189,7 +209,7 @@ export default function Profile() {
           <Modal.CloseButton />
           <Modal.Header>Edit</Modal.Header>
           <Modal.Body>
-            <FormControl isInvalid={modalFields.firstName.isInvalid}>
+            <FormControl isRequired isInvalid={modalFields.firstName.isInvalid}>
               <FormControl.Label>First Name</FormControl.Label>
               <Input
                 type="text"
@@ -208,7 +228,7 @@ export default function Profile() {
                 {modalFields.firstName.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3" isInvalid={modalFields.lastName.isInvalid}>
+            <FormControl mt="3" isRequired isInvalid={modalFields.lastName.isInvalid}>
               <FormControl.Label>Last Name</FormControl.Label>
               <Input
                 type="text"
@@ -227,7 +247,7 @@ export default function Profile() {
                 {modalFields.lastName.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3" isInvalid={modalFields.bio.isInvalid}>
+            <FormControl mt="3" isRequired isInvalid={modalFields.bio.isInvalid}>
               <FormControl.Label>Bio</FormControl.Label>
               <Input
                 type="text"
@@ -245,6 +265,49 @@ export default function Profile() {
               >
                 {modalFields.bio.errorMessage}
               </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl mt="1" isInvalid={modalFields.imageUrl.isInvalid}>
+              <FormControl.Label>Image</FormControl.Label>
+              <View
+                style={{
+                  width: "100%",
+                  height: 100,
+                  borderStyle: "dashed",
+                  borderRadius: 15,
+                  borderWidth: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {isImageLoading ? (
+                  <Spinner size="sm" />
+                ) : (
+                  <Fragment>
+                    {modalFields.imageUrl.value ? (
+                      <Image
+                        style={{
+                          borderRadius: 15,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        source={{ uri: modalFields.imageUrl.value }}
+                        resizeMode="stretch"
+                      />
+                    ) : (
+                      <FontAwesome name="image" size={40} color="black" />
+                    )}
+                  </Fragment>
+                )}
+              </View>
+              <FormControl.ErrorMessage
+                fontSize="xl"
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {modalFields.imageUrl.errorMessage}
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl mt="2">
+              <Button onPress={handlePickedImage}>Upload a photo</Button>
             </FormControl>
           </Modal.Body>
           <Modal.Footer>

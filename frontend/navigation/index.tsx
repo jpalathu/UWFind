@@ -26,6 +26,7 @@ import ChatRoom from "../screens/ChatRoom";
 import CreateChatRoom from "../components/chat/CreateChatRoom";
 import LostDetailedItem from "../components/LostDetailedItem";
 import FoundDetailedItem from "../components/FoundDetailedItem";
+import { useChatContext } from "stream-chat-expo";
 
 export default function Navigation({
   colorScheme,
@@ -49,6 +50,7 @@ export default function Navigation({
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const { client } = useChatContext();
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -109,7 +111,10 @@ function RootNavigator() {
           headerTitleStyle: { color: Colors.white },
           headerLeft: () => (
             <PressableIcon
-              onPress={() => navigation.navigate("Login")}
+              onPress={() => {
+                client.disconnectUser()
+                navigation.navigate("Login");
+              }}
               icon="sign-out"
               isLeft={false}
               style={{ transform: [{ rotateY: "180deg" }] }}
