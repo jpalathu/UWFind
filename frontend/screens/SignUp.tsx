@@ -103,14 +103,19 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
       isError = true;
     }
     /* Check if UW email */
-    // if (email.value && !email.value.endsWith("@uwaterloo.ca")) {
-    //   setEmail({
-    //     ...email,
-    //     isInvalid: true,
-    //     errorMessage: "Use a UW email ending with @uwaterloo.ca",
-    //   });
-    //   isError = true;
-    // }
+    if (
+      email.value &&
+      !email.value.endsWith("@uwaterloo.ca") &&
+      !email.value.endsWith("@edu.uwaterloo.ca")
+    ) {
+      setEmail({
+        ...email,
+        isInvalid: true,
+        errorMessage:
+          "Use a UW email ending with @uwaterloo.ca or @edu.uwaterloo.ca",
+      });
+      isError = true;
+    }
 
     return !isError;
   };
