@@ -538,10 +538,12 @@ export default function LostDetailedItem({ route }) {
               <Text style={styles.news_text}>Lost on {post.date}</Text>
               <Text style={styles.news_text}>{post.description}</Text>
             </View>
-
-            <View style={styles.news_photo}>
-              <Image source={{ uri: post.imageUrl }} style={styles.photo} />
-            </View>
+            {/* Only show the image if the url exists */}
+            {post.imageUrl && (
+              <View style={styles.news_photo}>
+                <Image source={{ uri: post.imageUrl }} style={styles.photo} />
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>

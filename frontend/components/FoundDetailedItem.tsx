@@ -253,8 +253,13 @@ export default function FoundDetailedItem({ route }) {
     }
 
     // Other drop off location is required if the drop off location is Other
-    if(Number(dropOffLocationID.value) == 17 && !otherDropOffLocation.value) {
-      setModalFields({...modalFields, otherDropOffLocation: formatInvalidState("Drop-Off Location is required")})
+    if (Number(dropOffLocationID.value) == 17 && !otherDropOffLocation.value) {
+      setModalFields({
+        ...modalFields,
+        otherDropOffLocation: formatInvalidState(
+          "Drop-Off Location is required"
+        ),
+      });
       hasError = true;
     }
 
@@ -391,7 +396,11 @@ export default function FoundDetailedItem({ route }) {
                 {modalFields.title.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isRequired isInvalid={modalFields.date.isInvalid}>
+            <FormControl
+              mt="1"
+              isRequired
+              isInvalid={modalFields.date.isInvalid}
+            >
               <FormControl.Label>Date</FormControl.Label>
               <DatePicker
                 style={{ width: 200 }}
@@ -428,7 +437,11 @@ export default function FoundDetailedItem({ route }) {
                 {modalFields.date.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isRequired isInvalid={modalFields.buildingID.isInvalid}>
+            <FormControl
+              mt="1"
+              isRequired
+              isInvalid={modalFields.buildingID.isInvalid}
+            >
               <FormControl.Label>Location</FormControl.Label>
               <Select
                 selectedValue={modalFields.buildingID.value}
@@ -459,7 +472,11 @@ export default function FoundDetailedItem({ route }) {
                 {modalFields.buildingID.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="1" isRequired isInvalid={modalFields.categoryID.isInvalid}>
+            <FormControl
+              mt="1"
+              isRequired
+              isInvalid={modalFields.categoryID.isInvalid}
+            >
               <FormControl.Label>Category</FormControl.Label>
 
               <Select
@@ -533,7 +550,9 @@ export default function FoundDetailedItem({ route }) {
                 mt="1"
                 isInvalid={modalFields.otherDropOffLocation.isInvalid}
               >
-                <FormControl.Label isRequired>Other Drop-Off Location</FormControl.Label>
+                <FormControl.Label isRequired>
+                  Other Drop-Off Location
+                </FormControl.Label>
                 <Input
                   onChangeText={(v) =>
                     setModalFields({
@@ -551,7 +570,11 @@ export default function FoundDetailedItem({ route }) {
                 </FormControl.ErrorMessage>
               </FormControl>
             )}
-            <FormControl mt="1" isRequired isInvalid={modalFields.description.isInvalid}>
+            <FormControl
+              mt="1"
+              isRequired
+              isInvalid={modalFields.description.isInvalid}
+            >
               <FormControl.Label>Description</FormControl.Label>
               <Input
                 type="text"
@@ -678,21 +701,25 @@ export default function FoundDetailedItem({ route }) {
               <Text style={styles.news_text}>{post.categoryName}</Text>
               <Text style={styles.news_text}>{post.buildingName}</Text>
               {/* Display the other drop off location if the drop off location is Other */}
-              {post.dropOffLocationID == 17 ? (
+              {post.dropOffLocationID && post.dropOffLocationID == 17 ? (
                 <Text style={styles.news_text}>
                   {post.otherDropOffLocation}
                 </Text>
-              ) : (
+              ) : null}
+              {post.dropOffLocationID && post.dropOffLocationID != 17 ? (
                 <Text style={styles.news_text}>{post.dropOffLocationName}</Text>
-              )}
+              ) : null}
 
               <Text style={styles.news_text}>Lost on {post.date}</Text>
               <Text style={styles.news_text}>{post.description}</Text>
             </View>
 
-            <View style={styles.news_photo}>
-              <Image source={{ uri: post.imageUrl }} style={styles.photo} />
-            </View>
+            {/* Only show the image if the url exists */}
+            {post.imageUrl && (
+              <View style={styles.news_photo}>
+                <Image source={{ uri: post.imageUrl }} style={styles.photo} />
+              </View>
+            )}
 
             {post.claimedUser ? (
               <View style={styles.claimed_user}>
