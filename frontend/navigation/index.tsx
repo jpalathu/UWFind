@@ -366,6 +366,30 @@ function RootNavigator() {
             textAlignVertical: 'center',
             alignContent: 'center',
           }}>
+            What does the “Claim Item” button mean on the “Found Items” feed posts?
+        </Text>
+        <Text
+          style={{
+            textAlign: 'center',
+            color: '#000000',
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlignVertical: 'center',
+            alignContent: 'center',
+          }}>
+            The “Claim Item” button is a way to ensure whether someone has already identified an item as their own. For example, if you believe an item on the “Found Items” feed belongs to you, go to the details of that item and click on “Claim Item” to notify other users that this item belongs to you. If the item has already been claimed, you may contact the original claimer.{"\n"}         </Text>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontWeight: "bold",
+            color: '#000000',
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlignVertical: 'center',
+            alignContent: 'center',
+          }}>
             I forgot my password, what do I do?       
         </Text>
         <Text
