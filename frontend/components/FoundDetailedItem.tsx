@@ -700,8 +700,8 @@ export default function FoundDetailedItem({ route }) {
                 </Text>
               </TouchableOpacity>
 
-              <Text style={styles.news_text}>{post.categoryName}</Text>
-              <Text style={styles.news_text}>{post.buildingName}</Text>
+              <Text style={styles.news_text}>Category: {post.categoryName}</Text>
+              <Text style={styles.news_text}>Found in: {post.buildingName}</Text>
               {/* Display the other drop off location if the drop off location is Other */}
               {post.dropOffLocationID && post.dropOffLocationID == 17 ? (
                 <Text style={styles.news_text}>
@@ -709,11 +709,11 @@ export default function FoundDetailedItem({ route }) {
                 </Text>
               ) : null}
               {post.dropOffLocationID && post.dropOffLocationID != 17 ? (
-                <Text style={styles.news_text}>{post.dropOffLocationName}</Text>
+                <Text style={styles.news_text}>Drop-off Location: {post.dropOffLocationName}</Text>
               ) : null}
 
-              <Text style={styles.news_text}>Lost on {post.date}</Text>
-              <Text style={styles.news_text}>{post.description}</Text>
+              <Text style={styles.news_text}>Lost on: {post.date}</Text>
+              <Text style={styles.news_text}>Description:{"\n"}{post.description}</Text>
             </View>
 
             {/* Only show the image if the url exists */}

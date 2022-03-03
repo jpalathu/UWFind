@@ -523,12 +523,12 @@ export default function LostDetailedItem({ route }) {
                 </Text>
               </TouchableOpacity>
 
-              <Text style={styles.news_text}>{post.categoryName}</Text>
+              <Text style={styles.news_text}>Category: {post.categoryName}</Text>
               {post.buildingID ? (
-                <Text style={styles.news_text}>{post.buildingName}</Text>
+                <Text style={styles.news_text}>Lost in: {post.buildingName}</Text>
               ) : null}
-              <Text style={styles.news_text}>Lost on {post.date}</Text>
-              <Text style={styles.news_text}>{post.description}</Text>
+              <Text style={styles.news_text}>Lost on: {post.date}</Text>
+              <Text style={styles.news_text}>Description:{"\n"}{post.description}</Text>
             </View>
             {/* Only show the image if the url exists */}
             {post.imageUrl ? (
