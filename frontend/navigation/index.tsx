@@ -146,7 +146,7 @@ function RootNavigator() {
               />
               <PressableIcon
                 onPress={() => setShowModal(true)}                
-                icon="circle-question"
+                icon="question-circle"
                 isLeft={true}
               />
             </View>
