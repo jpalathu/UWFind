@@ -163,7 +163,6 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
           },
         });
 
-        console.log("GOOD", result);
         connectUser(
           result.data.signUp.user.userId,
           `${result.data.signUp.user.firstName} ${result.data.signUp.user.lastName}`,

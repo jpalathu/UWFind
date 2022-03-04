@@ -39,7 +39,6 @@ const CreateChatRoom = () => {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       setUsers(data.users);
-      console.log("GOOD", data);
     }
   };
 

@@ -41,7 +41,6 @@ export default function PublicProfile() {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
       setProfile(data.userById);
-      console.log("GOOD", data);
     }
   };
 

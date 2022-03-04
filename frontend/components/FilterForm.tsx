@@ -154,7 +154,6 @@ export default function FilterForm(props: FilterFormProps) {
     props.isLost ? LOST_ITEM_POSTS : FOUND_ITEM_POSTS
   );
   const filter = async () => {
-    console.log(startDate, endDate, categoryValue, locationValue);
     const { data, error } = await executeFilterQuery({
       variables: {
         startDate: startDate ? startDate : null,
@@ -166,7 +165,6 @@ export default function FilterForm(props: FilterFormProps) {
     if (error) {
       console.error("ERROR", JSON.stringify(error, null, 2));
     } else {
-      console.log(data.foundItemPosts);
       props.setFilteredItems(
         props.isLost ? data.lostItemPosts : data.foundItemPosts
       );

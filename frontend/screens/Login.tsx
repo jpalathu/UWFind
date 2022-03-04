@@ -31,7 +31,6 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
       },
       client.devToken(id)
     );
-    console.log("user connected");
   };
 
   const [email, setEmail] = useState<ValidationState>(initialState);
@@ -95,7 +94,6 @@ export default function Login({ navigation }: RootTabScreenProps<"Login">) {
         if (error) {
           console.error("ERROR", JSON.stringify(error, null, 2));
         } else {
-          console.log("GOOD", data);
           const { userId, firstName, lastName, imageUrl } = data.login.user;
           // store the user ID and auth token
           updateUserID(userId);
@@ -220,7 +218,6 @@ const ForgotPassword = () => {
         const result = await executeMutation({
           variables: { email: email.value },
         });
-        console.log("GOOD", result);
         closeSheet();
       } catch (error) {
         console.error("ERROR", JSON.stringify(error, null, 2));
