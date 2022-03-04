@@ -1,4 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import AWS from "aws-sdk";
 
 const credentials = new AWS.Credentials(
@@ -50,14 +51,21 @@ const handleImagePicked = async (
     if (pickerResult.cancelled) {
       return "";
     }
-    const data = await fetchImageFromUri(pickerResult.uri);
+    const compressResult = await manipulateAsync(
+      pickerResult.uri,
+      [{ resize: { height: 1624 } }],
+      {
+        compress: 0,
+        format: SaveFormat.JPEG,
+      }
+    );
+    const data = await fetchImageFromUri(compressResult.uri);
     const uploadUrl = await uploadImage(data.filename, data.blob);
-    console.log("url", uploadUrl);
     return uploadUrl;
   } catch (e) {
     console.log(e);
     alert("Upload to S3 failed");
-    return ""
+    return "";
   }
 };
 
