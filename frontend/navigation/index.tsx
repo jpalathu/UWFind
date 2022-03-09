@@ -70,10 +70,17 @@ function RootNavigator() {
       <Stack.Screen
         name="SignUp"
         component={SignUp}
-        options={() => ({
+        options={({ navigation }: RootTabScreenProps<"SignUp">) => ({
           title: "",
           headerStyle: { backgroundColor: Colors.black },
           headerTitleStyle: { color: Colors.white },
+          headerLeft: () => (
+            <PressableIcon
+              onPress={() => navigation.navigate("Login")}
+              icon="caret-left"
+              isLeft={false}
+            />
+          ),
         })}
       />
 

@@ -27,6 +27,8 @@ import {
 } from "../utils/error";
 import { pickImage } from "../utils/imagePicker";
 
+const defaultImage = require("../photos/glass.png");
+
 export default function Profile() {
   const { client } = useChatContext();
   const [showEditInfo, setShowEditInfo] = useState(false);
@@ -105,12 +107,12 @@ export default function Profile() {
 
   /* Updating the user */
   const UPDATE_USER_MUTATION = gql`
-    mutation (
+    mutation(
       $id: Int!
       $firstName: String!
       $lastName: String!
       $bio: String!
-      $imageUrl: String!
+      $imageUrl: String
     ) {
       updateUser(
         id: $id
@@ -147,8 +149,13 @@ export default function Profile() {
             imageUrl: modalFields.imageUrl.value,
           },
         });
-        const { bio, firstName, lastName, email, imageUrl } =
-          result.data.updateUser.user;
+        const {
+          bio,
+          firstName,
+          lastName,
+          email,
+          imageUrl,
+        } = result.data.updateUser.user;
         setProfile({ firstName, lastName, bio, email, imageUrl });
         await client.upsertUser({
           id: userID,
@@ -165,7 +172,7 @@ export default function Profile() {
 
   /* Getting the user data initially */
   const USER_BY_ID_QUERY = gql`
-    query ($id: Int!) {
+    query($id: Int!) {
       userById(id: $id) {
         firstName
         lastName
@@ -228,7 +235,11 @@ export default function Profile() {
                 {modalFields.firstName.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3" isRequired isInvalid={modalFields.lastName.isInvalid}>
+            <FormControl
+              mt="3"
+              isRequired
+              isInvalid={modalFields.lastName.isInvalid}
+            >
               <FormControl.Label>Last Name</FormControl.Label>
               <Input
                 type="text"
@@ -247,7 +258,11 @@ export default function Profile() {
                 {modalFields.lastName.errorMessage}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl mt="3" isRequired isInvalid={modalFields.bio.isInvalid}>
+            <FormControl
+              mt="3"
+              isRequired
+              isInvalid={modalFields.bio.isInvalid}
+            >
               <FormControl.Label>Bio</FormControl.Label>
               <Input
                 type="text"
@@ -419,7 +434,7 @@ const LostItemTabContent = () => {
   const { userID } = useStore();
   const [items, setItems] = useState<any[]>([]);
   const LOST_ITEM_POSTS = gql`
-    query ($id: Int!) {
+    query($id: Int!) {
       lostItemPostsByUserId(userId: $id) {
         postId
         title
@@ -439,6 +454,7 @@ const LostItemTabContent = () => {
           firstName
           lastName
           email
+          imageUrl
         }
       }
     }
@@ -488,13 +504,25 @@ const LostItemTabContent = () => {
             <View style={styles.text_container}>
               <Text style={styles.title}>{item.title}</Text>
               <View style={styles.text_container}>
-                <Text style={styles.news_text}>{item.categoryId.name}</Text>
-                <Text style={styles.news_text}>{item.buildingId.name}</Text>
-                <Text style={styles.news_text}>Lost on {item.date}</Text>
+                <Text style={styles.label_text}>
+                  Category:{" "}
+                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
+                </Text>
+                <Text style={styles.label_text}>
+                  Lost in:{" "}
+                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
+                </Text>
+                <Text style={styles.label_text}>
+                  Lost on: <Text style={styles.news_text}>{item.date}</Text>
+                </Text>
               </View>
             </View>
             <View style={styles.news_photo}>
-              <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+              {item.imageUrl ? (
+                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+              ) : (
+                <Image source={defaultImage} style={styles.photo} />
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -517,7 +545,7 @@ const FoundItemTabContent = () => {
   const { userID } = useStore();
   const [items, setItems] = useState<any[]>([]);
   const FOUND_ITEM_POSTS = gql`
-    query ($id: Int!) {
+    query($id: Int!) {
       foundItemPostsByUserId(userId: $id) {
         postId
         title
@@ -542,12 +570,14 @@ const FoundItemTabContent = () => {
           firstName
           lastName
           email
+          imageUrl
         }
         claimedUserId {
           userId
           firstName
           lastName
           email
+          imageUrl
         }
       }
     }
@@ -601,13 +631,25 @@ const FoundItemTabContent = () => {
             <View style={styles.text_container}>
               <Text style={styles.title}>{item.title}</Text>
               <View style={styles.text_container}>
-                <Text style={styles.news_text}>{item.categoryId.name}</Text>
-                <Text style={styles.news_text}>{item.buildingId.name}</Text>
-                <Text style={styles.news_text}>Found on {item.date}</Text>
+                <Text style={styles.label_text}>
+                  Category:{" "}
+                  <Text style={styles.news_text}>{item.categoryId.name}</Text>
+                </Text>
+                <Text style={styles.label_text}>
+                  Found in:{" "}
+                  <Text style={styles.news_text}>{item.buildingId.name}</Text>
+                </Text>
+                <Text style={styles.label_text}>
+                  Found on: <Text style={styles.news_text}>{item.date}</Text>
+                </Text>
               </View>
             </View>
             <View style={styles.news_photo}>
-              <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+              {item.imageUrl ? (
+                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+              ) : (
+                <Image source={defaultImage} style={styles.photo} />
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -694,13 +736,21 @@ const styles = StyleSheet.create({
     padding: 10,
     color: "#FFFFFF",
   },
+  label_text: {
+    flex: 2,
+    flexDirection: "row",
+    padding: 10,
+    color: "#FFD54F",
+  },
   news_photo: {
+    marginLeft: 10,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   text_container: {
     flex: 3,
+    marginRight: 20,
   },
   title: {
     fontSize: 20,

@@ -704,15 +704,15 @@ export default function FoundDetailedItem({ route }) {
               <Text style={styles.label_text}>Found in: <Text style={styles.news_text}>{post.buildingName}</Text></Text>
               {/* Display the other drop off location if the drop off location is Other */}
               {post.dropOffLocationID && post.dropOffLocationID == 17 ? (
-                <Text style={styles.news_text}>
+                <Text style={styles.label_text}>Drop-off Location: <Text style={styles.news_text}>
                   {post.otherDropOffLocation}
-                </Text>
+                </Text></Text>
               ) : null}
               {post.dropOffLocationID && post.dropOffLocationID != 17 ? (
                 <Text style={styles.label_text}>Drop-off Location: <Text style={styles.news_text}>{post.dropOffLocationName}</Text></Text>
               ) : null}
 
-              <Text style={styles.label_text}>Lost on: <Text style={styles.news_text}>{post.date}</Text></Text>
+              <Text style={styles.label_text}>Found on: <Text style={styles.news_text}>{post.date}</Text></Text>
               <Text style={styles.label_text}>Description:{"\n"}<Text style={styles.news_text}>{post.description}</Text></Text>
             </View>
 
