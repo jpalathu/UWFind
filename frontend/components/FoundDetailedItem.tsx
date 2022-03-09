@@ -695,13 +695,13 @@ export default function FoundDetailedItem({ route }) {
                   lastName={post.foundUser.lastName}
                   textSize={18}
                 />
-                <Text style={styles.news_text}>
+                <Text style={styles.label_text}>
                   {post.foundUser.firstName} {post.foundUser.lastName}
                 </Text>
               </TouchableOpacity>
 
-              <Text style={styles.news_text}>Category: {post.categoryName}</Text>
-              <Text style={styles.news_text}>Found in: {post.buildingName}</Text>
+              <Text style={styles.label_text}>Category: <Text style={styles.news_text}>{post.categoryName}</Text></Text>
+              <Text style={styles.label_text}>Found in: <Text style={styles.news_text}>{post.buildingName}</Text></Text>
               {/* Display the other drop off location if the drop off location is Other */}
               {post.dropOffLocationID && post.dropOffLocationID == 17 ? (
                 <Text style={styles.news_text}>
@@ -709,11 +709,11 @@ export default function FoundDetailedItem({ route }) {
                 </Text>
               ) : null}
               {post.dropOffLocationID && post.dropOffLocationID != 17 ? (
-                <Text style={styles.news_text}>Drop-off Location: {post.dropOffLocationName}</Text>
+                <Text style={styles.label_text}>Drop-off Location: <Text style={styles.news_text}>{post.dropOffLocationName}</Text></Text>
               ) : null}
 
-              <Text style={styles.news_text}>Lost on: {post.date}</Text>
-              <Text style={styles.news_text}>Description:{"\n"}{post.description}</Text>
+              <Text style={styles.label_text}>Lost on: <Text style={styles.news_text}>{post.date}</Text></Text>
+              <Text style={styles.label_text}>Description:{"\n"}<Text style={styles.news_text}>{post.description}</Text></Text>
             </View>
 
             {/* Only show the image if the url exists */}
@@ -919,6 +919,12 @@ const styles = StyleSheet.create({
     padding: 10,
     color: "#FFFFFF",
   },
+  label_text: {
+    flex: 2,
+    flexDirection: "row",
+    padding: 10,
+    color: "#FFD54F",
+  },
   number: {
     flex: 0.5,
   },
@@ -941,8 +947,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photo: {
-    width: 120,
-    height: 120,
+    width: 310,
+    height: 310,
   },
   claimed_user: {
     marginTop: 10,

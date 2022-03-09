@@ -518,17 +518,17 @@ export default function LostDetailedItem({ route }) {
                   lastName={post.lostUser.lastName}
                   textSize={18}
                 />
-                <Text style={styles.news_text}>
+                <Text style={styles.label_text}>
                   {post.lostUser.firstName} {post.lostUser.lastName}
                 </Text>
               </TouchableOpacity>
 
-              <Text style={styles.news_text}>Category: {post.categoryName}</Text>
+              <Text style={styles.label_text}>Category: <Text style={styles.news_text}>{post.categoryName}</Text></Text>
               {post.buildingID ? (
-                <Text style={styles.news_text}>Lost in: {post.buildingName}</Text>
+                <Text style={styles.label_text}>Lost in: <Text style={styles.news_text}>{post.buildingName}</Text></Text>
               ) : null}
-              <Text style={styles.news_text}>Lost on: {post.date}</Text>
-              <Text style={styles.news_text}>Description:{"\n"}{post.description}</Text>
+              <Text style={styles.label_text}>Lost on: <Text style={styles.news_text}>{post.date}</Text></Text>
+              <Text style={styles.label_text}>Description:{"\n"}<Text style={styles.news_text}>{post.description}</Text></Text>
             </View>
             {/* Only show the image if the url exists */}
             {post.imageUrl ? (
@@ -702,6 +702,12 @@ const styles = StyleSheet.create({
     padding: 10,
     color: "#FFFFFF",
   },
+  label_text: {
+    flex: 2,
+    flexDirection: "row",
+    padding: 10,
+    color: "#FFD54F",
+  },
   number: {
     flex: 0.5,
   },
@@ -724,7 +730,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photo: {
-    width: 120,
-    height: 120,
+    width: 310,
+    height: 310,
   },
 });
