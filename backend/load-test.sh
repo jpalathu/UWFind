@@ -11,10 +11,10 @@ request_cmd() {
 }
 
 while true; do
-    # echo $(($(date +%s) - START)) | awk '{print int($1/60)":"int($1%60)}'
     sleep 1
 
     for i in $(seq 1 $max); do
+        echo "Request #:" $i
         request_cmd
         echo ""
     done
