@@ -736,7 +736,7 @@ export default function FoundDetailedItem({ route }) {
                 onPress={claimItem}
                 isLoading={isClaimItemLoading}
                 size="lg"
-                my="6"
+                mt="5"
                 style={{
                   backgroundColor: "#ffc50b",
                   borderColor: "#000",
@@ -744,6 +744,7 @@ export default function FoundDetailedItem({ route }) {
                   shadowOpacity: 0.3,
                   shadowRadius: 10,
                   shadowOffset: { width: 1, height: 10 },
+                  alignSelf: "center"
                 }}
                 width="40%"
                 height="39px"
