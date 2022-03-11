@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Colors from "../constants/Colors";
 import { Button, Box, Text, Heading } from "native-base";
 import { RootTabScreenProps } from "../types";
@@ -180,99 +180,107 @@ export default function SignUp({ navigation }: RootTabScreenProps<"SignUp">) {
   };
 
   return (
-    <Box style={styles.container}>
+    <View style={styles.container}>
       <Heading size="xl" alignSelf="flex-start" ml="8">
         Create Account
       </Heading>
       <Text fontSize={20} alignSelf="flex-start" ml="8" mb="3">
         Sign up to get started!
       </Text>
-      <TextInput
-        title="First Name"
-        value={firstName.value}
-        isInvalid={firstName.isInvalid}
-        errorMessage={firstName.errorMessage}
-        onChangeText={setFirstName}
-        my="3"
-        icon="person"
-      />
-      <TextInput
-        title="Last Name"
-        value={lastName.value}
-        isInvalid={lastName.isInvalid}
-        errorMessage={lastName.errorMessage}
-        onChangeText={setLastName}
-        my="3"
-        icon="person"
-      />
-      <TextInput
-        title="Tell Us About Yourself"
-        value={bio.value}
-        isInvalid={bio.isInvalid}
-        errorMessage={bio.errorMessage}
-        onChangeText={setBio}
-        my="3"
-        icon="person"
-      />
-      <TextInput
-        title="Email"
-        value={email.value}
-        isInvalid={email.isInvalid}
-        errorMessage={email.errorMessage}
-        onChangeText={setEmail}
-        my="3"
-        icon="email"
-      />
-      <TextInput
-        title="Password"
-        value={password.value}
-        isInvalid={password.isInvalid}
-        errorMessage={password.errorMessage}
-        onChangeText={setPassword}
-        my="3"
-        icon="lock"
-        hideEntry
-      />
-      <TextInput
-        title="Confirm Password"
-        value={confirmPassword.value}
-        isInvalid={confirmPassword.isInvalid}
-        errorMessage={confirmPassword.errorMessage}
-        onChangeText={setConfirmPassword}
-        my="3"
-        icon="lock"
-        hideEntry
-      />
+      <ScrollView>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <TextInput
+            title="First Name"
+            value={firstName.value}
+            isInvalid={firstName.isInvalid}
+            errorMessage={firstName.errorMessage}
+            onChangeText={setFirstName}
+            my="3"
+            icon="person"
+          />
+          <TextInput
+            title="Last Name"
+            value={lastName.value}
+            isInvalid={lastName.isInvalid}
+            errorMessage={lastName.errorMessage}
+            onChangeText={setLastName}
+            my="3"
+            icon="person"
+          />
+          <TextInput
+            title="Tell Us About Yourself"
+            value={bio.value}
+            isInvalid={bio.isInvalid}
+            errorMessage={bio.errorMessage}
+            onChangeText={setBio}
+            my="3"
+            icon="person"
+          />
+          <TextInput
+            title="Email"
+            value={email.value}
+            isInvalid={email.isInvalid}
+            errorMessage={email.errorMessage}
+            onChangeText={setEmail}
+            my="3"
+            icon="email"
+          />
+          <TextInput
+            title="Password"
+            value={password.value}
+            isInvalid={password.isInvalid}
+            errorMessage={password.errorMessage}
+            onChangeText={setPassword}
+            my="3"
+            icon="lock"
+            hideEntry
+          />
+          <TextInput
+            title="Confirm Password"
+            value={confirmPassword.value}
+            isInvalid={confirmPassword.isInvalid}
+            errorMessage={confirmPassword.errorMessage}
+            onChangeText={setConfirmPassword}
+            my="3"
+            icon="lock"
+            hideEntry
+          />
 
-      <Button
-        onPress={createAccount}
-        isLoading={isMutationLoading}
-        size="lg"
-        my="3"
-        style={{
-          backgroundColor: "#d4d4d4",
-          borderColor: "#000",
-          borderWidth: 1,
-          shadowOpacity: 0.3,
-          shadowRadius: 10,
-          shadowOffset: { width: 1, height: 10 },
-        }}
-        width="80%"
-        height="59px"
-        borderRadius="20"
-        _text={{ color: "#000" }}
-      >
-        CREATE ACCOUNT
-      </Button>
-    </Box>
+          <Button
+            onPress={createAccount}
+            isLoading={isMutationLoading}
+            size="lg"
+            my="3"
+            style={{
+              backgroundColor: "#d4d4d4",
+              borderColor: "#000",
+              borderWidth: 1,
+              shadowOpacity: 0.3,
+              shadowRadius: 10,
+              shadowOffset: { width: 1, height: 10 },
+            }}
+            width="80%"
+            height="59px"
+            borderRadius="20"
+            _text={{ color: "#000" }}
+          >
+            CREATE ACCOUNT
+          </Button>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingTop: 110,
     backgroundColor: Colors.gold,
   },
 });
