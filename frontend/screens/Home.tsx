@@ -401,13 +401,16 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    backgroundColor: "#FFD54F",
-    padding: 20,
+    backgroundColor: "#ffc50b",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 10,
     justifyContent: "space-between",
     borderBottomColor: "#E1E1E1",
     borderBottomWidth: 1,
   },
   header_button: {
+    marginTop: 10,
     flex: 1,
   },
   whitespace: {
