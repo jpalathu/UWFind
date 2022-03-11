@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
     marginTop: 130,
   },
   name: {
+    marginTop: 30,
     fontSize: 22,
     color: Colors.white,
     fontWeight: "600",
